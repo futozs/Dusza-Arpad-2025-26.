@@ -13,10 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title:
-    "About Dusza Árpád Országos Programozói Emlékverseny 2025-26. Web kategória",
+  title: "Damareen - Fantasy Kártyajáték | Dusza Árpád 2025-26",
   description:
-    "About Dusza Árpád Országos Programozói Emlékverseny 2025-26. Web kategória",
+    "Stratégia, szerencse és képzelet találkozása. Építsd fel a paklidat, küzdj meg kazamatákban, és fejleszd kártyáidat!",
 };
 
 export default function RootLayout({
@@ -25,7 +24,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="hu" className="dark">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
