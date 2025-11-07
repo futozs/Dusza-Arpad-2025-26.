@@ -5,7 +5,7 @@ import { PrismaClient } from "@/generated/prisma";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
-import { ArrowLeft, UserCog } from "lucide-react";
+import { ArrowLeft, Users as UsersIcon, UserCheck, Shield, GamepadIcon } from "lucide-react";
 import { UserListClient } from "@/app/webmaster/users/UserListClient";
 
 const prisma = new PrismaClient();
@@ -63,56 +63,73 @@ export default async function UsersPage() {
   }));
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-zinc-950 via-red-950/20 to-zinc-950 p-8">
+    <div className="min-h-screen bg-zinc-950 p-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center justify-between mb-12">
           <div className="flex items-center gap-4">
             <Link href="/webmaster">
-              <Button variant="outline" size="icon" className="border-red-400/40 text-red-200">
+              <Button variant="outline" size="icon" className="border-zinc-800 text-zinc-300 hover:bg-zinc-900">
                 <ArrowLeft className="w-4 h-4" />
               </Button>
             </Link>
-            <div>
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-red-200 via-orange-200 to-red-200 bg-clip-text text-transparent">
-                👥 Felhasználók
-              </h1>
-              <p className="text-zinc-400 mt-2">
-                Felhasználók kezelése és adminisztrálása
-              </p>
+            <div className="flex items-center gap-3">
+              <div className="p-3 bg-zinc-900 rounded-xl border border-zinc-800">
+                <UsersIcon className="w-6 h-6 text-cyan-500" />
+              </div>
+              <div>
+                <h1 className="text-4xl font-bold text-white">
+                  Felhasználók
+                </h1>
+                <p className="text-zinc-400 mt-1">
+                  Felhasználók kezelése és adminisztrálása
+                </p>
+              </div>
             </div>
           </div>
         </div>
 
         {/* Stats Card */}
-        <Card className="border-2 border-red-400/30 bg-zinc-900/90 backdrop-blur-xl mb-8">
+        <Card className="border border-zinc-800 bg-zinc-900 mb-8">
           <CardHeader>
-            <CardTitle className="text-red-200 flex items-center gap-2">
-              <UserCog className="w-5 h-5" />
+            <CardTitle className="text-white flex items-center gap-2">
+              <UsersIcon className="w-5 h-5 text-cyan-500" />
               Statisztikák
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-4 gap-4">
-              <div className="bg-zinc-800/50 p-4 rounded-lg">
-                <p className="text-zinc-400 text-sm">Összes felhasználó</p>
-                <p className="text-3xl font-bold text-zinc-100">{users.length}</p>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="bg-zinc-800 border border-zinc-700 p-4 rounded-lg">
+                <div className="flex items-center gap-2 mb-2">
+                  <UsersIcon className="w-4 h-4 text-zinc-400" />
+                  <p className="text-zinc-400 text-sm">Összes felhasználó</p>
+                </div>
+                <p className="text-3xl font-bold text-white">{users.length}</p>
               </div>
-              <div className="bg-zinc-800/50 p-4 rounded-lg">
-                <p className="text-zinc-400 text-sm">Játékosok</p>
-                <p className="text-3xl font-bold text-blue-200">
+              <div className="bg-zinc-800 border border-zinc-700 p-4 rounded-lg">
+                <div className="flex items-center gap-2 mb-2">
+                  <UserCheck className="w-4 h-4 text-blue-500" />
+                  <p className="text-zinc-400 text-sm">Játékosok</p>
+                </div>
+                <p className="text-3xl font-bold text-white">
                   {users.filter((u) => u.role === "PLAYER").length}
                 </p>
               </div>
-              <div className="bg-zinc-800/50 p-4 rounded-lg">
-                <p className="text-zinc-400 text-sm">Webmesterek</p>
-                <p className="text-3xl font-bold text-red-200">
+              <div className="bg-zinc-800 border border-zinc-700 p-4 rounded-lg">
+                <div className="flex items-center gap-2 mb-2">
+                  <Shield className="w-4 h-4 text-red-500" />
+                  <p className="text-zinc-400 text-sm">Webmesterek</p>
+                </div>
+                <p className="text-3xl font-bold text-white">
                   {users.filter((u) => u.role === "WEBMASTER").length}
                 </p>
               </div>
-              <div className="bg-zinc-800/50 p-4 rounded-lg">
-                <p className="text-zinc-400 text-sm">2FA engedélyezve</p>
-                <p className="text-3xl font-bold text-green-200">
+              <div className="bg-zinc-800 border border-zinc-700 p-4 rounded-lg">
+                <div className="flex items-center gap-2 mb-2">
+                  <GamepadIcon className="w-4 h-4 text-green-500" />
+                  <p className="text-zinc-400 text-sm">2FA engedélyezve</p>
+                </div>
+                <p className="text-3xl font-bold text-white">
                   {users.filter((u) => u.twoFactorEnabled).length}
                 </p>
               </div>

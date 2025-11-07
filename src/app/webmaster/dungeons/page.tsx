@@ -5,28 +5,28 @@ import { PrismaClient, DungeonType } from "@/generated/prisma";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
-import { ArrowLeft, Plus } from "lucide-react";
+import { ArrowLeft, Plus, Castle, Swords, Sparkles, Crown } from "lucide-react";
 import { DeleteDungeonButton } from "@/components/DeleteDungeonButton";
 
 const prisma = new PrismaClient();
 
-const dungeonTypeInfo: Record<DungeonType, { label: string; icon: string; color: string; reward: string }> = {
+const dungeonTypeInfo: Record<DungeonType, { label: string; iconComponent: typeof Swords; color: string; reward: string }> = {
   SIMPLE_ENCOUNTER: { 
     label: "Egyszerű találkozás", 
-    icon: "⚔️", 
-    color: "text-green-400",
+    iconComponent: Swords, 
+    color: "text-green-500",
     reward: "+1 sebzés"
   },
   SMALL_DUNGEON: { 
     label: "Kis kazamata", 
-    icon: "🏛️", 
-    color: "text-blue-400",
+    iconComponent: Sparkles, 
+    color: "text-blue-500",
     reward: "+2 életerő"
   },
   LARGE_DUNGEON: { 
     label: "Nagy kazamata", 
-    icon: "🏰", 
-    color: "text-purple-400",
+    iconComponent: Crown, 
+    color: "text-purple-500",
     reward: "+3 sebzés"
   },
 };
@@ -66,27 +66,32 @@ export default async function DungeonsPage() {
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-zinc-950 via-red-950/20 to-zinc-950 p-8">
+    <div className="min-h-screen bg-zinc-950 p-8">
       <div className="max-w-7xl mx-auto">
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center justify-between mb-12">
           <div className="flex items-center gap-4">
             <Link href="/webmaster">
-              <Button variant="outline" size="icon" className="border-red-400/40 text-red-200">
+              <Button variant="outline" size="icon" className="border-zinc-800 text-zinc-300 hover:bg-zinc-900">
                 <ArrowLeft className="w-4 h-4" />
               </Button>
             </Link>
-            <div>
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-red-200 via-orange-200 to-red-200 bg-clip-text text-transparent">
-                🏰 Kazamaták
-              </h1>
-              <p className="text-zinc-400 mt-2">
-                Kihívások összeállítása a játékosok számára
-              </p>
+            <div className="flex items-center gap-3">
+              <div className="p-3 bg-zinc-900 rounded-xl border border-zinc-800">
+                <Castle className="w-6 h-6 text-red-500" />
+              </div>
+              <div>
+                <h1 className="text-4xl font-bold text-white">
+                  Kazamaták
+                </h1>
+                <p className="text-zinc-400 mt-1">
+                  Kihívások összeállítása a játékosok számára
+                </p>
+              </div>
             </div>
           </div>
           
           <Link href="/webmaster/dungeons/create">
-            <Button className="bg-red-500 hover:bg-red-600 text-white">
+            <Button className="bg-red-600 hover:bg-red-700 text-white">
               <Plus className="w-4 h-4 mr-2" />
               Új kazamata
             </Button>
@@ -96,15 +101,17 @@ export default async function DungeonsPage() {
         <div className="grid md:grid-cols-2 gap-6">
           {dungeons.map((dungeon) => {
             const typeInfo = dungeonTypeInfo[dungeon.type];
+            const IconComponent = typeInfo.iconComponent;
             
             return (
-              <Card key={dungeon.id} className="border-2 border-purple-400/30 bg-gradient-to-br from-purple-900/20 to-indigo-900/20">
+              <Card key={dungeon.id} className="border border-zinc-800 bg-zinc-900 hover:bg-zinc-800 transition-all">
                 <CardHeader>
                   <div className="flex items-center justify-between">
-                    <CardTitle className="text-purple-200 flex items-center gap-2">
-                      {typeInfo.icon} {dungeon.name}
+                    <CardTitle className="text-white flex items-center gap-2">
+                      <IconComponent className={`w-5 h-5 ${typeInfo.color}`} />
+                      {dungeon.name}
                     </CardTitle>
-                    <span className={`text-sm ${typeInfo.color} font-semibold`}>
+                    <span className={`text-sm ${typeInfo.color} font-semibold px-3 py-1 bg-zinc-800 rounded-full`}>
                       {typeInfo.label}
                     </span>
                   </div>

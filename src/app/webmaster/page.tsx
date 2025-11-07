@@ -4,7 +4,20 @@ import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ShieldCheck } from "lucide-react";
+import { 
+  ShieldCheck, 
+  Globe, 
+  Layers, 
+  Crown, 
+  Castle, 
+  Users, 
+  BarChart3, 
+  Settings, 
+  FileText,
+  ShieldAlert,
+  CheckCircle2,
+  AlertTriangle
+} from "lucide-react";
 
 export default async function WebmasterDashboardPage() {
   const session = await getServerSession(authOptions);
@@ -19,170 +32,334 @@ export default async function WebmasterDashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-zinc-950 via-red-950/20 to-zinc-950 p-8">
-      <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-4">
-            <ShieldCheck className="w-12 h-12 text-red-400" />
-            <div>
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-red-200 via-orange-200 to-red-200 bg-clip-text text-transparent">
-                Webmester Panel
-              </h1>
-              <p className="text-zinc-400 mt-2">
-                Admin terület - <span className="text-red-300 font-semibold">{session.user.username}</span>
-              </p>
+    <div className="min-h-screen bg-zinc-950 p-4 md:p-8">
+      <div className="max-w-7xl mx-auto">
+        {/* Header with Glass Effect */}
+        <div className="relative mb-12">
+          {/* Decorative Background Blur */}
+          <div className="absolute -top-20 -left-20 w-72 h-72 bg-red-500/10 rounded-full blur-3xl" />
+          <div className="absolute -top-20 -right-20 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl" />
+          
+          <div className="relative bg-zinc-900/50 backdrop-blur-xl border border-zinc-800/50 rounded-2xl p-6 shadow-2xl">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="relative">
+                  <div className="absolute inset-0 bg-red-500/20 rounded-2xl blur-xl" />
+                  <div className="relative p-4 bg-zinc-900 rounded-2xl border border-red-500/30">
+                    <ShieldCheck className="w-10 h-10 text-red-500" />
+                  </div>
+                </div>
+                <div>
+                  <h1 className="text-4xl md:text-5xl font-bold text-white tracking-tight">
+                    Webmester Panel
+                  </h1>
+                  <p className="text-zinc-400 mt-2 flex items-center gap-2">
+                    <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                    <span className="text-white font-medium">{session.user.username}</span>
+                    <span className="text-zinc-600">•</span>
+                    <span className="text-zinc-500 text-sm">Online</span>
+                  </p>
+                </div>
+              </div>
+              
+              <Link href="/dashboard">
+                <Button 
+                  variant="outline" 
+                  className="border-zinc-700 text-zinc-300 hover:bg-zinc-800 hover:text-white hover:border-zinc-600 transition-all"
+                >
+                  Játékos nézet
+                </Button>
+              </Link>
             </div>
           </div>
-          
-          <Link href="/dashboard">
-            <Button 
-              variant="outline" 
-              className="border-red-400/40 text-red-200 hover:bg-red-900/30"
-            >
-              ← Játékos nézet
-            </Button>
-          </Link>
+        </div>
+
+        {/* Quick Stats Bar */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          <div className="group relative overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900/50 backdrop-blur-sm p-4 hover:border-blue-500/30 transition-all">
+            <div className="absolute top-0 right-0 w-20 h-20 bg-blue-500/10 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="flex items-center justify-between relative z-10">
+              <div>
+                <p className="text-zinc-500 text-xs uppercase tracking-wider mb-1">Környezetek</p>
+                <p className="text-2xl font-bold text-white">12</p>
+              </div>
+              <Globe className="w-8 h-8 text-blue-500/50 group-hover:text-blue-500 transition-colors" />
+            </div>
+          </div>
+
+          <div className="group relative overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900/50 backdrop-blur-sm p-4 hover:border-purple-500/30 transition-all">
+            <div className="absolute top-0 right-0 w-20 h-20 bg-purple-500/10 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="flex items-center justify-between relative z-10">
+              <div>
+                <p className="text-zinc-500 text-xs uppercase tracking-wider mb-1">Világkártyák</p>
+                <p className="text-2xl font-bold text-white">48</p>
+              </div>
+              <Layers className="w-8 h-8 text-purple-500/50 group-hover:text-purple-500 transition-colors" />
+            </div>
+          </div>
+
+          <div className="group relative overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900/50 backdrop-blur-sm p-4 hover:border-yellow-500/30 transition-all">
+            <div className="absolute top-0 right-0 w-20 h-20 bg-yellow-500/10 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="flex items-center justify-between relative z-10">
+              <div>
+                <p className="text-zinc-500 text-xs uppercase tracking-wider mb-1">Vezérkártyák</p>
+                <p className="text-2xl font-bold text-white">16</p>
+              </div>
+              <Crown className="w-8 h-8 text-yellow-500/50 group-hover:text-yellow-500 transition-colors" />
+            </div>
+          </div>
+
+          <div className="group relative overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900/50 backdrop-blur-sm p-4 hover:border-red-500/30 transition-all">
+            <div className="absolute top-0 right-0 w-20 h-20 bg-red-500/10 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="flex items-center justify-between relative z-10">
+              <div>
+                <p className="text-zinc-500 text-xs uppercase tracking-wider mb-1">Börtönök</p>
+                <p className="text-2xl font-bold text-white">8</p>
+              </div>
+              <Castle className="w-8 h-8 text-red-500/50 group-hover:text-red-500 transition-colors" />
+            </div>
+          </div>
         </div>
 
         {/* Admin Info Card */}
-        <Card className="border-2 border-red-400/30 bg-zinc-900/90 backdrop-blur-xl mb-8">
+        <Card className="border border-zinc-800/50 bg-zinc-900/50 backdrop-blur-sm mb-8 shadow-xl">
           <CardHeader>
-            <CardTitle className="text-2xl text-red-200">Admin Információk</CardTitle>
+            <CardTitle className="text-xl text-white flex items-center gap-2">
+              <div className="w-1 h-6 bg-red-500 rounded-full" />
+              Rendszerinformációk
+            </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-3">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <p className="text-zinc-400 text-sm">Felhasználónév</p>
-                <p className="text-zinc-100 font-semibold">{session.user.username}</p>
+          <CardContent>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="group relative overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900/50 p-4 hover:bg-zinc-800/50 transition-all">
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                <p className="text-zinc-500 text-sm mb-2 relative z-10">Felhasználónév</p>
+                <p className="text-white font-semibold relative z-10">{session.user.username}</p>
               </div>
-              <div>
-                <p className="text-zinc-400 text-sm">Email</p>
-                <p className="text-zinc-100 font-semibold">{session.user.email}</p>
+              <div className="group relative overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900/50 p-4 hover:bg-zinc-800/50 transition-all">
+                <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                <p className="text-zinc-500 text-sm mb-2 relative z-10">Email</p>
+                <p className="text-white font-semibold relative z-10">{session.user.email}</p>
               </div>
-              <div>
-                <p className="text-zinc-400 text-sm">Hozzáférési Szint</p>
-                <p className="text-zinc-100 font-semibold">🛡️ Teljes Admin</p>
+              <div className="group relative overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900/50 p-4 hover:bg-zinc-800/50 transition-all">
+                <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                <p className="text-zinc-500 text-sm mb-2 relative z-10">Hozzáférési szint</p>
+                <div className="flex items-center gap-2 relative z-10">
+                  <ShieldCheck className="w-4 h-4 text-red-500" />
+                  <p className="text-white font-semibold">Admin</p>
+                </div>
               </div>
-              <div>
-                <p className="text-zinc-400 text-sm">2FA Státusz</p>
-                <p className="text-zinc-100 font-semibold">
-                  {session.user.twoFactorEnabled ? "✅ Engedélyezve" : "⚠️ Ajánlott engedélyezni!"}
-                </p>
+              <div className="group relative overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900/50 p-4 hover:bg-zinc-800/50 transition-all">
+                <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                <p className="text-zinc-500 text-sm mb-2 relative z-10">2FA státusz</p>
+                <div className="flex items-center gap-2 relative z-10">
+                  {session.user.twoFactorEnabled ? (
+                    <>
+                      <CheckCircle2 className="w-4 h-4 text-green-500" />
+                      <p className="text-white font-semibold">Aktív</p>
+                    </>
+                  ) : (
+                    <>
+                      <AlertTriangle className="w-4 h-4 text-yellow-500" />
+                      <p className="text-white font-semibold">Inaktív</p>
+                    </>
+                  )}
+                </div>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Admin Actions */}
+        {/* Admin Actions Grid - Modern Layout */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <Link href="/webmaster/environments">
-            <Card className="border-2 border-red-400/20 bg-zinc-900/70 hover:bg-zinc-900/90 transition-all cursor-pointer h-full">
+          {/* Játékkörnyezetek */}
+          <Link href="/webmaster/environments" className="group">
+            <Card className="relative overflow-hidden border border-zinc-800/50 bg-zinc-900/50 backdrop-blur-sm hover:bg-zinc-800/50 transition-all duration-300 h-full hover:border-blue-500/30 hover:shadow-lg hover:shadow-blue-500/10">
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full blur-3xl group-hover:bg-blue-500/10 transition-all duration-300" />
               <CardHeader>
-                <CardTitle className="text-red-200">🌍 Játékkörnyezetek</CardTitle>
+                <div className="flex items-center justify-between relative z-10">
+                  <CardTitle className="text-white flex items-center gap-3 text-lg">
+                    <div className="p-2 bg-blue-500/10 rounded-lg group-hover:bg-blue-500/20 transition-colors">
+                      <Globe className="w-5 h-5 text-blue-500" />
+                    </div>
+                    Játékkörnyezetek
+                  </CardTitle>
+                  <div className="w-2 h-2 bg-blue-500 rounded-full opacity-50 group-hover:opacity-100 transition-opacity" />
+                </div>
               </CardHeader>
-              <CardContent>
+              <CardContent className="relative z-10">
                 <p className="text-zinc-400 text-sm">Világok létrehozása és kezelése</p>
               </CardContent>
             </Card>
           </Link>
 
-          <Link href="/webmaster/world-cards">
-            <Card className="border-2 border-red-400/20 bg-zinc-900/70 hover:bg-zinc-900/90 transition-all cursor-pointer h-full">
+          {/* Világkártyák */}
+          <Link href="/webmaster/world-cards" className="group">
+            <Card className="relative overflow-hidden border border-zinc-800/50 bg-zinc-900/50 backdrop-blur-sm hover:bg-zinc-800/50 transition-all duration-300 h-full hover:border-purple-500/30 hover:shadow-lg hover:shadow-purple-500/10">
+              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/5 rounded-full blur-3xl group-hover:bg-purple-500/10 transition-all duration-300" />
               <CardHeader>
-                <CardTitle className="text-red-200">🎴 Világkártyák</CardTitle>
+                <div className="flex items-center justify-between relative z-10">
+                  <CardTitle className="text-white flex items-center gap-3 text-lg">
+                    <div className="p-2 bg-purple-500/10 rounded-lg group-hover:bg-purple-500/20 transition-colors">
+                      <Layers className="w-5 h-5 text-purple-500" />
+                    </div>
+                    Világkártyák
+                  </CardTitle>
+                  <div className="w-2 h-2 bg-purple-500 rounded-full opacity-50 group-hover:opacity-100 transition-opacity" />
+                </div>
               </CardHeader>
-              <CardContent>
-                <p className="text-zinc-400 text-sm">Sima kártyák adminisztrálása</p>
+              <CardContent className="relative z-10">
+                <p className="text-zinc-400 text-sm">Alap kártyák adminisztrálása</p>
               </CardContent>
             </Card>
           </Link>
 
-          <Link href="/webmaster/leader-cards">
-            <Card className="border-2 border-red-400/20 bg-zinc-900/70 hover:bg-zinc-900/90 transition-all cursor-pointer h-full">
+          {/* Vezérkártyák */}
+          <Link href="/webmaster/leader-cards" className="group">
+            <Card className="relative overflow-hidden border border-zinc-800/50 bg-zinc-900/50 backdrop-blur-sm hover:bg-zinc-800/50 transition-all duration-300 h-full hover:border-amber-500/30 hover:shadow-lg hover:shadow-amber-500/10">
+              <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 rounded-full blur-3xl group-hover:bg-amber-500/10 transition-all duration-300" />
               <CardHeader>
-                <CardTitle className="text-red-200">👑 Vezérkártyák</CardTitle>
+                <div className="flex items-center justify-between relative z-10">
+                  <CardTitle className="text-white flex items-center gap-3 text-lg">
+                    <div className="p-2 bg-amber-500/10 rounded-lg group-hover:bg-amber-500/20 transition-colors">
+                      <Crown className="w-5 h-5 text-amber-500" />
+                    </div>
+                    Vezérkártyák
+                  </CardTitle>
+                  <div className="w-2 h-2 bg-amber-500 rounded-full opacity-50 group-hover:opacity-100 transition-opacity" />
+                </div>
               </CardHeader>
-              <CardContent>
+              <CardContent className="relative z-10">
                 <p className="text-zinc-400 text-sm">Vezérkártyák származtatása</p>
               </CardContent>
             </Card>
           </Link>
 
-          <Link href="/webmaster/dungeons">
-            <Card className="border-2 border-red-400/20 bg-zinc-900/70 hover:bg-zinc-900/90 transition-all cursor-pointer h-full">
+          {/* Kazamaták */}
+          <Link href="/webmaster/dungeons" className="group">
+            <Card className="relative overflow-hidden border border-zinc-800/50 bg-zinc-900/50 backdrop-blur-sm hover:bg-zinc-800/50 transition-all duration-300 h-full hover:border-red-500/30 hover:shadow-lg hover:shadow-red-500/10">
+              <div className="absolute inset-0 bg-gradient-to-br from-red-500/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="absolute top-0 right-0 w-32 h-32 bg-red-500/5 rounded-full blur-3xl group-hover:bg-red-500/10 transition-all duration-300" />
               <CardHeader>
-                <CardTitle className="text-red-200">� Kazamaták</CardTitle>
+                <div className="flex items-center justify-between relative z-10">
+                  <CardTitle className="text-white flex items-center gap-3 text-lg">
+                    <div className="p-2 bg-red-500/10 rounded-lg group-hover:bg-red-500/20 transition-colors">
+                      <Castle className="w-5 h-5 text-red-500" />
+                    </div>
+                    Kazamaták
+                  </CardTitle>
+                  <div className="w-2 h-2 bg-red-500 rounded-full opacity-50 group-hover:opacity-100 transition-opacity" />
+                </div>
               </CardHeader>
-              <CardContent>
-                <p className="text-zinc-400 text-sm">Kazamaták összeállítása</p>
+              <CardContent className="relative z-10">
+                <p className="text-zinc-400 text-sm">Kihívások összeállítása</p>
               </CardContent>
             </Card>
           </Link>
 
-          <Link href="/webmaster/users">
-            <Card className="border-2 border-red-400/20 bg-zinc-900/70 hover:bg-zinc-900/90 transition-all cursor-pointer h-full">
+          {/* Felhasználók */}
+          <Link href="/webmaster/users" className="group">
+            <Card className="relative overflow-hidden border border-zinc-800/50 bg-zinc-900/50 backdrop-blur-sm hover:bg-zinc-800/50 transition-all duration-300 h-full hover:border-cyan-500/30 hover:shadow-lg hover:shadow-cyan-500/10">
+              <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-500/5 rounded-full blur-3xl group-hover:bg-cyan-500/10 transition-all duration-300" />
               <CardHeader>
-                <CardTitle className="text-red-200">👥 Felhasználók</CardTitle>
+                <div className="flex items-center justify-between relative z-10">
+                  <CardTitle className="text-white flex items-center gap-3 text-lg">
+                    <div className="p-2 bg-cyan-500/10 rounded-lg group-hover:bg-cyan-500/20 transition-colors">
+                      <Users className="w-5 h-5 text-cyan-500" />
+                    </div>
+                    Felhasználók
+                  </CardTitle>
+                  <div className="w-2 h-2 bg-cyan-500 rounded-full opacity-50 group-hover:opacity-100 transition-opacity" />
+                </div>
               </CardHeader>
-              <CardContent>
+              <CardContent className="relative z-10">
                 <p className="text-zinc-400 text-sm">Felhasználók kezelése</p>
               </CardContent>
             </Card>
           </Link>
 
-          <Card className="border-2 border-red-400/20 bg-zinc-900/70 hover:bg-zinc-900/90 transition-all cursor-pointer h-full">
+          {/* Statisztikák */}
+          <Card className="relative overflow-hidden border border-zinc-800/50 bg-zinc-900/30 backdrop-blur-sm opacity-60 cursor-not-allowed h-full">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-green-500/5 rounded-full blur-3xl" />
             <CardHeader>
-              <CardTitle className="text-red-200">📊 Statisztikák</CardTitle>
+              <div className="flex items-center justify-between relative z-10">
+                <CardTitle className="text-white flex items-center gap-3 text-lg">
+                  <div className="p-2 bg-green-500/10 rounded-lg">
+                    <BarChart3 className="w-5 h-5 text-green-500" />
+                  </div>
+                  Statisztikák
+                </CardTitle>
+                <div className="text-xs text-zinc-600 font-medium px-2 py-1 bg-zinc-800 rounded-md">Hamarosan</div>
+              </div>
             </CardHeader>
-            <CardContent>
-              <p className="text-zinc-400 text-sm">Játék mérkőzések áttekintése</p>
+            <CardContent className="relative z-10">
+              <p className="text-zinc-500 text-sm">Rendszer statisztikák</p>
             </CardContent>
           </Card>
 
-          <Card className="border-2 border-red-400/20 bg-zinc-900/70 hover:bg-zinc-900/90 transition-all cursor-pointer">
+          {/* Beállítások */}
+          <Card className="relative overflow-hidden border border-zinc-800/50 bg-zinc-900/30 backdrop-blur-sm opacity-60 cursor-not-allowed h-full">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-zinc-500/5 rounded-full blur-3xl" />
             <CardHeader>
-              <CardTitle className="text-red-200">📊 Statisztikák</CardTitle>
+              <div className="flex items-center justify-between relative z-10">
+                <CardTitle className="text-white flex items-center gap-3 text-lg">
+                  <div className="p-2 bg-zinc-500/10 rounded-lg">
+                    <Settings className="w-5 h-5 text-zinc-500" />
+                  </div>
+                  Beállítások
+                </CardTitle>
+                <div className="text-xs text-zinc-600 font-medium px-2 py-1 bg-zinc-800 rounded-md">Hamarosan</div>
+              </div>
             </CardHeader>
-            <CardContent>
-              <p className="text-zinc-400 text-sm">Rendszer statisztikák</p>
+            <CardContent className="relative z-10">
+              <p className="text-zinc-500 text-sm">Rendszer konfigurálása</p>
             </CardContent>
           </Card>
 
-          <Card className="border-2 border-red-400/20 bg-zinc-900/70 hover:bg-zinc-900/90 transition-all cursor-pointer">
+          {/* Logok */}
+          <Card className="relative overflow-hidden border border-zinc-800/50 bg-zinc-900/30 backdrop-blur-sm opacity-60 cursor-not-allowed h-full">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-zinc-500/5 rounded-full blur-3xl" />
             <CardHeader>
-              <CardTitle className="text-red-200">⚙️ Beállítások</CardTitle>
+              <div className="flex items-center justify-between relative z-10">
+                <CardTitle className="text-white flex items-center gap-3 text-lg">
+                  <div className="p-2 bg-zinc-500/10 rounded-lg">
+                    <FileText className="w-5 h-5 text-zinc-500" />
+                  </div>
+                  Események
+                </CardTitle>
+                <div className="text-xs text-zinc-600 font-medium px-2 py-1 bg-zinc-800 rounded-md">Hamarosan</div>
+              </div>
             </CardHeader>
-            <CardContent>
-              <p className="text-zinc-400 text-sm">Rendszer konfigurálása</p>
-            </CardContent>
-          </Card>
-
-          <Card className="border-2 border-red-400/20 bg-zinc-900/70 hover:bg-zinc-900/90 transition-all cursor-pointer">
-            <CardHeader>
-              <CardTitle className="text-red-200">📝 Logok</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-zinc-400 text-sm">Rendszer események</p>
+            <CardContent className="relative z-10">
+              <p className="text-zinc-500 text-sm">Rendszer események</p>
             </CardContent>
           </Card>
         </div>
 
         {/* Security Notice */}
         {!session.user.twoFactorEnabled && (
-          <Card className="border-2 border-yellow-500/30 bg-yellow-900/10 mt-8">
+          <Card className="relative overflow-hidden border border-yellow-500/30 bg-zinc-900/50 backdrop-blur-sm mt-8">
+            <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/5 to-transparent" />
+            <div className="absolute top-0 right-0 w-64 h-64 bg-yellow-500/10 rounded-full blur-3xl" />
             <CardHeader>
-              <CardTitle className="text-yellow-200 flex items-center gap-2">
-                ⚠️ Biztonsági figyelmeztetés
+              <CardTitle className="text-yellow-500 flex items-center gap-3 relative z-10">
+                <div className="p-2 bg-yellow-500/10 rounded-lg">
+                  <ShieldAlert className="w-5 h-5" />
+                </div>
+                Biztonsági figyelmeztetés
               </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="relative z-10">
               <p className="text-zinc-300 mb-4">
-                Adminisztrátori fiók esetén erősen ajánlott a kétfaktoros hitelesítés (2FA) engedélyezése!
+                Admin fiók esetén erősen ajánlott a kétfaktoros hitelesítés (2FA) beállítása a fokozott biztonság érdekében.
               </p>
               <Link href="/dashboard/2fa-setup">
-                <Button className="bg-yellow-600 hover:bg-yellow-700 text-white">
-                  2FA Beállítása most
+                <Button className="bg-yellow-600 hover:bg-yellow-700 text-white transition-colors">
+                  2FA beállítása most
                 </Button>
               </Link>
             </CardContent>
