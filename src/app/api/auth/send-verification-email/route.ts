@@ -1,6 +1,11 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { PrismaClient } from "@/generated/prisma";
+import { sendVerificationEmail } from "@/mail/send-verification";
+import crypto from "crypto";
+
+const prisma = new PrismaClient();
 
 export async function POST() {
   try {
@@ -10,16 +15,48 @@ export async function POST() {
       return NextResponse.json({ error: "Nem vagy bejelentkezve" }, { status: 401 });
     }
 
-    // TODO: Implement email verification logic
-    // This would typically:
-    // 1. Generate a verification token
-    // 2. Store it in the database
-    // 3. Send an email with a verification link
-    
-    // For now, just return success
+    // Felhasználó lekérdezése
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email },
+    });
+
+    if (!user) {
+      return NextResponse.json({ error: "Felhasználó nem található" }, { status: 404 });
+    }
+
+    // Ha már megerősített
+    if (user.emailVerified) {
+      return NextResponse.json({ 
+        error: "Az email cím már megerősítésre került" 
+      }, { status: 400 });
+    }
+
+    // Új token generálása
+    const verificationToken = crypto.randomBytes(32).toString("hex");
+    const expiresInHours = 24; // 24 óra múlva jár le
+    const expiresAt = new Date();
+    expiresAt.setHours(expiresAt.getHours() + expiresInHours);
+
+    // Token mentése az adatbázisba
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        emailVerificationToken: verificationToken,
+        emailVerificationExpires: expiresAt,
+      },
+    });
+
+    // Email küldése
+    await sendVerificationEmail(
+      user.email,
+      verificationToken,
+      user.username,
+      expiresInHours
+    );
+
     return NextResponse.json({ 
       message: "Megerősítő email elküldve",
-      email: session.user.email,
+      email: user.email,
     });
   } catch (error) {
     console.error("Send verification email error:", error);
