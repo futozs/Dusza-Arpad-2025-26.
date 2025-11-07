@@ -2,7 +2,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import DashboardNavbar from "@/components/dashboard/DashboardNavbar";
+import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { 
   User, 
   Mail, 
@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import TwoFactorSetupButton from "@/components/TwoFactorSetupButton";
 
 export default async function SettingsPage() {
   const session = await getServerSession(authOptions);
@@ -27,17 +28,9 @@ export default async function SettingsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-zinc-950 via-zinc-900 to-zinc-950">
-      <DashboardNavbar />
-      
+    <DashboardLayout>
       <div className="pt-24 px-4 md:px-8 pb-8">
         <div className="max-w-5xl mx-auto">
-          {/* Decorative Background */}
-          <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10">
-            <div className="absolute top-40 -left-20 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl" />
-            <div className="absolute top-60 -right-20 w-96 h-96 bg-violet-500/10 rounded-full blur-3xl" />
-            <div className="absolute bottom-40 left-1/2 w-96 h-96 bg-fuchsia-500/10 rounded-full blur-3xl" />
-          </div>
           {/* Header */}
           <div className="mb-8">
             <h1 className="text-4xl font-bold text-white mb-2">Beállítások</h1>
@@ -268,40 +261,21 @@ export default async function SettingsPage() {
                           </p>
                         </div>
                       </div>
-                      <Link href="/dashboard/settings/2fa-setup">
-                        <Button className={session.user.twoFactorEnabled 
-                          ? "bg-red-600 hover:bg-red-700 text-white" 
-                          : "bg-green-600 hover:bg-green-700 text-white"
-                        }>
-                          {session.user.twoFactorEnabled ? "Letiltás" : "Engedélyezés"}
-                        </Button>
-                      </Link>
+                      <TwoFactorSetupButton isEnabled={session.user.twoFactorEnabled} />
                     </div>
+                    {!session.user.twoFactorEnabled && (
+                      <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-3 mt-3">
+                        <p className="text-xs text-amber-200">
+                          <strong>Javasoljuk:</strong> Engedélyezd a 2FA-t a fiókod jobb védelme érdekében.
+                        </p>
+                      </div>
+                    )}
                     {session.user.twoFactorEnabled && (
                       <p className="text-xs text-zinc-500 mt-2">
                         A 2FA védi a fiókodat azzal, hogy belépéskor egy második azonosítási lépést igényel.
                       </p>
                     )}
                   </div>
-
-                  {session.user.twoFactorEnabled && (
-                    <div className="p-4 rounded-lg bg-zinc-950/50 border border-zinc-800">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <Shield className="w-5 h-5 text-emerald-400" />
-                          <div>
-                            <h3 className="text-white font-medium">Backup Kódok</h3>
-                            <p className="text-zinc-500 text-sm">Tartalék kódok kezelése</p>
-                          </div>
-                        </div>
-                        <Link href="/dashboard/settings/backup-codes">
-                          <Button variant="outline" className="border-zinc-700 text-zinc-300 hover:bg-zinc-800">
-                            Megtekintés
-                          </Button>
-                        </Link>
-                      </div>
-                    </div>
-                  )}
                 </CardContent>
               </Card>
 
@@ -403,6 +377,6 @@ export default async function SettingsPage() {
           </div>
         </div>
       </div>
-    </div>
+    </DashboardLayout>
   );
 }

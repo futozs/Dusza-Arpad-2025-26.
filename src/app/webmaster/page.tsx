@@ -18,6 +18,7 @@ import {
   CheckCircle2,
   AlertTriangle
 } from "lucide-react";
+import TwoFactorSetupButton from "@/components/TwoFactorSetupButton";
 
 export default async function WebmasterDashboardPage() {
   const session = await getServerSession(authOptions);
@@ -357,11 +358,11 @@ export default async function WebmasterDashboardPage() {
               <p className="text-zinc-300 mb-4">
                 Admin fiók esetén erősen ajánlott a kétfaktoros hitelesítés (2FA) beállítása a fokozott biztonság érdekében.
               </p>
-              <Link href="/dashboard/2fa-setup">
-                <Button className="bg-yellow-600 hover:bg-yellow-700 text-white transition-colors">
-                  2FA beállítása most
-                </Button>
-              </Link>
+              <TwoFactorSetupButton 
+                isEnabled={false}
+                variant="default"
+                className="bg-yellow-600 hover:bg-yellow-700"
+              />
             </CardContent>
           </Card>
         )}

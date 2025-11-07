@@ -219,13 +219,13 @@ export default function Home() {
         <div className="container relative z-10 mx-auto px-4">
           <div className="mb-16 text-center">
             <TrueFocus
-              sentence="Játékmenet Roviden"
+              sentence="Játékmenet Röviden"
               manualMode={false}
               blurAmount={8}
               borderColor="rgb(168, 85, 247)"
               glowColor="rgba(168, 85, 247, 0.6)"
-              animationDuration={1.5}
-              pauseBetweenAnimations={2}
+              animationDuration={1}
+              pauseBetweenAnimations={0.5}
             />
           </div>
 
