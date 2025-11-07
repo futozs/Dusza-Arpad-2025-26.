@@ -229,25 +229,27 @@ Generálva: ${new Date().toLocaleString("hu-HU")}
         </div>
 
         {/* Content */}
-        <div className="p-8 max-h-[70vh] overflow-y-auto">
+        <div className="p-6 max-h-[70vh] overflow-y-auto space-y-4">
           {error && (
-            <div className="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/30 flex items-start gap-3">
-              <AlertTriangle className="w-5 h-5 text-red-400 mt-0.5 flex-shrink-0" />
-              <p className="text-red-200">{error}</p>
+            <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4">
+              <div className="flex items-start gap-3">
+                <AlertTriangle className="w-5 h-5 text-red-400 mt-0.5 flex-shrink-0" />
+                <p className="text-sm text-red-400">{error}</p>
+              </div>
             </div>
           )}
 
           {/* Step 1: Jelszó megerősítés */}
           {step === "password" && (
-            <div className="space-y-6">
-              <div className="text-center space-y-3">
-                <div className="inline-flex p-4 rounded-2xl bg-purple-500/10 border border-purple-500/20">
-                  <Shield className="w-12 h-12 text-purple-400" />
+            <div className="space-y-4">
+              <div className="text-center space-y-2">
+                <div className="inline-flex p-4 rounded-xl bg-purple-500/10 border border-purple-500/20">
+                  <Shield className="w-10 h-10 text-purple-400" />
                 </div>
                 <h3 className="text-2xl font-bold text-white">
                   Erősítsd meg a személyazonosságod
                 </h3>
-                <p className="text-zinc-400">
+                <p className="text-zinc-400 text-sm">
                   Biztonságból kérjük add meg a jelenlegi jelszavadat
                 </p>
               </div>
@@ -265,7 +267,7 @@ Generálva: ${new Date().toLocaleString("hu-HU")}
                       {...passwordForm.register("password")}
                     />
                     {passwordForm.formState.errors.password && (
-                      <p className="text-red-400 text-sm mt-1">
+                      <p className="text-xs text-red-400 mt-1">
                         {passwordForm.formState.errors.password.message}
                       </p>
                     )}
@@ -274,7 +276,7 @@ Generálva: ${new Date().toLocaleString("hu-HU")}
                   <Button
                     type="submit"
                     disabled={loading}
-                    className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 transition-all"
+                    className="w-full bg-purple-600 hover:bg-purple-700 text-white py-6 mt-2"
                   >
                     {loading ? "Ellenőrzés..." : "Tovább"}
                   </Button>
@@ -285,12 +287,12 @@ Generálva: ${new Date().toLocaleString("hu-HU")}
 
           {/* Step 2: QR kód megjelenítés */}
           {step === "qrcode" && (
-            <div className="space-y-6">
+            <div className="space-y-4">
               <div className="text-center space-y-2">
-                <h3 className="text-2xl font-bold text-white">
+                <h3 className="text-xl font-bold text-white">
                   Szkenneld be a QR kódot
                 </h3>
-                <p className="text-zinc-400">
+                <p className="text-zinc-400 text-sm">
                   Használj egy authenticator alkalmazást (pl. Google
                   Authenticator, Authy, Microsoft Authenticator)
                 </p>
@@ -298,35 +300,36 @@ Generálva: ${new Date().toLocaleString("hu-HU")}
 
               {/* QR Code */}
               <div className="flex justify-center">
-                <div className="p-6 bg-white rounded-2xl shadow-lg">
+                <div className="p-4 bg-white rounded-xl shadow-lg">
                   <Image
                     src={qrCode}
                     alt="2FA QR Code"
-                    width={256}
-                    height={256}
-                    className="w-64 h-64"
+                    width={200}
+                    height={200}
+                    className="w-52 h-52"
                   />
                 </div>
               </div>
 
               {/* Manual entry */}
-              <div className="bg-zinc-950/50 border border-zinc-800 rounded-xl p-4">
-                <p className="text-sm text-zinc-400 mb-3">
+              <div className="bg-zinc-950/50 border border-zinc-800 rounded-lg p-4">
+                <p className="text-sm text-zinc-400 mb-2">
                   Vagy írd be manuálisan a kódot:
                 </p>
                 <div className="flex items-center gap-2">
-                  <code className="flex-1 p-3 bg-zinc-900 border border-zinc-800 rounded-lg text-purple-400 font-mono text-sm break-all">
+                  <code className="flex-1 p-2 bg-zinc-900 border border-zinc-800 rounded-lg text-purple-400 font-mono text-xs break-all">
                     {secret}
                   </code>
                   <Button
                     type="button"
+                    size="sm"
                     onClick={() => copyToClipboard(secret, "secret")}
                     className="bg-zinc-800 hover:bg-zinc-700 border border-zinc-700"
                   >
                     {copiedSecret ? (
-                      <CheckCircle2 className="w-5 h-5 text-green-400" />
+                      <CheckCircle2 className="w-4 h-4 text-green-400" />
                     ) : (
-                      <Copy className="w-5 h-5" />
+                      <Copy className="w-4 h-4" />
                     )}
                   </Button>
                 </div>
@@ -334,7 +337,7 @@ Generálva: ${new Date().toLocaleString("hu-HU")}
 
               <Button
                 onClick={() => setStep("verify")}
-                className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3"
+                className="w-full bg-purple-600 hover:bg-purple-700 text-white py-6"
               >
                 Következő lépés
               </Button>
@@ -343,12 +346,12 @@ Generálva: ${new Date().toLocaleString("hu-HU")}
 
           {/* Step 3: Kód ellenőrzés */}
           {step === "verify" && (
-            <div className="space-y-6">
+            <div className="space-y-4">
               <div className="text-center space-y-2">
-                <h3 className="text-2xl font-bold text-white">
+                <h3 className="text-xl font-bold text-white">
                   Add meg az ellenőrző kódot
                 </h3>
-                <p className="text-zinc-400">
+                <p className="text-zinc-400 text-sm">
                   Írd be a 6 számjegyű kódot az alkalmazásodból
                 </p>
               </div>
@@ -360,29 +363,29 @@ Generálva: ${new Date().toLocaleString("hu-HU")}
                       type="text"
                       placeholder="123456"
                       maxLength={6}
-                      className="bg-zinc-950/50 border-zinc-800 text-white text-center text-3xl tracking-[0.5em] font-mono focus:border-purple-500 focus:ring-purple-500/20"
+                      className="bg-zinc-950/50 border-zinc-800 text-white text-center text-2xl tracking-[0.3em] font-mono focus:border-purple-500 focus:ring-purple-500/20"
                       {...codeForm.register("code")}
                     />
                     {codeForm.formState.errors.code && (
-                      <p className="text-red-400 text-sm mt-2 text-center">
+                      <p className="text-xs text-red-400 mt-2 text-center">
                         {codeForm.formState.errors.code.message}
                       </p>
                     )}
                   </div>
 
-                  <div className="flex gap-3">
+                  <div className="flex gap-3 pt-2">
                     <Button
                       type="button"
                       onClick={() => setStep("qrcode")}
                       variant="outline"
-                      className="flex-1 border-zinc-800 bg-zinc-950/50 text-zinc-300 hover:bg-zinc-800 hover:text-white"
+                      className="flex-1 border-zinc-700 text-zinc-300 hover:bg-zinc-800"
                     >
                       Vissza
                     </Button>
                     <Button
                       type="submit"
                       disabled={loading}
-                      className="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-semibold"
+                      className="flex-1 bg-purple-600 hover:bg-purple-700 text-white"
                     >
                       {loading ? "Ellenőrzés..." : "Ellenőrzés"}
                     </Button>
@@ -394,21 +397,21 @@ Generálva: ${new Date().toLocaleString("hu-HU")}
 
           {/* Step 4: Backup kódok */}
           {step === "backup" && (
-            <div className="space-y-6">
-              <div className="text-center space-y-3">
-                <div className="inline-flex p-4 rounded-2xl bg-green-500/10 border border-green-500/20">
-                  <CheckCircle2 className="w-12 h-12 text-green-400" />
+            <div className="space-y-4">
+              <div className="text-center space-y-2">
+                <div className="inline-flex p-4 rounded-xl bg-green-500/10 border border-green-500/20">
+                  <CheckCircle2 className="w-10 h-10 text-green-400" />
                 </div>
-                <h3 className="text-2xl font-bold text-white">
+                <h3 className="text-xl font-bold text-white">
                   Mentsd el a tartalék kódokat!
                 </h3>
-                <p className="text-zinc-400">
+                <p className="text-zinc-400 text-sm">
                   Ezekkel tudsz bejelentkezni, ha nincs hozzáférésed az
                   alkalmazáshoz
                 </p>
               </div>
 
-              <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-4">
+              <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-4">
                 <div className="flex items-start gap-3">
                   <AlertTriangle className="w-5 h-5 text-amber-400 mt-0.5 flex-shrink-0" />
                   <p className="text-amber-200 text-sm">
@@ -418,12 +421,12 @@ Generálva: ${new Date().toLocaleString("hu-HU")}
                 </div>
               </div>
 
-              <div className="bg-zinc-950/50 border border-zinc-800 rounded-xl p-4">
-                <div className="grid grid-cols-2 gap-3">
+              <div className="bg-zinc-950/50 border border-zinc-800 rounded-lg p-4">
+                <div className="grid grid-cols-2 gap-2">
                   {backupCodes.map((code, index) => (
                     <code
                       key={index}
-                      className="p-3 bg-zinc-900 border border-zinc-800 rounded-lg text-purple-400 font-mono text-center text-sm"
+                      className="p-2 bg-zinc-900 border border-zinc-800 rounded-lg text-purple-400 font-mono text-center text-xs"
                     >
                       {code}
                     </code>
@@ -437,7 +440,7 @@ Generálva: ${new Date().toLocaleString("hu-HU")}
                     copyToClipboard(backupCodes.join("\n"), "backup")
                   }
                   variant="outline"
-                  className="flex-1 border-zinc-800 bg-zinc-950/50 text-zinc-300 hover:bg-zinc-800 hover:text-white"
+                  className="flex-1 border-zinc-700 text-zinc-300 hover:bg-zinc-800"
                 >
                   {copiedBackup ? (
                     <>
@@ -454,7 +457,7 @@ Generálva: ${new Date().toLocaleString("hu-HU")}
                 <Button
                   onClick={downloadBackupCodes}
                   variant="outline"
-                  className="flex-1 border-zinc-800 bg-zinc-950/50 text-zinc-300 hover:bg-zinc-800 hover:text-white"
+                  className="flex-1 border-zinc-700 text-zinc-300 hover:bg-zinc-800"
                 >
                   <Download className="w-4 h-4 mr-2" />
                   Letöltés
@@ -463,7 +466,7 @@ Generálva: ${new Date().toLocaleString("hu-HU")}
 
               <Button
                 onClick={handleComplete}
-                className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3"
+                className="w-full bg-purple-600 hover:bg-purple-700 text-white py-6"
               >
                 Kész, elmentettem
               </Button>
@@ -472,22 +475,22 @@ Generálva: ${new Date().toLocaleString("hu-HU")}
 
           {/* Step 5: Siker */}
           {step === "success" && (
-            <div className="text-center space-y-6 py-12">
-              <div className="inline-flex p-6 rounded-3xl bg-green-500/10 border border-green-500/20 animate-bounce">
-                <CheckCircle2 className="w-16 h-16 text-green-400" />
+            <div className="text-center space-y-4 py-8">
+              <div className="inline-flex p-4 rounded-xl bg-green-500/10 border border-green-500/20 animate-bounce">
+                <CheckCircle2 className="w-12 h-12 text-green-400" />
               </div>
               <div>
-                <h3 className="text-3xl font-bold text-white mb-2">
+                <h3 className="text-2xl font-bold text-white mb-2">
                   Sikeresen beállítva!
                 </h3>
-                <p className="text-zinc-400">
+                <p className="text-zinc-400 text-sm">
                   A kétfaktoros azonosítás mostantól védelmezi a fiókodat
                 </p>
               </div>
             </div>
           )}
         </div>
-      </Card>
+      </div>
     </div>
   );
 

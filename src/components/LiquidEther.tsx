@@ -136,18 +136,25 @@ export default function LiquidEther({
         this.container = container;
         this.pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
         this.resize();
-        this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-        // Always transparent
-        this.renderer.autoClear = false;
-        this.renderer.setClearColor(new THREE.Color(0x000000), 0);
-        this.renderer.setPixelRatio(this.pixelRatio);
-        this.renderer.setSize(this.width, this.height);
-        const el = this.renderer.domElement;
-        el.style.width = '100%';
-        el.style.height = '100%';
-        el.style.display = 'block';
-        this.clock = new THREE.Clock();
-        this.clock.start();
+        try {
+          this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+          // Always transparent
+          this.renderer.autoClear = false;
+          this.renderer.setClearColor(new THREE.Color(0x000000), 0);
+          this.renderer.setPixelRatio(this.pixelRatio);
+          this.renderer.setSize(this.width, this.height);
+          const el = this.renderer.domElement;
+          el.style.width = '100%';
+          el.style.height = '100%';
+          el.style.display = 'block';
+          this.clock = new THREE.Clock();
+          this.clock.start();
+        } catch (error) {
+          // WebGL context creation failed - gracefully degrade
+          console.warn('WebGL context could not be created. LiquidEther animation disabled.');
+          this.renderer = null;
+          this.clock = null;
+        }
       }
       resize() {
         if (!this.container) return;
@@ -1018,19 +1025,23 @@ export default function LiquidEther({
         document.addEventListener('visibilitychange', this._onVisibility);
       }
       init() {
-        if (!Common.renderer) return;
+        if (!Common.renderer) {
+          console.warn('WebGL renderer not available. Skipping LiquidEther initialization.');
+          return;
+        }
         this.props.$wrapper.prepend(Common.renderer.domElement);
         this.output = new Output();
       }
       resize() {
         Common.resize();
-        this.output.resize();
+        if (this.output) this.output.resize();
       }
       render() {
+        if (!Common.renderer) return;
         if (this.autoDriver) this.autoDriver.update();
         Mouse.update();
         Common.update();
-        this.output.update();
+        if (this.output) this.output.update();
       }
       loop() {
         if (!this.running) return;
@@ -1038,7 +1049,7 @@ export default function LiquidEther({
         rafRef.current = requestAnimationFrame(this._loop);
       }
       start() {
-        if (this.running) return;
+        if (this.running || !Common.renderer) return;
         this.running = true;
         this._loop();
       }
