@@ -9,15 +9,18 @@ import Footer from "@/components/layout/Footer";
 import ClientOnly from "@/components/ClientOnly";
 import TrueFocus from "@/components/TrueFocus";
 import LiquidEther from "@/components/LiquidEther";
+import SpotlightCard from "@/components/SpotlightCard";
 
 
 
 
-import {Droplet} from "lucide-react";
-import {Flame} from "lucide-react";
-import {Mountain} from 'lucide-react';
+import { Droplet } from "lucide-react";
+import { Flame } from "lucide-react";
+import { Mountain } from 'lucide-react';
 import { Wind } from 'lucide-react';
-
+import { TrendingUp } from 'lucide-react';
+import { Infinity } from 'lucide-react';
+import { Cpu } from 'lucide-react';
 
 
 export default function Home() {
@@ -151,23 +154,11 @@ export default function Home() {
 
           <div className="grid gap-8 md:grid-cols-3">
             <div >
-              <Card className="group relative overflow-hidden border-zinc-800 bg-zinc-900/50 backdrop-blur-sm transition-all hover:scale-105 hover:border-purple-500/50 hover:shadow-2xl hover:shadow-purple-900/20 h-full">
+              <SpotlightCard className="custom-spotlight-card" spotlightColor="rgba(225, 42, 251, 0.2)">
                 <div className="absolute inset-0 bg-gradient-to-br from-red-600/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
                 <CardContent className="relative p-8 h-full flex flex-col">
                   <div className="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-red-600 to-orange-600 shadow-lg shadow-red-900/50">
-                    <svg
-                      className="h-7 w-7 text-white"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M13 10V3L4 14h7v7l9-11h-7z"
-                      />
-                    </svg>
+                    <Cpu className="h-7 w-7 text-white" />
                   </div>
                   <h3 className="mb-3 text-xl font-bold text-zinc-100">
                     Stratégiai Mélység
@@ -177,27 +168,14 @@ export default function Home() {
                     fel a tökéletes paklidat, és gondold át minden lépésedet.
                   </p>
                 </CardContent>
-              </Card>
+              </SpotlightCard>
             </div>
 
-            <div>
-              <Card className="group relative overflow-hidden border-zinc-800 bg-zinc-900/50 backdrop-blur-sm transition-all hover:scale-105 hover:border-purple-500/50 hover:shadow-2xl hover:shadow-purple-900/20 h-full">
+            <SpotlightCard className="custom-spotlight-card" spotlightColor="rgba(225, 42, 251, 0.2)">
                 <div className="absolute inset-0 bg-gradient-to-br from-purple-600/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
                 <CardContent className="relative p-8 h-full flex flex-col">
                   <div className="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-purple-600 to-violet-600 shadow-lg shadow-purple-900/50">
-                    <svg
-                      className="h-7 w-7 text-white"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M7 11.5V14m0-2.5v-6a1.5 1.5 0 113 0m-3 6a1.5 1.5 0 00-3 0v2a7.5 7.5 0 0015 0v-5a1.5 1.5 0 00-3 0m-6-3V11m0-5.5v-1a1.5 1.5 0 013 0v1m0 0V11m0-5.5a1.5 1.5 0 013 0v3m0 0V11"
-                      />
-                    </svg>
+                    <TrendingUp className="h-7 w-7 text-white" />
                   </div>
                   <h3 className="mb-3 text-xl font-bold text-zinc-100">
                     Gyűjtögetés & Fejlesztés
@@ -207,27 +185,14 @@ export default function Home() {
                     ahogy egyre erősebbé válnak!
                   </p>
                 </CardContent>
-              </Card>
-            </div>
+            </SpotlightCard>
 
-            <div>
-              <Card className="group relative overflow-hidden border-zinc-800 bg-zinc-900/50 backdrop-blur-sm transition-all hover:scale-105 hover:border-purple-500/50 hover:shadow-2xl hover:shadow-purple-900/20 h-full">
+
+              <SpotlightCard className="custom-spotlight-card" spotlightColor="rgba(225, 42, 251, 0.2)">
                 <div className="absolute inset-0 bg-gradient-to-br from-cyan-600/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
                 <CardContent className="relative p-8 h-full flex flex-col">
                   <div className="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-600 to-blue-600 shadow-lg shadow-cyan-900/50">
-                    <svg
-                      className="h-7 w-7 text-white"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"
-                      />
-                    </svg>
+                    <Infinity className="h-7 w-7 text-white" />
                   </div>
                   <h3 className="mb-3 text-xl font-bold text-zinc-100">
                     Végtelen Kihívások
@@ -237,9 +202,8 @@ export default function Home() {
                     soha nem ér véget!
                   </p>
                 </CardContent>
-              </Card>
+              </SpotlightCard>
             </div>
-          </div>
         </div>
       </section>
 
@@ -255,12 +219,13 @@ export default function Home() {
         <div className="container relative z-10 mx-auto px-4">
           <div className="mb-16 text-center">
             <TrueFocus
-              sentence="Játékmenet"
-              manualMode={true}
-              blurAmount={5}
+              sentence="Játékmenet Roviden"
+              manualMode={false}
+              blurAmount={8}
               borderColor="rgb(168, 85, 247)"
-              animationDuration={2}
-              pauseBetweenAnimations={1}
+              glowColor="rgba(168, 85, 247, 0.6)"
+              animationDuration={1.5}
+              pauseBetweenAnimations={2}
             />
           </div>
 

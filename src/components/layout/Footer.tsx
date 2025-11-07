@@ -133,7 +133,7 @@ export default function Footer() {
               </li>
               <li>
                 <a
-                  href="#"
+                  href="/contact"
                   className="text-zinc-500 transition-colors hover:text-purple-400"
                 >
                   Kapcsolat
