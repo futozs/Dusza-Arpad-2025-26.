@@ -3,6 +3,7 @@ import { PrismaClient } from "@/generated/prisma";
 import bcrypt from "bcryptjs";
 import { SignUpSchema } from "@/schemas/auth.schemas";
 import { z } from "zod";
+import { sendVerificationEmail } from "@/mail/send-verification";
 
 const prisma = new PrismaClient();
 
@@ -88,7 +89,13 @@ export async function POST(request: NextRequest) {
     console.log(`New user registered: ${user.email}`);
 
     // TODO: Email küldés a verification tokennel
-    // await sendVerificationEmail(user.email, emailVerificationToken);
+    await sendVerificationEmail(
+      user.email,
+      emailVerificationToken,
+      user.username,
+      24
+    );
+    
 
     return NextResponse.json(
       {
