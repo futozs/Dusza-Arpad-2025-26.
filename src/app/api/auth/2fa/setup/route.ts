@@ -5,6 +5,7 @@ import { PrismaClient } from "@/generated/prisma";
 import * as speakeasy from "speakeasy";
 import * as QRCode from "qrcode";
 import { TwoFactorSetupSchema } from "@/schemas/auth.schemas";
+import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
 
@@ -124,12 +125,23 @@ export async function POST(request: NextRequest) {
     }
 
     // 2FA engedélyezése és mentés DB-be
+    // Először hash-eljük a backup kódokat
+    const hashedBackupCodes = await Promise.all(
+      backupCodes.map(async (code: string) => ({
+        code: await bcrypt.hash(code, 10),
+        used: false,
+      }))
+    );
+
     await prisma.user.update({
       where: { id: session.user.id },
       data: {
         twoFactorEnabled: true,
         twoFactorSecret: secret,
-        twoFactorBackupCodes: JSON.stringify(backupCodes),
+        backupCodes: {
+          deleteMany: {}, // Töröljük a régi kódokat, ha vannak
+          create: hashedBackupCodes,
+        },
       },
     });
 
@@ -153,7 +165,7 @@ export async function POST(request: NextRequest) {
  * 
  * 2FA letiltása
  */
-export async function DELETE(request: NextRequest) {
+export async function DELETE() {
   try {
     const session = await getServerSession(authOptions);
 
@@ -169,7 +181,9 @@ export async function DELETE(request: NextRequest) {
       data: {
         twoFactorEnabled: false,
         twoFactorSecret: null,
-        twoFactorBackupCodes: null,
+        backupCodes: {
+          deleteMany: {},
+        },
       },
     });
 

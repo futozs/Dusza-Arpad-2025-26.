@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import DashboardNavbar from "@/components/dashboard/DashboardNavbar";
+import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -56,7 +56,7 @@ export default function ChangePasswordPage() {
         const data = await response.json();
         setError(data.error || 'Hiba történt a jelszó módosításakor');
       }
-    } catch (error) {
+    } catch {
       setError('Hiba történt a jelszó módosításakor');
     } finally {
       setLoading(false);
@@ -65,16 +65,9 @@ export default function ChangePasswordPage() {
 
   if (success) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-zinc-950 via-zinc-900 to-zinc-950">
-        <DashboardNavbar />
+      <DashboardLayout>
         <div className="pt-24 px-4 md:px-8 pb-8">
           <div className="max-w-2xl mx-auto">
-            {/* Decorative Background */}
-            <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10">
-              <div className="absolute top-40 -left-20 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl" />
-              <div className="absolute top-60 -right-20 w-96 h-96 bg-violet-500/10 rounded-full blur-3xl" />
-              <div className="absolute bottom-40 left-1/2 w-96 h-96 bg-fuchsia-500/10 rounded-full blur-3xl" />
-            </div>
             <Card className="border border-green-800 bg-green-900/20 backdrop-blur-sm">
               <CardContent className="p-12 text-center">
                 <CheckCircle2 className="w-20 h-20 text-green-400 mx-auto mb-4" />
@@ -84,22 +77,14 @@ export default function ChangePasswordPage() {
             </Card>
           </div>
         </div>
-      </div>
+      </DashboardLayout>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-zinc-950 via-zinc-900 to-zinc-950">
-      <DashboardNavbar />
-      
+    <DashboardLayout>
       <div className="pt-24 px-4 md:px-8 pb-8">
         <div className="max-w-2xl mx-auto">
-          {/* Decorative Background */}
-          <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10">
-            <div className="absolute top-40 -left-20 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl" />
-            <div className="absolute top-60 -right-20 w-96 h-96 bg-violet-500/10 rounded-full blur-3xl" />
-            <div className="absolute bottom-40 left-1/2 w-96 h-96 bg-fuchsia-500/10 rounded-full blur-3xl" />
-          </div>
           <Card className="border border-zinc-800 bg-zinc-900/50 backdrop-blur-sm">
             <CardHeader>
               <CardTitle className="text-2xl text-white flex items-center gap-3">
@@ -219,6 +204,6 @@ export default function ChangePasswordPage() {
           </Card>
         </div>
       </div>
-    </div>
+    </DashboardLayout>
   );
 }

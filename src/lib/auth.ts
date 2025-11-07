@@ -138,6 +138,7 @@ export const authOptions: NextAuthOptions = {
               throw new Error("2FA_REQUIRED");
             }
 
+            // Először próbáljuk a TOTP kódot
             const verified = speakeasy.totp.verify({
               secret: user.twoFactorSecret,
               encoding: "base32",
@@ -146,8 +147,45 @@ export const authOptions: NextAuthOptions = {
             });
 
             if (!verified) {
-              console.error("Invalid 2FA code");
-              return null;
+              // Ha a TOTP nem jó, próbáljuk a backup kódokat
+              const backupCodes = await prisma.twoFactorBackupCode.findMany({
+                where: {
+                  userId: user.id,
+                  used: false,
+                },
+              });
+
+              let backupCodeValid = false;
+              let usedBackupCodeId: string | null = null;
+
+              for (const backupCode of backupCodes) {
+                const isMatch = await bcrypt.compare(
+                  twoFactorCode,
+                  backupCode.code
+                );
+                if (isMatch) {
+                  backupCodeValid = true;
+                  usedBackupCodeId = backupCode.id;
+                  break;
+                }
+              }
+
+              if (!backupCodeValid) {
+                console.error("Invalid 2FA code and no valid backup code");
+                return null;
+              }
+
+              // Ha backup kódot használtunk, jelöljük használtként
+              if (usedBackupCodeId) {
+                await prisma.twoFactorBackupCode.update({
+                  where: { id: usedBackupCodeId },
+                  data: {
+                    used: true,
+                    usedAt: new Date(),
+                  },
+                });
+                console.log(`Backup code used for user: ${user.email}`);
+              }
             }
           }
 
