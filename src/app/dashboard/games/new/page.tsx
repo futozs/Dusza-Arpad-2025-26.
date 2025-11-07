@@ -69,7 +69,7 @@ export default function NewGamePage() {
 
       if (response.ok) {
         const game = await response.json();
-        router.push(`/dashboard/games/${game.id}`);
+        router.push(`/dashboard/games/${game.id}/play`);
       } else {
         const error = await response.json();
         alert(error.error || 'Hiba történt a játék létrehozásakor');
