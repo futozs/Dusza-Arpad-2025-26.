@@ -23,6 +23,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import TwoFactorLoginModal from "@/components/TwoFactorLoginModal";
 import ForgotPasswordModal from "@/components/ForgotPasswordModal";
+import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { z } from "zod";
 
 const LoginSchema = z.object({
