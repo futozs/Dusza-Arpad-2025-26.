@@ -75,28 +75,65 @@ export default async function WebmasterDashboardPage() {
         </Card>
 
         {/* Admin Actions */}
-        <div className="grid md:grid-cols-3 gap-6">
-          <Card className="border-2 border-red-400/20 bg-zinc-900/70 hover:bg-zinc-900/90 transition-all cursor-pointer">
-            <CardHeader>
-              <CardTitle className="text-red-200">👥 Felhasználók</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-zinc-400 text-sm">Felhasználók kezelése</p>
-            </CardContent>
-          </Card>
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <Link href="/webmaster/environments">
+            <Card className="border-2 border-red-400/20 bg-zinc-900/70 hover:bg-zinc-900/90 transition-all cursor-pointer h-full">
+              <CardHeader>
+                <CardTitle className="text-red-200">🌍 Játékkörnyezetek</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-zinc-400 text-sm">Világok létrehozása és kezelése</p>
+              </CardContent>
+            </Card>
+          </Link>
 
-          <Card className="border-2 border-red-400/20 bg-zinc-900/70 hover:bg-zinc-900/90 transition-all cursor-pointer">
-            <CardHeader>
-              <CardTitle className="text-red-200">🎴 Kártyák</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-zinc-400 text-sm">Kártyák adminisztrálása</p>
-            </CardContent>
-          </Card>
+          <Link href="/webmaster/world-cards">
+            <Card className="border-2 border-red-400/20 bg-zinc-900/70 hover:bg-zinc-900/90 transition-all cursor-pointer h-full">
+              <CardHeader>
+                <CardTitle className="text-red-200">🎴 Világkártyák</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-zinc-400 text-sm">Sima kártyák adminisztrálása</p>
+              </CardContent>
+            </Card>
+          </Link>
 
-          <Card className="border-2 border-red-400/20 bg-zinc-900/70 hover:bg-zinc-900/90 transition-all cursor-pointer">
+          <Link href="/webmaster/leader-cards">
+            <Card className="border-2 border-red-400/20 bg-zinc-900/70 hover:bg-zinc-900/90 transition-all cursor-pointer h-full">
+              <CardHeader>
+                <CardTitle className="text-red-200">👑 Vezérkártyák</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-zinc-400 text-sm">Vezérkártyák származtatása</p>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link href="/webmaster/dungeons">
+            <Card className="border-2 border-red-400/20 bg-zinc-900/70 hover:bg-zinc-900/90 transition-all cursor-pointer h-full">
+              <CardHeader>
+                <CardTitle className="text-red-200">� Kazamaták</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-zinc-400 text-sm">Kazamaták összeállítása</p>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link href="/webmaster/users">
+            <Card className="border-2 border-red-400/20 bg-zinc-900/70 hover:bg-zinc-900/90 transition-all cursor-pointer h-full">
+              <CardHeader>
+                <CardTitle className="text-red-200">👥 Felhasználók</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-zinc-400 text-sm">Felhasználók kezelése</p>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Card className="border-2 border-red-400/20 bg-zinc-900/70 hover:bg-zinc-900/90 transition-all cursor-pointer h-full">
             <CardHeader>
-              <CardTitle className="text-red-200">🎮 Játékok</CardTitle>
+              <CardTitle className="text-red-200">📊 Statisztikák</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-zinc-400 text-sm">Játék mérkőzések áttekintése</p>
