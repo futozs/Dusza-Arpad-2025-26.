@@ -14,7 +14,8 @@ import {
   LogOut,
   Menu,
   X,
-  Shield
+  Shield,
+  Users
 } from "lucide-react";
 
 export default function DashboardNavbar() {
@@ -54,6 +55,14 @@ export default function DashboardNavbar() {
             >
               <Gamepad2 className="w-4 h-4" />
               Játékaim
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-purple-400 to-violet-400 transition-all group-hover:w-full" />
+            </Link>
+            <Link
+              href="/dashboard/players"
+              className="relative text-sm font-medium text-zinc-300 transition-all hover:text-purple-300 group flex items-center gap-2"
+            >
+              <Users className="w-4 h-4" />
+              Játékosok
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-purple-400 to-violet-400 transition-all group-hover:w-full" />
             </Link>
             <Link
@@ -139,6 +148,14 @@ export default function DashboardNavbar() {
             >
               <Gamepad2 className="w-5 h-5" />
               <span className="font-medium">Játékaim</span>
+            </Link>
+            <Link
+              href="/dashboard/players"
+              className="flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-300 hover:text-purple-300 hover:bg-purple-500/10 transition-all"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              <Users className="w-5 h-5" />
+              <span className="font-medium">Játékosok</span>
             </Link>
             <Link
               href="/dashboard/stats"

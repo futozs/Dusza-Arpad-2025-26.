@@ -169,7 +169,7 @@ export default function TwoFactorLoginModal({
           {/* Help text */}
           <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4">
             <p className="text-blue-200 text-xs text-center">
-              <strong>Tipp:</strong> A kód 30 másodpercenként változik az
+              <strong>Tipp:</strong> A kód 60 másodpercenként változik az
               alkalmazásban. Várj egy új kódra, ha nem működik.
             </p>
           </div>

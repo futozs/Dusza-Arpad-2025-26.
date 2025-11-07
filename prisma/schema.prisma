@@ -40,6 +40,9 @@ model User {
   twoFactorEnabled    Boolean   @default(false)
   twoFactorSecret     String?   // TOTP secret (encrypted)
   
+  // Privacy settings
+  profileVisibility   Boolean   @default(true) // true = public, false = private
+  
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

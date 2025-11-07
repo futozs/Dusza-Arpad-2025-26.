@@ -14,9 +14,11 @@ import {
   Palette,
   Globe,
   Eye,
+  EyeOff,
   CheckCircle2,
   XCircle,
-  AlertTriangle
+  AlertTriangle,
+  ShieldCheck
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import TwoFactorSetupButton from "@/components/TwoFactorSetupButton";
@@ -29,6 +31,7 @@ import ThemeSettingsModal from "@/components/settings/ThemeSettingsModal";
 import LanguageSettingsModal from "@/components/settings/LanguageSettingsModal";
 import SessionManagementModal from "@/components/settings/SessionManagementModal";
 import DeleteAccountModal from "@/components/settings/DeleteAccountModal";
+import PrivacySettingsModal from "@/components/settings/PrivacySettingsModal";
 
 export default function SettingsPage() {
   const { data: session, status } = useSession();
@@ -43,6 +46,7 @@ export default function SettingsPage() {
   const [isLanguageSettingsOpen, setIsLanguageSettingsOpen] = useState(false);
   const [isSessionManagementOpen, setIsSessionManagementOpen] = useState(false);
   const [isDeleteAccountOpen, setIsDeleteAccountOpen] = useState(false);
+  const [isPrivacySettingsOpen, setIsPrivacySettingsOpen] = useState(false);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -106,6 +110,11 @@ export default function SettingsPage() {
         isOpen={isDeleteAccountOpen}
         onClose={() => setIsDeleteAccountOpen(false)}
       />
+      <PrivacySettingsModal
+        isOpen={isPrivacySettingsOpen}
+        onClose={() => setIsPrivacySettingsOpen(false)}
+        currentVisibility={session.user.profileVisibility ?? true}
+      />
 
       <DashboardLayout>
       <div className="pt-24 px-4 md:px-8 pb-8">
@@ -144,6 +153,10 @@ export default function SettingsPage() {
                   <a href="#appearance" className="flex items-center gap-3 p-3 rounded-lg text-zinc-300 hover:text-white hover:bg-zinc-800/50 transition-all">
                     <Palette className="w-5 h-5" />
                     <span className="font-medium">Megjelenés</span>
+                  </a>
+                  <a href="#privacy" className="flex items-center gap-3 p-3 rounded-lg text-zinc-300 hover:text-white hover:bg-zinc-800/50 transition-all">
+                    <ShieldCheck className="w-5 h-5" />
+                    <span className="font-medium">Adatvédelem</span>
                   </a>
                 </CardContent>
               </Card>
@@ -449,6 +462,54 @@ export default function SettingsPage() {
                     >
                       Módosítás
                     </Button>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Adatvédelmi Beállítások */}
+              <Card id="privacy" className="border border-zinc-800 bg-zinc-900/50 backdrop-blur-sm">
+                <CardHeader>
+                  <CardTitle className="text-2xl text-white flex items-center gap-3">
+                    <ShieldCheck className="w-6 h-6 text-indigo-400" />
+                    Adatvédelmi Beállítások
+                  </CardTitle>
+                  <CardDescription className="text-zinc-400">
+                    Profil láthatóságának és adatvédelmi preferenciák kezelése
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="p-4 rounded-lg bg-zinc-950/50 border border-zinc-800">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-3">
+                        {session.user.profileVisibility ?? true ? (
+                          <Eye className="w-5 h-5 text-indigo-400" />
+                        ) : (
+                          <EyeOff className="w-5 h-5 text-zinc-400" />
+                        )}
+                        <div>
+                          <h3 className="text-white font-medium">Profil Láthatósága</h3>
+                          <p className="text-zinc-500 text-sm">
+                            {session.user.profileVisibility ?? true
+                              ? "Publikus - Más játékosok megtekinthetik a statisztikáidat" 
+                              : "Privát - Csak te láthatod a statisztikáidat"}
+                          </p>
+                        </div>
+                      </div>
+                      <Button 
+                        variant="outline" 
+                        onClick={() => setIsPrivacySettingsOpen(true)}
+                        className="border-zinc-700 text-zinc-300 hover:bg-zinc-800"
+                      >
+                        Módosítás
+                      </Button>
+                    </div>
+                    {(session.user.profileVisibility ?? true) && (
+                      <div className="bg-indigo-500/10 border border-indigo-500/30 rounded-lg p-3">
+                        <p className="text-xs text-indigo-200">
+                          <strong>Publikus profil:</strong> Más játékosok kereshetnek rád és megtekinthetik a statisztikáidat, kazamata teljesítményeidet és eredményeidet.
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>
