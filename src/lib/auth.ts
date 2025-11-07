@@ -18,6 +18,7 @@ declare module "next-auth" {
       role: UserRole;
       emailVerified: boolean;
       twoFactorEnabled: boolean;
+      profileVisibility: boolean;
     };
   }
 
@@ -29,6 +30,7 @@ declare module "next-auth" {
     emailVerified: boolean;
     twoFactorEnabled: boolean;
     twoFactorSecret?: string | null;
+    profileVisibility: boolean;
   }
 }
 
@@ -40,6 +42,7 @@ declare module "next-auth/jwt" {
     role: UserRole;
     emailVerified: boolean;
     twoFactorEnabled: boolean;
+    profileVisibility: boolean;
     // Flag jelzi, ha a user törölve lett
     userDeleted?: boolean;
   }
@@ -200,6 +203,7 @@ export const authOptions: NextAuthOptions = {
             role: user.role,
             emailVerified: user.emailVerified,
             twoFactorEnabled: user.twoFactorEnabled,
+            profileVisibility: user.profileVisibility,
           };
         } catch (error) {
           console.error("Auth error:", error);
@@ -232,6 +236,7 @@ export const authOptions: NextAuthOptions = {
         // user.emailVerified may be Date | boolean | null in Prisma — normalize to boolean
         token.emailVerified = Boolean(user.emailVerified);
         token.twoFactorEnabled = Boolean(user.twoFactorEnabled);
+        token.profileVisibility = user.profileVisibility;
       }
 
       // BIZTONSÁGI ELLENŐRZÉS: Felhasználó létezésének validálása
@@ -247,6 +252,7 @@ export const authOptions: NextAuthOptions = {
               role: true,
               emailVerified: true,
               twoFactorEnabled: true,
+              profileVisibility: true,
             },
           });
 
@@ -266,6 +272,7 @@ export const authOptions: NextAuthOptions = {
           token.role = existingUser.role;
           token.emailVerified = Boolean(existingUser.emailVerified);
           token.twoFactorEnabled = Boolean(existingUser.twoFactorEnabled);
+          token.profileVisibility = existingUser.profileVisibility;
         } catch (error) {
           console.error("Error validating user in JWT callback:", error);
           // Hiba esetén is jelöljük a tokent
@@ -294,6 +301,7 @@ export const authOptions: NextAuthOptions = {
         session.user.role = token.role;
         session.user.emailVerified = token.emailVerified;
         session.user.twoFactorEnabled = token.twoFactorEnabled;
+        session.user.profileVisibility = token.profileVisibility;
       }
 
       return session;
