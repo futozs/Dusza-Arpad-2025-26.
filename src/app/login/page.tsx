@@ -10,8 +10,8 @@ export default function LoginPage() {
   return (
     <ClientOnly>
       <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-zinc-950 via-zinc-900 to-zinc-950 px-4 py-12">
-        {/* LiquidEther Background */}
-        <div className="absolute inset-0 z-0">
+        {/* Fixed LiquidEther Background */}
+        <div className="fixed inset-0 z-0">
           <LiquidEther
             colors={['#5227FF', '#FF9FFC', '#B19EEF']}
             mouseForce={20}
@@ -32,7 +32,7 @@ export default function LoginPage() {
         </div>
         
         {/* Dark overlay for better readability */}
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-zinc-950/40 via-zinc-950/60 to-zinc-950/80 z-[1]" />
+        <div className="pointer-events-none fixed inset-0 bg-gradient-to-b from-zinc-950/40 via-zinc-950/60 to-zinc-950/80 z-[1]" />
         
         {/* Back Button */}
         <div className="absolute left-4 top-4 md:left-8 md:top-8 z-20">
