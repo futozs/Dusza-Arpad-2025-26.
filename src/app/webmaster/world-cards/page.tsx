@@ -5,7 +5,8 @@ import { PrismaClient, CardType } from "@/generated/prisma";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
-import { ArrowLeft, Plus, Pencil, Trash2 } from "lucide-react";
+import { ArrowLeft, Plus, Pencil } from "lucide-react";
+import { DeleteCardButton } from "@/components/DeleteCardButton";
 
 const prisma = new PrismaClient();
 
@@ -150,13 +151,7 @@ export default async function WorldCardsPage() {
                                   Szerkeszt
                                 </Button>
                               </Link>
-                              <Button 
-                                variant="outline" 
-                                size="sm"
-                                className="border-red-600/40 text-red-400 hover:bg-red-900/50"
-                              >
-                                <Trash2 className="w-3 h-3" />
-                              </Button>
+                              <DeleteCardButton cardId={card.id} cardName={card.name} />
                             </div>
                           </CardContent>
                         </Card>

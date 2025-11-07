@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 
 const VALID_CARD_TYPES: CardType[] = ["EARTH", "AIR", "WATER", "FIRE"];
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
 
@@ -15,7 +15,11 @@ export async function GET() {
       return NextResponse.json({ error: "Nincs jogosultság" }, { status: 403 });
     }
 
+    const { searchParams } = new URL(request.url);
+    const environmentId = searchParams.get("environmentId");
+
     const worldCards = await prisma.worldCard.findMany({
+      where: environmentId ? { environmentId } : undefined,
       include: {
         environment: true,
       },
@@ -109,5 +113,31 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("WorldCard POST error:", error);
     return NextResponse.json({ error: "Hiba történt a létrehozás során" }, { status: 500 });
+  }
+}
+
+export async function DELETE(request: NextRequest) {
+  try {
+    const session = await getServerSession(authOptions);
+
+    if (!session || session.user.role !== "WEBMASTER") {
+      return NextResponse.json({ error: "Nincs jogosultság" }, { status: 403 });
+    }
+
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get("id");
+
+    if (!id) {
+      return NextResponse.json({ error: "Hiányzó kártya ID" }, { status: 400 });
+    }
+
+    await prisma.worldCard.delete({
+      where: { id },
+    });
+
+    return NextResponse.json({ message: "Kártya sikeresen törölve" });
+  } catch (error) {
+    console.error("WorldCard DELETE error:", error);
+    return NextResponse.json({ error: "Hiba történt a törlés során" }, { status: 500 });
   }
 }

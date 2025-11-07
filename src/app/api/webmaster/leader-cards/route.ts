@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 
 const VALID_BOOST_TYPES: LeaderBoostType[] = ["DAMAGE_DOUBLE", "HEALTH_DOUBLE"];
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
 
@@ -15,7 +15,11 @@ export async function GET() {
       return NextResponse.json({ error: "Nincs jogosultság" }, { status: 403 });
     }
 
+    const { searchParams } = new URL(request.url);
+    const environmentId = searchParams.get("environmentId");
+
     const leaderCards = await prisma.leaderCard.findMany({
+      where: environmentId ? { environmentId } : undefined,
       include: {
         baseCard: true,
         environment: true,
@@ -109,5 +113,31 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("LeaderCard POST error:", error);
     return NextResponse.json({ error: "Hiba történt a létrehozás során" }, { status: 500 });
+  }
+}
+
+export async function DELETE(request: NextRequest) {
+  try {
+    const session = await getServerSession(authOptions);
+
+    if (!session || session.user.role !== "WEBMASTER") {
+      return NextResponse.json({ error: "Nincs jogosultság" }, { status: 403 });
+    }
+
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get("id");
+
+    if (!id) {
+      return NextResponse.json({ error: "Hiányzó vezérkártya ID" }, { status: 400 });
+    }
+
+    await prisma.leaderCard.delete({
+      where: { id },
+    });
+
+    return NextResponse.json({ message: "Vezérkártya sikeresen törölve" });
+  } catch (error) {
+    console.error("LeaderCard DELETE error:", error);
+    return NextResponse.json({ error: "Hiba történt a törlés során" }, { status: 500 });
   }
 }

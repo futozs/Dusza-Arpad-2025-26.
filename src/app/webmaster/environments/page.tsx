@@ -5,7 +5,8 @@ import { PrismaClient } from "@/generated/prisma";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import Link from "next/link";
-import { ArrowLeft, Plus, Pencil, Trash2 } from "lucide-react";
+import { ArrowLeft, Plus, Pencil } from "lucide-react";
+import { DeleteEnvironmentButton } from "@/components/DeleteEnvironmentButton";
 
 const prisma = new PrismaClient();
 
@@ -105,13 +106,7 @@ export default async function EnvironmentsPage() {
                       Szerkesztés
                     </Button>
                   </Link>
-                  <Button 
-                    variant="outline" 
-                    size="icon"
-                    className="border-red-600/40 text-red-400 hover:bg-red-900/50"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
+                  <DeleteEnvironmentButton environmentId={env.id} environmentName={env.name} />
                 </div>
 
                 <div className="text-xs text-zinc-500 text-center">

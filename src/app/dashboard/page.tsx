@@ -79,14 +79,16 @@ export default async function DashboardPage() {
 
         {/* Quick Actions */}
         <div className="grid md:grid-cols-3 gap-6">
-          <Card className="border-2 border-purple-400/20 bg-zinc-900/70 hover:bg-zinc-900/90 transition-all cursor-pointer">
-            <CardHeader>
-              <CardTitle className="text-purple-200">🎴 Új Játék</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-zinc-400 text-sm">Kezdj új kártyacsatát</p>
-            </CardContent>
-          </Card>
+          <Link href="/games">
+            <Card className="border-2 border-purple-400/20 bg-zinc-900/70 hover:bg-zinc-900/90 transition-all cursor-pointer h-full">
+              <CardHeader>
+                <CardTitle className="text-purple-200">🎴 Játékaim</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-zinc-400 text-sm">Indíts új játékot vagy folytasd a meglévőket</p>
+              </CardContent>
+            </Card>
+          </Link>
 
           <Card className="border-2 border-purple-400/20 bg-zinc-900/70 hover:bg-zinc-900/90 transition-all cursor-pointer">
             <CardHeader>

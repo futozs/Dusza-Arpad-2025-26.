@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import { ArrowLeft, Plus } from "lucide-react";
+import { DeleteLeaderCardButton } from "@/components/DeleteLeaderCardButton";
 
 const prisma = new PrismaClient();
 
@@ -94,6 +95,19 @@ export default async function LeaderCardsPage() {
                     🌍 {card.environment.name}
                   </p>
                 )}
+
+                <div className="flex gap-2 mt-2">
+                  <Link href={`/webmaster/leader-cards/${card.id}`} className="flex-1">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      className="w-full border-orange-400/40 text-orange-200 hover:bg-orange-900/30"
+                    >
+                      Részletek
+                    </Button>
+                  </Link>
+                  <DeleteLeaderCardButton cardId={card.id} cardName={card.name} />
+                </div>
               </CardContent>
             </Card>
           ))}

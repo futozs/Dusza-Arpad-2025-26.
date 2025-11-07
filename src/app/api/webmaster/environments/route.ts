@@ -102,3 +102,38 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+
+export async function DELETE(request: NextRequest) {
+  try {
+    const session = await getServerSession(authOptions);
+
+    if (!session || session.user.role !== "WEBMASTER") {
+      return NextResponse.json(
+        { error: "Nincs jogosultság" },
+        { status: 403 }
+      );
+    }
+
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get("id");
+
+    if (!id) {
+      return NextResponse.json(
+        { error: "Hiányzó környezet ID" },
+        { status: 400 }
+      );
+    }
+
+    await prisma.environment.delete({
+      where: { id },
+    });
+
+    return NextResponse.json({ message: "Környezet sikeresen törölve" });
+  } catch (error) {
+    console.error("Environment DELETE error:", error);
+    return NextResponse.json(
+      { error: "Hiba történt a törlés során" },
+      { status: 500 }
+    );
+  }
+}

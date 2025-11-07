@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import { ArrowLeft, Plus } from "lucide-react";
+import { DeleteDungeonButton } from "@/components/DeleteDungeonButton";
 
 const prisma = new PrismaClient();
 
@@ -160,6 +161,7 @@ export default async function DungeonsPage() {
                         Részletek
                       </Button>
                     </Link>
+                    <DeleteDungeonButton dungeonId={dungeon.id} dungeonName={dungeon.name} />
                   </div>
                 </CardContent>
               </Card>
