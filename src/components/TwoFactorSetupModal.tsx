@@ -8,7 +8,6 @@ import { z } from "zod";
 import { X, Shield, Copy, CheckCircle2, Download, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card } from "@/components/ui/card";
 import Image from "next/image";
 
 const PasswordVerifySchema = z.object({
@@ -202,8 +201,8 @@ Generálva: ${new Date().toLocaleString("hu-HU")}
         justifyContent: 'center'
       }}
     >
-      <Card 
-        className="relative w-full max-w-2xl bg-zinc-900 border border-zinc-700 shadow-[0_0_100px_rgba(0,0,0,0.9)] overflow-hidden"
+      <div 
+        className="relative w-full max-w-2xl bg-zinc-900 border border-zinc-700 shadow-[0_0_100px_rgba(0,0,0,0.9)] overflow-hidden rounded-xl"
         style={{ zIndex: 1000000 }}
       >
         {/* Close button */}
@@ -217,14 +216,14 @@ Generálva: ${new Date().toLocaleString("hu-HU")}
         {/* Header */}
         <div className="relative bg-zinc-950/50 border-b border-zinc-800 p-8">
           <div className="flex items-center gap-4">
-            <div className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/20">
-              <Shield className="w-8 h-8 text-purple-400" />
+            <div className="p-3 bg-gradient-to-br from-purple-600 to-purple-700 rounded-xl shadow-lg">
+              <Shield className="w-7 h-7 text-white" />
             </div>
             <div>
               <h2 className="text-3xl font-bold text-white mb-1">
                 Kétfaktoros Azonosítás
               </h2>
-              <p className="text-zinc-400">Extra védelem a fiókodnak</p>
+              <p className="text-zinc-400 text-sm">Extra védelem a fiókodnak</p>
             </div>
           </div>
         </div>
