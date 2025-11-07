@@ -16,13 +16,13 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import TwoFactorLoginModal from "@/components/TwoFactorLoginModal";
+import ForgotPasswordModal from "@/components/ForgotPasswordModal";
 import { z } from "zod";
 
 const LoginSchema = z.object({
@@ -48,6 +48,7 @@ export function LoginForm({
   const [show2FAModal, setShow2FAModal] = useState(false);
   const [twoFAError, setTwoFAError] = useState("");
   const [credentials, setCredentials] = useState<{ email: string; password: string } | null>(null);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
 
   const {
     register,
@@ -166,12 +167,13 @@ export function LoginForm({
                     <FieldLabel htmlFor="password" className="text-zinc-200 font-semibold">
                       Jelszó
                     </FieldLabel>
-                    <Link
-                      href="#"
+                    <button
+                      type="button"
+                      onClick={() => setShowForgotPassword(true)}
                       className="ml-auto inline-block text-sm text-purple-300 underline-offset-4 hover:text-purple-200 hover:underline font-medium transition-colors"
                     >
-                      Elfelejtetted?
-                    </Link>
+                      Elfelejtetted a jelszavadat?
+                    </button>
                   </div>
                   <Input
                     id="password"
@@ -209,6 +211,12 @@ export function LoginForm({
         onBack={handle2FABack}
         error={twoFAError}
         loading={loading}
+      />
+
+      {/* Forgot Password Modal */}
+      <ForgotPasswordModal
+        isOpen={showForgotPassword}
+        onClose={() => setShowForgotPassword(false)}
       />
     </>
   );

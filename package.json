@@ -51,7 +51,7 @@
     "zod": "^4.1.12"
   },
   "devDependencies": {
-    "@react-email/preview-server": "5.0.1",
+    "@react-email/preview-server": "^5.0.1",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
