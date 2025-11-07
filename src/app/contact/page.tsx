@@ -53,15 +53,15 @@ export default function ContactPage() {
           </div>
 
           <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
-            <SpotlightCard className="backdrop-blur-sm bg-neutral-900/30 border border-white/10">
+            <    className="backdrop-blur-sm bg-neutral-900/30 border border-white/10">
               <div className="p-8 space-y-6">
-                <h2 className="text-2xl font-semibold mb-4 bg-gradient-to-r from-purple-300 to-violet-300 bg-clip-text text-transparent">
+                <h2 className="text-2xl font-semibold mb-4 bg-gradient-to-r from-purple-300 to-violet-300 bg-clip-text">
                   Elérhetőségeink
                 </h2>
                 <div className="space-y-6">
                   <div>
                     <p className="text-neutral-400 text-sm">Cím:</p>
-                    <p className="font-medium text-neutral-200">1234 Budapest, Példa utca 123.</p>
+                    <p className="font-medium text-neutral-200">3525 Miskolc, Palóczy László utca 3.</p>
                   </div>
                   <div>
                     <p className="text-neutral-400 text-sm">Email:</p>
@@ -69,11 +69,7 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <p className="text-neutral-400 text-sm">Telefon:</p>
-                    <p className="font-medium text-neutral-200">+36 1 234 5678</p>
-                  </div>
-                  <div>
-                    <p className="text-neutral-400 text-sm">Nyitvatartás:</p>
-                    <p className="font-medium text-neutral-200">Hétfő - Péntek: 9:00 - 17:00</p>
+                    <p className="font-medium text-neutral-200">Hamarossan...</p>
                   </div>
                 </div>
               </div>
