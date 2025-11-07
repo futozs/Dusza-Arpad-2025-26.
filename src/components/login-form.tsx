@@ -153,7 +153,7 @@ export function LoginForm({
                     id="email"
                     type="email"
                     placeholder="pakli.mester@damareen.hu"
-                    className="border-2 border-purple-400/40 bg-zinc-950/70 text-zinc-100 placeholder:text-zinc-500 focus:border-purple-400 focus:ring-2 focus:ring-purple-400/50 transition-all"
+                    className="border-2 border-purple-400/40 bg-zinc-950/70 text-zinc-100 focus:border-purple-400 focus:ring-2 focus:ring-purple-400/50 transition-all"
                     {...register("email")}
                   />
                   {errors.email && (
@@ -176,6 +176,7 @@ export function LoginForm({
                   <Input
                     id="password"
                     type="password"
+                    placeholder="Jelszavad"
                     className="border-2 border-purple-400/40 bg-zinc-950/70 text-zinc-100 focus:border-purple-400 focus:ring-2 focus:ring-purple-400/50 transition-all"
                     {...register("password")}
                   />
