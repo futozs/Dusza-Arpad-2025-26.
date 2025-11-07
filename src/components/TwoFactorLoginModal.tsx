@@ -7,7 +7,6 @@ import { z } from "zod";
 import { Shield, AlertTriangle, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card } from "@/components/ui/card";
 
 const TwoFactorCodeSchema = z.object({
   code: z
@@ -52,13 +51,29 @@ export default function TwoFactorLoginModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/70 backdrop-blur-md animate-in fade-in duration-200">
-      <Card className="w-full max-w-md bg-zinc-900/95 border border-zinc-800 shadow-2xl animate-in zoom-in-95 duration-200">
+    <div 
+      className="fixed inset-0 flex items-center justify-center p-4 bg-black/90 backdrop-blur-xl"
+      style={{ 
+        zIndex: 999999,
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}
+    >
+      <div 
+        className="relative w-full max-w-md bg-zinc-900 border border-zinc-700 shadow-[0_0_100px_rgba(0,0,0,0.9)] overflow-hidden rounded-xl animate-in zoom-in-95 duration-200"
+        style={{ zIndex: 1000000 }}
+      >
         {/* Header */}
         <div className="relative bg-zinc-950/50 border-b border-zinc-800 p-8">
           <div className="flex items-center gap-4">
-            <div className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/20">
-              <Shield className="w-8 h-8 text-purple-400" />
+            <div className="p-3 bg-gradient-to-br from-purple-600 to-purple-700 rounded-xl shadow-lg">
+              <Shield className="w-7 h-7 text-white" />
             </div>
             <div>
               <h2 className="text-3xl font-bold text-white mb-1">
@@ -72,16 +87,18 @@ export default function TwoFactorLoginModal({
         </div>
 
         {/* Content */}
-        <div className="p-8 space-y-6">
+        <div className="p-6 space-y-4">
           {externalError && (
-            <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/30 flex items-start gap-3">
-              <AlertTriangle className="w-5 h-5 text-red-400 mt-0.5 flex-shrink-0" />
-              <p className="text-red-200 text-sm">{externalError}</p>
+            <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4">
+              <div className="flex items-start gap-3">
+                <AlertTriangle className="w-5 h-5 text-red-400 mt-0.5 flex-shrink-0" />
+                <p className="text-sm text-red-400">{externalError}</p>
+              </div>
             </div>
           )}
 
           <div className="text-center space-y-2">
-            <p className="text-zinc-300">
+            <p className="text-zinc-300 text-sm">
               {useBackupCode
                 ? "Használj egy tartalék kódot a bejelentkezéshez"
                 : "Írd be a kódot az authenticator alkalmazásodból"}
@@ -96,11 +113,11 @@ export default function TwoFactorLoginModal({
                 maxLength={useBackupCode ? 8 : 6}
                 autoComplete="off"
                 autoFocus
-                className="bg-zinc-950/50 border-zinc-800 text-white text-center text-3xl tracking-[0.5em] font-mono placeholder:text-zinc-600 focus:border-purple-500 focus:ring-purple-500/20"
+                className="bg-zinc-950/50 border-zinc-800 text-white text-center text-2xl tracking-[0.3em] font-mono placeholder:text-zinc-600 focus:border-purple-500 focus:ring-purple-500/20"
                 {...register("code")}
               />
               {errors.code && (
-                <p className="text-red-400 text-sm mt-2 text-center">
+                <p className="text-xs text-red-400 mt-2 text-center">
                   {errors.code.message}
                 </p>
               )}
@@ -109,7 +126,7 @@ export default function TwoFactorLoginModal({
             <Button
               type="submit"
               disabled={externalLoading}
-              className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold text-lg py-6 shadow-lg"
+              className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-6"
             >
               {externalLoading ? "Ellenőrzés..." : "Belépés"}
             </Button>
@@ -143,21 +160,21 @@ export default function TwoFactorLoginModal({
             type="button"
             onClick={onBack}
             variant="outline"
-            className="w-full border-zinc-800 bg-zinc-950/50 text-zinc-300 hover:bg-zinc-800 hover:text-white"
+            className="w-full border-zinc-700 text-zinc-300 hover:bg-zinc-800 hover:text-white"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Vissza a bejelentkezéshez
           </Button>
 
           {/* Help text */}
-          <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4">
+          <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4">
             <p className="text-blue-200 text-xs text-center">
               <strong>Tipp:</strong> A kód 30 másodpercenként változik az
               alkalmazásban. Várj egy új kódra, ha nem működik.
             </p>
           </div>
         </div>
-      </Card>
+      </div>
     </div>
   );
 }

@@ -1,6 +1,8 @@
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
-import { redirect } from "next/navigation";
+"use client";
+
+import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { 
@@ -16,19 +18,96 @@ import {
   XCircle,
   AlertTriangle
 } from "lucide-react";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import TwoFactorSetupButton from "@/components/TwoFactorSetupButton";
+import EditProfileModal from "@/components/settings/EditProfileModal";
+import ChangePasswordModal from "@/components/settings/ChangePasswordModal";
+import VerifyEmailModal from "@/components/settings/VerifyEmailModal";
+import ChangeEmailModal from "@/components/settings/ChangeEmailModal";
+import NotificationSettingsModal from "@/components/settings/NotificationSettingsModal";
+import ThemeSettingsModal from "@/components/settings/ThemeSettingsModal";
+import LanguageSettingsModal from "@/components/settings/LanguageSettingsModal";
+import SessionManagementModal from "@/components/settings/SessionManagementModal";
+import DeleteAccountModal from "@/components/settings/DeleteAccountModal";
 
-export default async function SettingsPage() {
-  const session = await getServerSession(authOptions);
+export default function SettingsPage() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+  
+  const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
+  const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
+  const [isVerifyEmailOpen, setIsVerifyEmailOpen] = useState(false);
+  const [isChangeEmailOpen, setIsChangeEmailOpen] = useState(false);
+  const [isNotificationSettingsOpen, setIsNotificationSettingsOpen] = useState(false);
+  const [isThemeSettingsOpen, setIsThemeSettingsOpen] = useState(false);
+  const [isLanguageSettingsOpen, setIsLanguageSettingsOpen] = useState(false);
+  const [isSessionManagementOpen, setIsSessionManagementOpen] = useState(false);
+  const [isDeleteAccountOpen, setIsDeleteAccountOpen] = useState(false);
 
-  if (!session) {
-    redirect("/login");
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/login");
+    }
+  }, [status, router]);
+
+  if (status === "loading") {
+    return (
+      <DashboardLayout>
+        <div className="pt-24 px-4 flex items-center justify-center min-h-screen">
+          <div className="text-white">Betöltés...</div>
+        </div>
+      </DashboardLayout>
+    );
   }
 
+  if (!session) {
+    return null;
+  }
   return (
-    <DashboardLayout>
+    <>
+      {/* Modals */}
+      <EditProfileModal
+        isOpen={isEditProfileOpen}
+        onClose={() => setIsEditProfileOpen(false)}
+        currentUsername={session.user.username}
+        currentEmail={session.user.email}
+      />
+      <ChangePasswordModal
+        isOpen={isChangePasswordOpen}
+        onClose={() => setIsChangePasswordOpen(false)}
+      />
+      <VerifyEmailModal
+        isOpen={isVerifyEmailOpen}
+        onClose={() => setIsVerifyEmailOpen(false)}
+        email={session.user.email}
+      />
+      <ChangeEmailModal
+        isOpen={isChangeEmailOpen}
+        onClose={() => setIsChangeEmailOpen(false)}
+        currentEmail={session.user.email}
+      />
+      <NotificationSettingsModal
+        isOpen={isNotificationSettingsOpen}
+        onClose={() => setIsNotificationSettingsOpen(false)}
+      />
+      <ThemeSettingsModal
+        isOpen={isThemeSettingsOpen}
+        onClose={() => setIsThemeSettingsOpen(false)}
+      />
+      <LanguageSettingsModal
+        isOpen={isLanguageSettingsOpen}
+        onClose={() => setIsLanguageSettingsOpen(false)}
+      />
+      <SessionManagementModal
+        isOpen={isSessionManagementOpen}
+        onClose={() => setIsSessionManagementOpen(false)}
+      />
+      <DeleteAccountModal
+        isOpen={isDeleteAccountOpen}
+        onClose={() => setIsDeleteAccountOpen(false)}
+      />
+
+      <DashboardLayout>
       <div className="pt-24 px-4 md:px-8 pb-8">
         <div className="max-w-5xl mx-auto">
           {/* Header */}
@@ -117,11 +196,12 @@ export default async function SettingsPage() {
                   </div>
 
                   <div className="flex gap-3">
-                    <Link href="/dashboard/settings/edit-profile">
-                      <Button className="bg-purple-600 hover:bg-purple-700 text-white">
-                        Profil Szerkesztése
-                      </Button>
-                    </Link>
+                    <Button 
+                      onClick={() => setIsEditProfileOpen(true)}
+                      className="bg-purple-600 hover:bg-purple-700 text-white"
+                    >
+                      Profil Szerkesztése
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
@@ -147,11 +227,13 @@ export default async function SettingsPage() {
                           <p className="text-zinc-500 text-sm">Utoljára módosítva: 2025. november 7.</p>
                         </div>
                       </div>
-                      <Link href="/dashboard/settings/change-password">
-                        <Button variant="outline" className="border-zinc-700 text-zinc-300 hover:bg-zinc-800">
-                          Módosítás
-                        </Button>
-                      </Link>
+                      <Button 
+                        variant="outline" 
+                        onClick={() => setIsChangePasswordOpen(true)}
+                        className="border-zinc-700 text-zinc-300 hover:bg-zinc-800"
+                      >
+                        Módosítás
+                      </Button>
                     </div>
                   </div>
 
@@ -164,11 +246,13 @@ export default async function SettingsPage() {
                           <p className="text-zinc-500 text-sm">Jelenleg 1 aktív eszköz</p>
                         </div>
                       </div>
-                      <Link href="/dashboard/settings/sessions">
-                        <Button variant="outline" className="border-zinc-700 text-zinc-300 hover:bg-zinc-800">
-                          Kezelés
-                        </Button>
-                      </Link>
+                      <Button 
+                        variant="outline" 
+                        onClick={() => setIsSessionManagementOpen(true)}
+                        className="border-zinc-700 text-zinc-300 hover:bg-zinc-800"
+                      >
+                        Kezelés
+                      </Button>
                     </div>
                   </div>
                 </CardContent>
@@ -204,11 +288,12 @@ export default async function SettingsPage() {
                         </div>
                       </div>
                       {!session.user.emailVerified && (
-                        <Link href="/dashboard/settings/verify-email">
-                          <Button className="bg-yellow-600 hover:bg-yellow-700 text-white">
-                            Megerősítés
-                          </Button>
-                        </Link>
+                        <Button 
+                          onClick={() => setIsVerifyEmailOpen(true)}
+                          className="bg-yellow-600 hover:bg-yellow-700 text-white"
+                        >
+                          Megerősítés
+                        </Button>
                       )}
                     </div>
                   </div>
@@ -222,11 +307,13 @@ export default async function SettingsPage() {
                           <p className="text-zinc-500 text-sm">{session.user.email}</p>
                         </div>
                       </div>
-                      <Link href="/dashboard/settings/change-email">
-                        <Button variant="outline" className="border-zinc-700 text-zinc-300 hover:bg-zinc-800">
-                          Módosítás
-                        </Button>
-                      </Link>
+                      <Button 
+                        variant="outline" 
+                        onClick={() => setIsChangeEmailOpen(true)}
+                        className="border-zinc-700 text-zinc-300 hover:bg-zinc-800"
+                      >
+                        Módosítás
+                      </Button>
                     </div>
                   </div>
                 </CardContent>
@@ -296,7 +383,11 @@ export default async function SettingsPage() {
                       <h3 className="text-white font-medium">Email Értesítések</h3>
                       <p className="text-zinc-500 text-sm">Játék frissítések és eredmények</p>
                     </div>
-                    <Button variant="outline" className="border-zinc-700 text-zinc-300 hover:bg-zinc-800">
+                    <Button 
+                      variant="outline" 
+                      onClick={() => setIsNotificationSettingsOpen(true)}
+                      className="border-zinc-700 text-zinc-300 hover:bg-zinc-800"
+                    >
                       Beállítás
                     </Button>
                   </div>
@@ -306,7 +397,11 @@ export default async function SettingsPage() {
                       <h3 className="text-white font-medium">Push Értesítések</h3>
                       <p className="text-zinc-500 text-sm">Azonnali értesítések a böngészőben</p>
                     </div>
-                    <Button variant="outline" className="border-zinc-700 text-zinc-300 hover:bg-zinc-800">
+                    <Button 
+                      variant="outline" 
+                      onClick={() => setIsNotificationSettingsOpen(true)}
+                      className="border-zinc-700 text-zinc-300 hover:bg-zinc-800"
+                    >
                       Beállítás
                     </Button>
                   </div>
@@ -330,7 +425,11 @@ export default async function SettingsPage() {
                       <h3 className="text-white font-medium">Téma</h3>
                       <p className="text-zinc-500 text-sm">Jelenleg: Sötét mód</p>
                     </div>
-                    <Button variant="outline" className="border-zinc-700 text-zinc-300 hover:bg-zinc-800">
+                    <Button 
+                      variant="outline" 
+                      onClick={() => setIsThemeSettingsOpen(true)}
+                      className="border-zinc-700 text-zinc-300 hover:bg-zinc-800"
+                    >
                       Módosítás
                     </Button>
                   </div>
@@ -343,7 +442,11 @@ export default async function SettingsPage() {
                         <p className="text-zinc-500 text-sm">Magyar</p>
                       </div>
                     </div>
-                    <Button variant="outline" className="border-zinc-700 text-zinc-300 hover:bg-zinc-800">
+                    <Button 
+                      variant="outline" 
+                      onClick={() => setIsLanguageSettingsOpen(true)}
+                      className="border-zinc-700 text-zinc-300 hover:bg-zinc-800"
+                    >
                       Módosítás
                     </Button>
                   </div>
@@ -367,7 +470,11 @@ export default async function SettingsPage() {
                       <h3 className="text-white font-medium">Fiók Törlése</h3>
                       <p className="text-red-300/70 text-sm">Véglegesen törli a fiókodat és minden adatodat</p>
                     </div>
-                    <Button variant="outline" className="border-red-700 text-red-400 hover:bg-red-900/30">
+                    <Button 
+                      variant="outline" 
+                      onClick={() => setIsDeleteAccountOpen(true)}
+                      className="border-red-700 text-red-400 hover:bg-red-900/30"
+                    >
                       Törlés
                     </Button>
                   </div>
@@ -378,5 +485,6 @@ export default async function SettingsPage() {
         </div>
       </div>
     </DashboardLayout>
+    </>
   );
 }

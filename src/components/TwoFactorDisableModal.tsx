@@ -8,7 +8,6 @@ import { z } from "zod";
 import { X, Shield, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card } from "@/components/ui/card";
 
 const PasswordVerifySchema = z.object({
   password: z.string().min(1, "Jelszó megadása kötelező"),
@@ -109,8 +108,8 @@ export default function TwoFactorDisableModal({
         justifyContent: 'center'
       }}
     >
-      <Card 
-        className="relative w-full max-w-md bg-zinc-900 border border-zinc-700 shadow-[0_0_100px_rgba(0,0,0,0.9)]"
+      <div 
+        className="relative w-full max-w-md bg-zinc-900 border border-zinc-700 shadow-[0_0_100px_rgba(0,0,0,0.9)] overflow-hidden rounded-xl"
         style={{ zIndex: 1000000 }}
       >
         {/* Close button */}
@@ -124,28 +123,27 @@ export default function TwoFactorDisableModal({
         {/* Header */}
         <div className="relative bg-zinc-950/50 border-b border-zinc-800 p-8">
           <div className="flex items-center gap-4">
-            <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/20">
-              <Shield className="w-8 h-8 text-red-400" />
+            <div className="p-3 bg-gradient-to-br from-red-600 to-red-700 rounded-xl shadow-lg">
+              <Shield className="w-7 h-7 text-white" />
             </div>
             <div>
               <h2 className="text-3xl font-bold text-white mb-1">
                 2FA Letiltása
               </h2>
-              <p className="text-zinc-400">Biztos vagy benne?</p>
+              <p className="text-zinc-400 text-sm">Biztos vagy benne?</p>
             </div>
           </div>
         </div>
 
         {/* Content */}
-        <div className="p-8 space-y-6">
+        <div className="p-6 space-y-4">
           {error && (
-            <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/30 flex items-start gap-3">
-              <AlertTriangle className="w-5 h-5 text-red-400 mt-0.5 flex-shrink-0" />
-              <p className="text-red-200">{error}</p>
+            <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4">
+              <p className="text-sm text-red-400">{error}</p>
             </div>
           )}
 
-          <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-4">
+          <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-4">
             <div className="flex items-start gap-3">
               <AlertTriangle className="w-5 h-5 text-amber-400 mt-0.5 flex-shrink-0" />
               <div className="text-amber-200 text-sm">
@@ -168,33 +166,34 @@ export default function TwoFactorDisableModal({
                   {...register("password")}
                 />
                 {errors.password && (
-                  <p className="text-red-400 text-sm mt-1">
+                  <p className="text-xs text-red-400 mt-1">
                     {errors.password.message}
                   </p>
                 )}
               </div>
 
-              <div className="flex gap-3">
+              <div className="flex gap-3 pt-4">
                 <Button
                   type="button"
                   onClick={handleClose}
                   variant="outline"
-                  className="flex-1 border-zinc-800 bg-zinc-950/50 text-zinc-300 hover:bg-zinc-800 hover:text-white"
+                  disabled={loading}
+                  className="flex-1 border-zinc-700 text-zinc-300 hover:bg-zinc-800"
                 >
                   Mégse
                 </Button>
                 <Button
                   type="submit"
                   disabled={loading}
-                  className="flex-1 bg-red-600 hover:bg-red-700 text-white font-semibold"
+                  className="flex-1 bg-red-600 hover:bg-red-700 text-white"
                 >
-                  {loading ? "Letiltás..." : "2FA Letiltása"}
+                  {loading ? "Letiltás..." : "Letiltás"}
                 </Button>
               </div>
             </div>
           </form>
         </div>
-      </Card>
+      </div>
     </div>
   );
 
