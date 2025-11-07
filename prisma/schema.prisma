@@ -1,15 +1,340 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
-  provider = "prisma-client"
+  provider = "prisma-client-js"
   output   = "../src/generated/prisma"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
+}
+
+// ============================================
+// FELHASZNÁLÓK ÉS AUTENTIKÁCIÓ
+// ============================================
+
+enum UserRole {
+  PLAYER      // Normál játékos
+  WEBMASTER   // Webmester (admin)
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  username  String   @unique
+  password  String   // Hashelve tárolva (bcrypt)
+  role      UserRole @default(PLAYER)
+  
+  // E-mail verification
+  emailVerified       Boolean   @default(false)
+  emailVerificationToken String?  @unique
+  emailVerificationExpires DateTime?
+  
+  // Password reset
+  resetToken          String?   @unique
+  resetTokenExpires   DateTime?
+  
+  // 2FA (Two-Factor Authentication)
+  twoFactorEnabled    Boolean   @default(false)
+  twoFactorSecret     String?   // TOTP secret (encrypted)
+  twoFactorBackupCodes String?  // Backup codes (encrypted, JSON array)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Kapcsolatok
+  games Game[]
+  sessions Session[]
+
+  @@map("users")
+}
+
+// NextAuth sessions (optional, ha DB sessions-t használnál JWT helyett)
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("sessions")
+}
+
+// ============================================
+// VILÁGKÁRTYÁK (WORLD CARDS)
+// ============================================
+
+enum CardType {
+  EARTH    // föld
+  AIR      // levegő
+  WATER    // víz
+  FIRE     // tűz
+}
+
+// Sima (normál) világkártyák
+model WorldCard {
+  id          String   @id @default(cuid())
+  name        String   @unique // Max 16 karakter
+  damage      Int      // Sebzés érték (2-100)
+  health      Int      // Életerő (1-100)
+  type        CardType // Kártya típusa
+  order       Int      // Sorrend a világkártyák között
+  createdAt   DateTime @default(now())
+  environment Environment? @relation(fields: [environmentId], references: [id], onDelete: Cascade)
+  environmentId String?
+
+  // Kapcsolatok
+  leaderCardsAsBase LeaderCard[]            // Ebből származó vezérkártyák
+  dungeonCards      DungeonCard[]           // Kazamatákban való előfordulás
+  playerCards       PlayerCard[]            // Játékos gyűjteményében
+  baseLeaderDungeonCards DungeonCard[] @relation("BaseLeaderCard")
+
+  @@map("world_cards")
+}
+
+// Vezérkártyák (származtatott a sima kártyákból)
+enum LeaderBoostType {
+  DAMAGE_DOUBLE  // Sebzés duplázás
+  HEALTH_DOUBLE  // Életerő duplázás
+}
+
+model LeaderCard {
+  id              String          @id @default(cuid())
+  name            String          @unique
+  boostType       LeaderBoostType
+  createdAt       DateTime        @default(now())
+  
+  baseCard        WorldCard       @relation(fields: [baseCardId], references: [id], onDelete: Cascade)
+  baseCardId      String
+  
+  environment     Environment?    @relation(fields: [environmentId], references: [id], onDelete: Cascade)
+  environmentId   String?
+
+  // Kapcsolatok
+  dungeonCards    DungeonCard[]   // Kazamatákban való előfordulás
+
+  @@map("leader_cards")
+}
+
+// ============================================
+// KAZAMATÁK (DUNGEONS)
+// ============================================
+
+enum DungeonType {
+  SIMPLE_ENCOUNTER  // 1 sima kártya - Nyeremény: +1 sebzés
+  SMALL_DUNGEON     // 3 sima + 1 vezér - Nyeremény: +2 életerő
+  LARGE_DUNGEON     // 5 sima + 1 vezér - Nyeremény: +3 sebzés
+}
+
+model Dungeon {
+  id              String      @id @default(cuid())
+  name            String      @unique
+  type            DungeonType
+  createdAt       DateTime    @default(now())
+  
+  environment     Environment? @relation(fields: [environmentId], references: [id], onDelete: Cascade)
+  environmentId   String?
+
+  // Kapcsolatok
+  dungeonCards    DungeonCard[]
+  battles         Battle[]
+
+  @@map("dungeons")
+}
+
+// Kazamata kártyák (sorrend számít!)
+model DungeonCard {
+  id          String  @id @default(cuid())
+  order       Int     // Sorrend a kazamatában
+  isLeader    Boolean @default(false)
+
+  dungeon     Dungeon     @relation(fields: [dungeonId], references: [id], onDelete: Cascade)
+  dungeonId   String
+
+  // Vagy sima kártya...
+  worldCard   WorldCard?  @relation(fields: [worldCardId], references: [id], onDelete: Cascade)
+  worldCardId String?
+
+  // ...vagy vezérkártya
+  leaderCard   LeaderCard? @relation(fields: [leaderCardId], references: [id], onDelete: Cascade)
+  leaderCardId String?
+
+  // Vagy a vezérkártya alapkártyája (ha nem létezik külön LeaderCard)
+  baseLeaderCard   WorldCard? @relation("BaseLeaderCard", fields: [baseLeaderCardId], references: [id])
+  baseLeaderCardId String?
+
+  @@unique([dungeonId, order])
+  @@map("dungeon_cards")
+}
+
+// ============================================
+// JÁTÉKKÖRNYEZET (ENVIRONMENT)
+// ============================================
+
+model Environment {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Kapcsolatok
+  worldCards  WorldCard[]
+  leaderCards LeaderCard[]
+  dungeons    Dungeon[]
+  games       Game[]
+
+  @@map("environments")
+}
+
+// ============================================
+// JÁTÉKOS GYŰJTEMÉNY ÉS PAKLI
+// ============================================
+
+// Játékos gyűjteménye (fejleszthető kártyák)
+model PlayerCard {
+  id              String   @id @default(cuid())
+  damageBoost     Int      @default(0) // Hány sebzést kapott pluszban
+  healthBoost     Int      @default(0) // Hány életerőt kapott pluszban
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  game            Game       @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  gameId          String
+
+  baseCard        WorldCard  @relation(fields: [baseCardId], references: [id])
+  baseCardId      String
+
+  // Kapcsolatok
+  deckCards       DeckCard[]
+
+  @@unique([gameId, baseCardId]) // Egy kártya csak egyszer szerepelhet a gyűjteményben
+  @@map("player_cards")
+}
+
+// Pakli (összeállított lapok egy harchoz)
+model Deck {
+  id        String   @id @default(cuid())
+  name      String?
+  isActive  Boolean  @default(true) // Csak egy aktív pakli lehet
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  game      Game       @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  gameId    String
+
+  // Kapcsolatok
+  deckCards DeckCard[]
+  battles   Battle[]
+
+  @@map("decks")
+}
+
+// Pakli kártyák (sorrend számít!)
+model DeckCard {
+  id        String @id @default(cuid())
+  order     Int    // Sorrend a pakliban
+
+  deck      Deck       @relation(fields: [deckId], references: [id], onDelete: Cascade)
+  deckId    String
+
+  playerCard PlayerCard @relation(fields: [playerCardId], references: [id], onDelete: Cascade)
+  playerCardId String
+
+  @@unique([deckId, order])
+  @@unique([deckId, playerCardId]) // Egy kártya csak egyszer szerepelhet egy pakliban
+  @@map("deck_cards")
+}
+
+// ============================================
+// JÁTÉK ÉS HARCOK
+// ============================================
+
+model Game {
+  id          String   @id @default(cuid())
+  name        String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      String
+
+  environment Environment @relation(fields: [environmentId], references: [id])
+  environmentId String
+
+  // Kapcsolatok
+  playerCards PlayerCard[]
+  decks       Deck[]
+  battles     Battle[]
+
+  @@map("games")
+}
+
+enum BattleStatus {
+  IN_PROGRESS
+  WON
+  LOST
+}
+
+model Battle {
+  id          String       @id @default(cuid())
+  status      BattleStatus @default(IN_PROGRESS)
+  playerWins  Int          @default(0) // Játékos hány kártyaütközetet nyert
+  dungeonWins Int          @default(0) // Kazamata hány kártyaütközetet nyert
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  game        Game    @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  gameId      String
+
+  deck        Deck    @relation(fields: [deckId], references: [id])
+  deckId      String
+
+  dungeon     Dungeon @relation(fields: [dungeonId], references: [id])
+  dungeonId   String
+
+  // Kapcsolatok
+  clashes     Clash[]
+
+  @@map("battles")
+}
+
+// Kártya ütközetek egy harcon belül
+enum ClashWinner {
+  PLAYER
+  DUNGEON
+}
+
+enum ClashWinReason {
+  DAMAGE         // Sebzés alapján nyert
+  TYPE_ADVANTAGE // Típus előny alapján
+  DEFAULT        // Döntetlen esetén a kazamata nyer
+}
+
+model Clash {
+  id               String         @id @default(cuid())
+  order            Int            // Hányadik ütközet
+  winner           ClashWinner
+  winReason        ClashWinReason
+  playerDamage     Int            // Játékos kártya tényleges sebzése
+  playerHealth     Int            // Játékos kártya tényleges életereje
+  dungeonDamage    Int            // Kazamata kártya tényleges sebzése
+  dungeonHealth    Int            // Kazamata kártya tényleges életereje
+  createdAt        DateTime       @default(now())
+
+  battle           Battle   @relation(fields: [battleId], references: [id], onDelete: Cascade)
+  battleId         String
+
+  playerCardName   String   // A játékos kártya neve (snapshot)
+  dungeonCardName  String   // A kazamata kártya neve (snapshot)
+  playerCardType   CardType // A játékos kártya típusa
+  dungeonCardType  CardType // A kazamata kártya típusa
+
+  @@unique([battleId, order])
+  @@map("clashes")
 }

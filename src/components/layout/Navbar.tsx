@@ -3,11 +3,13 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import Image from "next/image"
+import Image from "next/image";
+import { useSession } from "next-auth/react";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const { data: session } = useSession();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -72,19 +74,31 @@ export default function Navbar() {
 
           {/* CTA Buttons */}
           <div className="hidden items-center gap-3 md:flex">
-            <Link href="/login">
-              <Button 
-                variant="ghost" 
-                className="text-zinc-300 hover:text-purple-300 hover:bg-purple-500/10 font-medium"
-              >
-                Belépés
-              </Button>
-            </Link>
-            <Link href="/register">
-              <Button className="bg-gradient-to-r from-purple-500 to-violet-500 text-white font-bold shadow-lg shadow-purple-500/30 hover:from-purple-600 hover:to-violet-600 hover:shadow-purple-500/50 transition-all hover:scale-105">
-                Kezdjük el!
-              </Button>
-            </Link>
+            {session ? (
+              <Link href="/dashboard">
+                <Button 
+                  className="bg-gradient-to-r from-purple-500 to-violet-500 text-white font-bold shadow-lg shadow-purple-500/30 hover:from-purple-600 hover:to-violet-600 hover:shadow-purple-500/50 transition-all hover:scale-105"
+                >
+                  👤 {session.user.username}
+                </Button>
+              </Link>
+            ) : (
+              <>
+                <Link href="/login">
+                  <Button 
+                    variant="ghost" 
+                    className="text-zinc-300 hover:text-purple-300 hover:bg-purple-500/10 font-medium"
+                  >
+                    Belépés
+                  </Button>
+                </Link>
+                <Link href="/register">
+                  <Button className="bg-gradient-to-r from-purple-500 to-violet-500 text-white font-bold shadow-lg shadow-purple-500/30 hover:from-purple-600 hover:to-violet-600 hover:shadow-purple-500/50 transition-all hover:scale-105">
+                    Kezdjük el!
+                  </Button>
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -151,19 +165,29 @@ export default function Navbar() {
               Rólunk
             </Link>
             <div className="flex flex-col gap-2 pt-3 border-t border-purple-400/20 mt-3">
-              <Link href="/login" onClick={() => setIsMenuOpen(false)}>
-                <Button 
-                  variant="ghost" 
-                  className="w-full text-zinc-300 hover:text-purple-300 hover:bg-purple-500/10 font-medium"
-                >
-                  Belépés
-                </Button>
-              </Link>
-              <Link href="/register" onClick={() => setIsMenuOpen(false)}>
-                <Button className="w-full bg-gradient-to-r from-purple-500 to-violet-500 text-white font-bold shadow-lg shadow-purple-500/30 hover:from-purple-600 hover:to-violet-600">
-                  Kezdjük el!
-                </Button>
-              </Link>
+              {session ? (
+                <Link href="/dashboard" onClick={() => setIsMenuOpen(false)}>
+                  <Button className="w-full bg-gradient-to-r from-purple-500 to-violet-500 text-white font-bold shadow-lg shadow-purple-500/30">
+                    👤 {session.user.username}
+                  </Button>
+                </Link>
+              ) : (
+                <>
+                  <Link href="/login" onClick={() => setIsMenuOpen(false)}>
+                    <Button 
+                      variant="ghost" 
+                      className="w-full text-zinc-300 hover:text-purple-300 hover:bg-purple-500/10 font-medium"
+                    >
+                      Belépés
+                    </Button>
+                  </Link>
+                  <Link href="/register" onClick={() => setIsMenuOpen(false)}>
+                    <Button className="w-full bg-gradient-to-r from-purple-500 to-violet-500 text-white font-bold shadow-lg shadow-purple-500/30 hover:from-purple-600 hover:to-violet-600">
+                      Kezdjük el!
+                    </Button>
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>

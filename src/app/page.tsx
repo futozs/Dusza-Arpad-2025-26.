@@ -10,6 +10,16 @@ import ClientOnly from "@/components/ClientOnly";
 import TrueFocus from "@/components/TrueFocus";
 import LiquidEther from "@/components/LiquidEther";
 
+
+
+
+import {Droplet} from "lucide-react";
+import {Flame} from "lucide-react";
+import {Mountain} from 'lucide-react';
+import { Wind } from 'lucide-react';
+
+
+
 export default function Home() {
   return (
     <ClientOnly>
@@ -99,19 +109,19 @@ export default function Home() {
           
             <div className="flex flex-wrap items-center justify-center gap-4">
               <div className="flex items-center gap-3 rounded-2xl border-2 border-red-400/30 bg-gradient-to-br from-red-900/40 to-red-950/40 px-8 py-4 backdrop-blur-md shadow-xl shadow-red-900/30 transition-all hover:scale-110 hover:border-red-400/60 hover:shadow-2xl hover:shadow-red-500/50 cursor-pointer">
-                <div className="h-5 w-5 rounded-full bg-gradient-to-br from-red-400 to-red-600 shadow-lg shadow-red-500/70 animate-pulse" />
+                <Flame className="from-red-400 to-red-600 text-red" />
                 <span className="text-base font-bold text-red-200">Tűz</span>
               </div>
               <div className="flex items-center gap-3 rounded-2xl border-2 border-blue-400/30 bg-gradient-to-br from-blue-900/40 to-blue-950/40 px-8 py-4 backdrop-blur-md shadow-xl shadow-blue-900/30 transition-all hover:scale-110 hover:border-blue-400/60 hover:shadow-2xl hover:shadow-blue-500/50 cursor-pointer">
-                <div className="h-5 w-5 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 shadow-lg shadow-blue-500/70 animate-pulse" />
+                <Droplet className="from-blue-400 to-blue-600 text-blue-600" />
                 <span className="text-base font-bold text-blue-200">Víz</span>
               </div>
               <div className="flex items-center gap-3 rounded-2xl border-2 border-amber-400/30 bg-gradient-to-br from-amber-900/40 to-amber-950/40 px-8 py-4 backdrop-blur-md shadow-xl shadow-amber-900/30 transition-all hover:scale-110 hover:border-amber-400/60 hover:shadow-2xl hover:shadow-amber-500/50 cursor-pointer">
-                <div className="h-5 w-5 rounded-full bg-gradient-to-br from-amber-400 to-amber-700 shadow-lg shadow-amber-600/70 animate-pulse" />
+                <Mountain className="from-amber-300 to-amber-500 text-amber-500" />
                 <span className="text-base font-bold text-amber-200">Föld</span>
               </div>
               <div className="flex items-center gap-3 rounded-2xl border-2 border-cyan-400/30 bg-gradient-to-br from-cyan-900/40 to-cyan-950/40 px-8 py-4 backdrop-blur-md shadow-xl shadow-cyan-900/30 transition-all hover:scale-110 hover:border-cyan-400/60 hover:shadow-2xl hover:shadow-cyan-500/50 cursor-pointer">
-                <div className="h-5 w-5 rounded-full bg-gradient-to-br from-cyan-300 to-cyan-500 shadow-lg shadow-cyan-400/70 animate-pulse" />
+                <Wind className="from-cyan-300 to-cyan-500 text-cyan-500"/>
                 <span className="text-base font-bold text-cyan-200">Levegő</span>
               </div>
             </div>
@@ -391,19 +401,7 @@ export default function Home() {
                 <div className="absolute inset-0 bg-gradient-to-br from-red-600/10 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
                 <CardContent className="relative p-8 text-center h-full flex flex-col">
                   <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-red-500/20 shadow-lg shadow-red-500/50 mx-auto">
-                    <svg
-                      className="h-8 w-8 text-red-400"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"
-                      />
-                    </svg>
+                    <Flame className="h-8 w-8 text-red-400" />
                   </div>
                   <h3 className="mb-3 text-2xl font-bold text-red-300">Tűz</h3>
                   <p className="text-sm text-zinc-400 flex-grow">
@@ -418,19 +416,7 @@ export default function Home() {
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
                 <CardContent className="relative p-8 text-center h-full flex flex-col">
                   <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-blue-500/20 shadow-lg shadow-blue-500/50 mx-auto">
-                    <svg
-                      className="h-8 w-8 text-blue-400"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
-                      />
-                    </svg>
+                    <Droplet className="h-8 w-8 text-blue-400" />
                   </div>
                   <h3 className="mb-3 text-2xl font-bold text-blue-300">Víz</h3>
                   <p className="text-sm text-zinc-400 flex-grow">
@@ -445,19 +431,7 @@ export default function Home() {
                 <div className="absolute inset-0 bg-gradient-to-br from-amber-600/10 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
                 <CardContent className="relative p-8 text-center h-full flex flex-col">
                   <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-amber-600/20 shadow-lg shadow-amber-600/50 mx-auto">
-                    <svg
-                      className="h-8 w-8 text-amber-400"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                      />
-                    </svg>
+                    <Mountain className="h-8 w-8 text-amber-300" />
                   </div>
                   <h3 className="mb-3 text-2xl font-bold text-amber-300">Föld</h3>
                   <p className="text-sm text-zinc-400 flex-grow">
@@ -472,19 +446,7 @@ export default function Home() {
                 <div className="absolute inset-0 bg-gradient-to-br from-cyan-600/10 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
                 <CardContent className="relative p-8 text-center h-full flex flex-col">
                   <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-cyan-400/20 shadow-lg shadow-cyan-400/50 mx-auto">
-                    <svg
-                      className="h-8 w-8 text-cyan-300"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5"
-                      />
-                    </svg>
+                    <Wind className="h-8 w-8 text-cyan-300" />
                   </div>
                   <h3 className="mb-3 text-2xl font-bold text-cyan-300">Levegő</h3>
                   <p className="text-sm text-zinc-400 flex-grow">

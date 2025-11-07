@@ -11,20 +11,19 @@ import {
 } from "@/components/ui/card";
 import {
   Field,
-  FieldDescription,
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SignInSchema, SignInInput } from "@/schemas/auth.schemas";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { LockKeyhole, ShieldCheck } from "lucide-react";
 
-export function LoginForm({
+export function WebmasterLoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
@@ -61,11 +60,12 @@ export function LoginForm({
         }
         setError("Helytelen email vagy jelszó");
       } else if (result?.ok) {
-        router.push("/dashboard");
+        // TODO: Session ellenőrzés hogy tényleg WEBMASTER-e
+        router.push("/webmaster");
         router.refresh();
       }
     } catch (error) {
-      console.error("Login error:", error);
+      console.error("Webmaster login error:", error);
       setError("Váratlan hiba történt");
     } finally {
       setLoading(false);
@@ -74,13 +74,17 @@ export function LoginForm({
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card className="border-2 border-purple-400/30 bg-zinc-900/90 backdrop-blur-xl shadow-2xl shadow-purple-900/40">
+      <Card className="border-2 border-red-500/40 bg-zinc-900/95 backdrop-blur-xl shadow-2xl shadow-red-900/50">
         <CardHeader className="space-y-2">
-          <CardTitle className="text-3xl font-bold bg-gradient-to-r from-purple-200 via-violet-200 to-fuchsia-200 bg-clip-text text-transparent">
-            Belépés
+          <div className="flex items-center justify-center gap-3 mb-2">
+            <ShieldCheck className="w-10 h-10 text-red-400" />
+            <LockKeyhole className="w-8 h-8 text-red-300" />
+          </div>
+          <CardTitle className="text-3xl font-bold text-center bg-gradient-to-r from-red-200 via-orange-200 to-red-200 bg-clip-text text-transparent">
+            Webmester Belépés
           </CardTitle>
-          <CardDescription className="text-zinc-300 text-base">
-            Lépj be a kártyák világába
+          <CardDescription className="text-zinc-300 text-base text-center">
+            Csak adminisztrátorok számára
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -94,13 +98,13 @@ export function LoginForm({
 
               <Field>
                 <FieldLabel htmlFor="email" className="text-zinc-200 font-semibold">
-                  Email
+                  Admin Email
                 </FieldLabel>
                 <Input
                   id="email"
                   type="email"
-                  placeholder="pakli.mester@damareen.hu"
-                  className="border-2 border-purple-400/40 bg-zinc-950/70 text-zinc-100 placeholder:text-zinc-500 focus:border-purple-400 focus:ring-2 focus:ring-purple-400/50 transition-all"
+                  placeholder="admin@damareen.hu"
+                  className="border-2 border-red-400/40 bg-zinc-950/70 text-zinc-100 placeholder:text-zinc-500 focus:border-red-400 focus:ring-2 focus:ring-red-400/50 transition-all"
                   {...register("email")}
                 />
                 {errors.email && (
@@ -109,21 +113,13 @@ export function LoginForm({
               </Field>
 
               <Field>
-                <div className="flex items-center">
-                  <FieldLabel htmlFor="password" className="text-zinc-200 font-semibold">
-                    Jelszó
-                  </FieldLabel>
-                  <Link
-                    href="#"
-                    className="ml-auto inline-block text-sm text-purple-300 underline-offset-4 hover:text-purple-200 hover:underline font-medium transition-colors"
-                  >
-                    Elfelejtetted?
-                  </Link>
-                </div>
+                <FieldLabel htmlFor="password" className="text-zinc-200 font-semibold">
+                  Jelszó
+                </FieldLabel>
                 <Input
                   id="password"
                   type="password"
-                  className="border-2 border-purple-400/40 bg-zinc-950/70 text-zinc-100 focus:border-purple-400 focus:ring-2 focus:ring-purple-400/50 transition-all"
+                  className="border-2 border-red-400/40 bg-zinc-950/70 text-zinc-100 focus:border-red-400 focus:ring-2 focus:ring-red-400/50 transition-all"
                   {...register("password")}
                 />
                 {errors.password && (
@@ -141,7 +137,7 @@ export function LoginForm({
                     type="text"
                     placeholder="123456"
                     maxLength={6}
-                    className="border-2 border-purple-400/40 bg-zinc-950/70 text-zinc-100 placeholder:text-zinc-500 focus:border-purple-400 focus:ring-2 focus:ring-purple-400/50 transition-all text-center text-2xl tracking-widest"
+                    className="border-2 border-red-400/40 bg-zinc-950/70 text-zinc-100 placeholder:text-zinc-500 focus:border-red-400 focus:ring-2 focus:ring-red-400/50 transition-all text-center text-2xl tracking-widest"
                     {...register("twoFactorCode")}
                   />
                   {errors.twoFactorCode && (
@@ -156,12 +152,10 @@ export function LoginForm({
                 <Button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-gradient-to-r from-purple-500 via-violet-500 to-fuchsia-500 hover:from-purple-600 hover:via-violet-600 hover:to-fuchsia-600 text-white font-bold text-lg py-6 shadow-2xl shadow-purple-900/60 border-2 border-white/20 transition-all hover:scale-[1.02] hover:shadow-purple-600/80 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-gradient-to-r from-red-600 via-orange-600 to-red-600 hover:from-red-700 hover:via-orange-700 hover:to-red-700 text-white font-bold text-lg py-6 shadow-2xl shadow-red-900/60 border-2 border-white/20 transition-all hover:scale-[1.02] hover:shadow-red-600/80 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {loading ? "Belépés..." : "Belépés"}
+                  {loading ? "Belépés..." : "🔐 Admin Belépés"}
                 </Button>
-                <FieldDescription className="text-center text-zinc-300 mt-4">
-                </FieldDescription>
               </Field>
             </FieldGroup>
           </form>
@@ -170,4 +164,3 @@ export function LoginForm({
     </div>
   );
 }
-

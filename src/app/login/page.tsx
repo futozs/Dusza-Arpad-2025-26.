@@ -78,7 +78,7 @@ export default function LoginPage() {
 
           <LoginForm />
 
-          <div className="mt-6 text-center">
+          <div className="mt-6 text-center space-y-2">
             <p className="text-sm text-zinc-300 drop-shadow-md">
               Még nincs fiókod?{" "}
               <Link
@@ -86,6 +86,14 @@ export default function LoginPage() {
                 className="text-purple-300 hover:text-purple-200 hover:underline font-semibold transition-colors"
               >
                 Regisztrálj most!
+              </Link>
+            </p>
+            <p className="text-xs text-zinc-500">
+              <Link
+                href="/login/webmaster"
+                className="hover:text-zinc-300 transition-colors"
+              >
+                🔒 Webmester belépés
               </Link>
             </p>
           </div>

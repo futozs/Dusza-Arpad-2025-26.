@@ -157,7 +157,7 @@ export default function Footer() {
               © 2025 Damareen. Minden jog fenntartva.
             </p>
             <p className="text-xs text-zinc-700">
-              Dusza Árpád Országos Programozói Emlékverseny 2025/2026
+              NPM INSTALL
             </p>
           </div>
         </div>
