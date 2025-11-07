@@ -80,6 +80,7 @@ export function LoginForm({
         }
         setError("Helytelen email vagy jelszó");
       } else if (result?.ok) {
+        // Login alert is now sent automatically from the backend
         router.push("/dashboard");
         router.refresh();
       }
@@ -109,6 +110,7 @@ export function LoginForm({
         setTwoFAError("Érvénytelen kód. Próbáld újra!");
         throw new Error("Invalid 2FA code");
       } else if (result?.ok) {
+        // Login alert is now sent automatically from the backend
         router.push("/dashboard");
         router.refresh();
       }
