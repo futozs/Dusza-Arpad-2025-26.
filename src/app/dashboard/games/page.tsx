@@ -4,7 +4,6 @@ import { redirect } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PrismaClient } from "@/generated/prisma";
 import DashboardNavbar from "@/components/dashboard/DashboardNavbar";
-import DashboardBackground from "@/components/dashboard/DashboardBackground";
 import Link from "next/link";
 import { 
   Gamepad2, 
@@ -51,11 +50,16 @@ export default async function GamesPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-zinc-950 via-zinc-900 to-zinc-950">
-      <DashboardBackground />
       <DashboardNavbar />
       
       <div className="pt-24 px-4 md:px-8 pb-8">
         <div className="max-w-7xl mx-auto">
+          {/* Decorative Background */}
+          <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10">
+            <div className="absolute top-40 -left-20 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl" />
+            <div className="absolute top-60 -right-20 w-96 h-96 bg-violet-500/10 rounded-full blur-3xl" />
+            <div className="absolute bottom-40 left-1/2 w-96 h-96 bg-fuchsia-500/10 rounded-full blur-3xl" />
+          </div>
           {/* Header */}
           <div className="mb-8 flex items-center justify-between">
             <div>
