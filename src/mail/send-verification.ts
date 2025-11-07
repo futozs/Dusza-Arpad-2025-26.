@@ -33,10 +33,9 @@ export async function sendVerificationEmail(
 
     await transporter.sendMail({
       from: process.env.EMAIL_FROM!,
-      to,
-      subject: "Email Verification",
-      html: emailHtml,
-      text: emailText,
+      to: to,
+      subject: "Damareen Email Verification",
+      html: emailHtml
     });
     
   } catch (error) {
