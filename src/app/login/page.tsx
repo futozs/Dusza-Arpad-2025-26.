@@ -1,12 +1,16 @@
 'use client';
 
+import { useState } from "react";
 import Link from "next/link";
 import { LoginForm } from "@/components/login-form";
 import { Button } from "@/components/ui/button";
 import ClientOnly from "@/components/ClientOnly";
 import LiquidEther from "@/components/LiquidEther";
+import ForgotPasswordModal from "@/components/ForgotPasswordModal";
 
 export default function LoginPage() {
+  const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false);
+
   return (
     <ClientOnly>
       <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-zinc-950 via-zinc-900 to-zinc-950 px-4 py-12">
@@ -80,6 +84,15 @@ export default function LoginPage() {
 
           <div className="mt-6 text-center space-y-2">
             <p className="text-sm text-zinc-300 drop-shadow-md">
+              Elfelejtetted a jelszavad?{" "}
+              <button
+                onClick={() => setIsForgotPasswordOpen(true)}
+                className="text-purple-300 hover:text-purple-200 hover:underline font-semibold transition-colors"
+              >
+                Kattints ide!
+              </button>
+            </p>
+            <p className="text-sm text-zinc-300 drop-shadow-md">
               Még nincs fiókod?{" "}
               <Link
                 href="/register"
@@ -98,6 +111,12 @@ export default function LoginPage() {
             </p>
           </div>
         </div>
+
+        {/* Forgot Password Modal */}
+        <ForgotPasswordModal
+          isOpen={isForgotPasswordOpen}
+          onClose={() => setIsForgotPasswordOpen(false)}
+        />
       </div>
     </ClientOnly>
   );
