@@ -9,6 +9,7 @@ import { NextResponse } from "next/server";
  * 2. Védett route-okon megköveteli a bejelentkezést
  * 3. Role-based access control (RBAC)
  * 4. Átirányítások kezelése
+ * 5. BIZTONSÁGI ELLENŐRZÉS: Törölt userek automatikus kijelentkeztetése
  * 
  * Védett route-ok:
  * - /dashboard/* - Csak bejelentkezett usereknek
@@ -19,6 +20,15 @@ export default withAuth(
   function middleware(req) {
     const token = req.nextauth.token;
     const path = req.nextUrl.pathname;
+
+    // BIZTONSÁGI ELLENŐRZÉS: Ha a user törölve lett az adatbázisból
+    if (token?.userDeleted) {
+      console.warn(`Deleted user attempted to access ${path} - forcing logout`);
+      // Átirányítás loginra a session törlésével
+      const url = new URL("/api/auth/signout", req.url);
+      url.searchParams.set("callbackUrl", "/login");
+      return NextResponse.redirect(url);
+    }
 
     // Webmaster route védelem
     if (path.startsWith("/webmaster")) {
