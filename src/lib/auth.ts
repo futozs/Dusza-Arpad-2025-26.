@@ -1,4 +1,5 @@
-import type { NextAuthOptions, User as NextAuthUser } from "next-auth";
+import type { NextAuthOptions } from "next-auth";
+import type { JWT } from "next-auth/jwt";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaClient, UserRole } from "@/generated/prisma";
 import bcrypt from "bcryptjs";
@@ -39,6 +40,8 @@ declare module "next-auth/jwt" {
     role: UserRole;
     emailVerified: boolean;
     twoFactorEnabled: boolean;
+    // Flag jelzi, ha a user törölve lett
+    userDeleted?: boolean;
   }
 }
 
@@ -214,6 +217,10 @@ export const authOptions: NextAuthOptions = {
     /**
      * JWT Callback - token létrehozása/frissítése
      * Ez fut először a sign in után
+     * 
+     * BIZTONSÁGI ELLENŐRZÉS:
+     * Minden request-nél ellenőrizzük, hogy a user még létezik-e az adatbázisban.
+     * Ha törölték, invalidáljuk a tokent.
      */
     async jwt({ token, user, trigger, session }) {
       // Initial sign in
@@ -225,6 +232,46 @@ export const authOptions: NextAuthOptions = {
         // user.emailVerified may be Date | boolean | null in Prisma — normalize to boolean
         token.emailVerified = Boolean(user.emailVerified);
         token.twoFactorEnabled = Boolean(user.twoFactorEnabled);
+      }
+
+      // BIZTONSÁGI ELLENŐRZÉS: Felhasználó létezésének validálása
+      // Ha a tokenben van userId, ellenőrizzük minden request-nél az adatbázisban
+      if (token?.id) {
+        try {
+          const existingUser = await prisma.user.findUnique({
+            where: { id: token.id as string },
+            select: {
+              id: true,
+              email: true,
+              username: true,
+              role: true,
+              emailVerified: true,
+              twoFactorEnabled: true,
+            },
+          });
+
+          // Ha a user nem létezik (törölték), jelöljük a tokenben
+          if (!existingUser) {
+            console.warn(`User ${token.id} not found in database - marking for logout`);
+            // Jelöljük, hogy a user törölve lett - a middleware fogja kezelni
+            token.userDeleted = true;
+            return token;
+          }
+
+          // Frissítjük a token adatokat az aktuális DB értékekkel
+          // Ez biztosítja, hogy a role és egyéb változások azonnal érvényesüljenek
+          token.id = existingUser.id;
+          token.email = existingUser.email;
+          token.username = existingUser.username;
+          token.role = existingUser.role;
+          token.emailVerified = Boolean(existingUser.emailVerified);
+          token.twoFactorEnabled = Boolean(existingUser.twoFactorEnabled);
+        } catch (error) {
+          console.error("Error validating user in JWT callback:", error);
+          // Hiba esetén is jelöljük a tokent
+          token.userDeleted = true;
+          return token;
+        }
       }
 
       // Update session trigger (from client)
@@ -251,24 +298,14 @@ export const authOptions: NextAuthOptions = {
 
       return session;
     },
-
-    /**
-     * SignOut Callback - amikor a user kijelentkezik
-     * JWT strategy esetén ez biztosítja a token törlését
-     */
-    async signOut() {
-      // JWT strategy esetén a token automatikusan törlődik a cookie-ból
-      // Ez csak logging és cleanup célokra használható
-      return true;
-    },
   },
 
   // Events - audit logging (optional)
   events: {
-    async signIn({ user, account, profile, isNewUser }) {
+    async signIn({ user }) {
       console.log(`User signed in: ${user.email}`);
     },
-    async signOut({ token, session }) {
+    async signOut() {
       console.log(`User signed out`);
     },
   },
@@ -276,3 +313,45 @@ export const authOptions: NextAuthOptions = {
   // Debug mode (csak dev-ben)
   debug: process.env.NODE_ENV === "development",
 };
+
+/**
+ * Helper függvény biztonságos session ellenőrzéshez
+ * 
+ * Ez a függvény ellenőrzi, hogy:
+ * 1. Van-e aktív session
+ * 2. A user még létezik-e az adatbázisban
+ * 
+ * Használat API route-okban:
+ * ```ts
+ * const session = await getValidatedSession();
+ * if (!session) {
+ *   return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+ * }
+ * ```
+ */
+export async function getValidatedSession() {
+  const { getServerSession } = await import("next-auth");
+  const session = await getServerSession(authOptions);
+  
+  if (!session?.user?.id) {
+    return null;
+  }
+
+  // Ellenőrizzük, hogy a user még létezik-e
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { id: true },
+    });
+
+    if (!user) {
+      console.warn(`Session validation failed: User ${session.user.id} not found in database`);
+      return null;
+    }
+
+    return session;
+  } catch (error) {
+    console.error("Error validating session:", error);
+    return null;
+  }
+}
