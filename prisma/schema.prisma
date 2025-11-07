@@ -39,7 +39,6 @@ model User {
   // 2FA (Two-Factor Authentication)
   twoFactorEnabled    Boolean   @default(false)
   twoFactorSecret     String?   // TOTP secret (encrypted)
-  twoFactorBackupCodes String?  // Backup codes (encrypted, JSON array)
   
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -47,6 +46,7 @@ model User {
   // Kapcsolatok
   games Game[]
   sessions Session[]
+  backupCodes TwoFactorBackupCode[]
 
   @@map("users")
 }
@@ -63,6 +63,21 @@ model Session {
   updatedAt    DateTime @updatedAt
 
   @@map("sessions")
+}
+
+// 2FA Backup Codes
+model TwoFactorBackupCode {
+  id        String   @id @default(cuid())
+  code      String   @unique // Hashed backup code
+  used      Boolean  @default(false)
+  usedAt    DateTime?
+  
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  
+  createdAt DateTime @default(now())
+
+  @@map("two_factor_backup_codes")
 }
 
 // ============================================

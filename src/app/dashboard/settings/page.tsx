@@ -276,25 +276,6 @@ export default async function SettingsPage() {
                       </p>
                     )}
                   </div>
-
-                  {session.user.twoFactorEnabled && (
-                    <div className="p-4 rounded-lg bg-zinc-950/50 border border-zinc-800">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <Shield className="w-5 h-5 text-emerald-400" />
-                          <div>
-                            <h3 className="text-white font-medium">Backup Kódok</h3>
-                            <p className="text-zinc-500 text-sm">Tartalék kódok kezelése</p>
-                          </div>
-                        </div>
-                        <Link href="/dashboard/settings/backup-codes">
-                          <Button variant="outline" className="border-zinc-700 text-zinc-300 hover:bg-zinc-800">
-                            Megtekintés
-                          </Button>
-                        </Link>
-                      </div>
-                    </div>
-                  )}
                 </CardContent>
               </Card>
 

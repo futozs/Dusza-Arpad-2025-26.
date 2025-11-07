@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -28,6 +29,11 @@ export default function TwoFactorDisableModal({
 }: TwoFactorDisableModalProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const {
     register,
@@ -86,10 +92,27 @@ export default function TwoFactorDisableModal({
   };
 
   if (!isOpen) return null;
+  if (!mounted) return null;
 
-  return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/70 backdrop-blur-md animate-in fade-in duration-200">
-      <Card className="relative w-full max-w-md bg-zinc-900/95 border border-zinc-800 shadow-2xl animate-in zoom-in-95 duration-200">
+  const modalContent = (
+    <div 
+      className="fixed inset-0 flex items-center justify-center p-4 bg-black/90 backdrop-blur-xl"
+      style={{ 
+        zIndex: 999999,
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}
+    >
+      <Card 
+        className="relative w-full max-w-md bg-zinc-900 border border-zinc-700 shadow-[0_0_100px_rgba(0,0,0,0.9)]"
+        style={{ zIndex: 1000000 }}
+      >
         {/* Close button */}
         <button
           onClick={handleClose}
@@ -174,4 +197,6 @@ export default function TwoFactorDisableModal({
       </Card>
     </div>
   );
+
+  return createPortal(modalContent, document.body);
 }
