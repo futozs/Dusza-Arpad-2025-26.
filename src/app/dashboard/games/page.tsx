@@ -168,9 +168,10 @@ export default async function GamesPage() {
                         </div>
 
                         <div className="flex gap-2 pt-2">
-                          <Link href={`/dashboard/games/${game.id}`} className="flex-1">
+                          <Link href={`/dashboard/games/${game.id}/play`} className="flex-1">
                             <Button className="w-full bg-purple-600 hover:bg-purple-700 text-white">
-                              Folytatás
+                              <Play className="w-4 h-4 mr-2" />
+                              Játék
                             </Button>
                           </Link>
                           <Button variant="outline" className="border-red-700 text-red-400 hover:bg-red-900/30">
@@ -238,9 +239,10 @@ export default async function GamesPage() {
                         </div>
 
                         <div className="flex gap-2 pt-2">
-                          <Link href={`/dashboard/games/${game.id}`} className="flex-1">
+                          <Link href={`/dashboard/games/${game.id}/play`} className="flex-1">
                             <Button variant="outline" className="w-full border-zinc-700 text-zinc-300 hover:bg-zinc-800">
-                              Részletek
+                              <Play className="w-4 h-4 mr-2" />
+                              Játék
                             </Button>
                           </Link>
                         </div>
