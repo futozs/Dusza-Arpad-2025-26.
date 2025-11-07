@@ -21,12 +21,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { SignUpSchema, SignUpInput } from "@/schemas/auth.schemas";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { EyeIcon, EyeOffIcon } from "lucide-react";
 
 export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
   const router = useRouter();
   const [error, setError] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [showPasswords, setShowPasswords] = useState(false);
 
   const {
     register,
@@ -83,7 +85,7 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <FieldGroup className="gap-3.5">
+          <FieldGroup className="gap-5">
             {error && (
               <div className="bg-red-500/10 border border-red-500/50 text-red-200 px-4 py-3 rounded-lg mb-4">
                 {error}
@@ -135,12 +137,26 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
               <FieldLabel htmlFor="password" className="text-zinc-200 font-semibold">
                 Jelszó
               </FieldLabel>
-              <Input
-                id="password"
-                type="password"
-                className="border-2 border-purple-400/40 bg-zinc-950/70 text-zinc-100 focus:border-purple-400 focus:ring-2 focus:ring-purple-400/50 transition-all"
-                {...register("password")}
-              />
+              <div className="relative">
+                <Input
+                  id="password"
+                  placeholder="Jelszavad"
+                  type={showPasswords ? "text" : "password"}
+                  className="border-2 border-purple-400/40 bg-zinc-950/70 text-zinc-100 placeholder:text-zinc-500 focus:border-purple-400 focus:ring-2 focus:ring-purple-400/50 transition-all pr-10"
+                  {...register("password")}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPasswords(!showPasswords)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-200 transition-colors"
+                >
+                  {showPasswords ? (
+                    <EyeOffIcon className="h-5 w-5" />
+                  ) : (
+                    <EyeIcon className="h-5 w-5" />
+                  )}
+                </button>
+              </div>
               {errors.password && (
                 <p className="text-red-400 text-sm mt-1">{errors.password.message}</p>
               )}
@@ -156,12 +172,26 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
               >
                 Jelszó megerősítés
               </FieldLabel>
-              <Input
-                id="confirmPassword"
-                type="password"
-                className="border-2 border-purple-400/40 bg-zinc-950/70 text-zinc-100 focus:border-purple-400 focus:ring-2 focus:ring-purple-400/50 transition-all"
-                {...register("confirmPassword")}
-              />
+              <div className="relative">
+                <Input
+                  id="confirmPassword"
+                  placeholder="Erősítsd meg a jelszavad"
+                  type={showPasswords ? "text" : "password"}
+                  className="border-2 border-purple-400/40 bg-zinc-950/70 text-zinc-100 placeholder:text-zinc-500 focus:border-purple-400 focus:ring-2 focus:ring-purple-400/50 transition-all pr-10"
+                  {...register("confirmPassword")}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPasswords(!showPasswords)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-200 transition-colors"
+                >
+                  {showPasswords ? (
+                    <EyeOffIcon className="h-5 w-5" />
+                  ) : (
+                    <EyeIcon className="h-5 w-5" />
+                  )}
+                </button>
+              </div>
               {errors.confirmPassword && (
                 <p className="text-red-400 text-sm mt-1">
                   {errors.confirmPassword.message}
@@ -178,15 +208,6 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
                 >
                   {loading ? "Fiók létrehozása..." : "Fiók létrehozása"}
                 </Button>
-                <FieldDescription className="px-6 text-center text-zinc-300 mt-4">
-                  Már van fiókod?{" "}
-                  <Link
-                    href="/login"
-                    className="text-purple-300 hover:text-purple-200 hover:underline font-semibold transition-colors"
-                  >
-                    Belépés
-                  </Link>
-                </FieldDescription>
               </Field>
             </FieldGroup>
           </FieldGroup>

@@ -8,6 +8,45 @@ import * as speakeasy from "speakeasy";
 
 const prisma = new PrismaClient();
 
+/**
+ * Parse user agent string to extract device and browser info
+ */
+function parseUserAgent(userAgent: string): { device: string; browser: string } {
+  const ua = userAgent.toLowerCase();
+  
+  // Detect browser
+  let browser = 'Ismeretlen böngésző';
+  if (ua.includes('edg/')) {
+    browser = 'Microsoft Edge';
+  } else if (ua.includes('chrome/')) {
+    browser = 'Google Chrome';
+  } else if (ua.includes('firefox/')) {
+    browser = 'Mozilla Firefox';
+  } else if (ua.includes('safari/') && !ua.includes('chrome')) {
+    browser = 'Safari';
+  } else if (ua.includes('opera/') || ua.includes('opr/')) {
+    browser = 'Opera';
+  }
+  
+  // Detect device/OS
+  let device = 'Ismeretlen eszköz';
+  if (ua.includes('windows')) {
+    device = 'Windows PC';
+  } else if (ua.includes('mac os x')) {
+    device = 'macOS';
+  } else if (ua.includes('linux')) {
+    device = 'Linux';
+  } else if (ua.includes('iphone')) {
+    device = 'iPhone';
+  } else if (ua.includes('ipad')) {
+    device = 'iPad';
+  } else if (ua.includes('android')) {
+    device = 'Android';
+  }
+  
+  return { device, browser };
+}
+
 // Extend NextAuth types
 declare module "next-auth" {
   interface Session {
@@ -42,6 +81,8 @@ declare module "next-auth/jwt" {
     twoFactorEnabled: boolean;
     // Flag jelzi, ha a user törölve lett
     userDeleted?: boolean;
+    // Flag to track if login alert was sent
+    loginAlertSent?: boolean;
   }
 }
 
@@ -77,7 +118,7 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" },
         twoFactorCode: { label: "2FA Code", type: "text" },
       },
-      async authorize(credentials) {
+      async authorize(credentials, req) {
         try {
           // Ha nincs credentials (biztonsági ellenőrzés)
           if (!credentials) return null;
@@ -192,8 +233,8 @@ export const authOptions: NextAuthOptions = {
             }
           }
 
-          // Sikeres autentikáció
-          return {
+          // Sikeres autentikáció - send login alert email
+          const returnUser = {
             id: user.id,
             email: user.email,
             username: user.username,
@@ -201,6 +242,59 @@ export const authOptions: NextAuthOptions = {
             emailVerified: user.emailVerified,
             twoFactorEnabled: user.twoFactorEnabled,
           };
+
+          // Send login alert email asynchronously (don't block login)
+          (async () => {
+            try {
+              const { sendLoginAlertEmail } = await import("@/mail/send-login-alert");
+              const { getLocationFromIP } = await import("@/lib/request-info");
+              
+              // Get request info from the req parameter
+              const forwarded = req?.headers?.["x-forwarded-for"];
+              const realIp = req?.headers?.["x-real-ip"];
+              const ipAddress = (typeof forwarded === 'string' ? forwarded.split(',')[0] : undefined) 
+                || (typeof realIp === 'string' ? realIp : undefined) 
+                || 'Ismeretlen';
+              
+              const userAgent = req?.headers?.["user-agent"] || 'Ismeretlen';
+              
+              // Parse device and browser from user agent
+              const { device, browser } = parseUserAgent(userAgent);
+              
+              // Get location from IP
+              const location = await getLocationFromIP(ipAddress);
+              
+              // Get current time in Hungarian format
+              const now = new Date();
+              const loginTime = now.toLocaleTimeString('hu-HU', { 
+                hour: '2-digit', 
+                minute: '2-digit' 
+              });
+              const loginDate = now.toLocaleDateString('hu-HU', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+              });
+              
+              // Send email in background (non-blocking)
+              await sendLoginAlertEmail({
+                to: user.email,
+                name: user.username || 'Játékos',
+                loginTime,
+                loginDate,
+                ipAddress,
+                location,
+                device,
+                browser,
+              });
+              
+              console.log(`Login alert sent to: ${user.email}`);
+            } catch (error) {
+              console.error('Failed to send login alert email:', error);
+            }
+          })();
+
+          return returnUser;
         } catch (error) {
           console.error("Auth error:", error);
           // Re-throw 2FA_REQUIRED for client handling
@@ -300,10 +394,11 @@ export const authOptions: NextAuthOptions = {
     },
   },
 
-  // Events - audit logging (optional)
+  // Events - audit logging
   events: {
     async signIn({ user }) {
       console.log(`User signed in: ${user.email}`);
+      // Login alert is now handled by the authorize callback
     },
     async signOut() {
       console.log(`User signed out`);
