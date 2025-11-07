@@ -60,6 +60,7 @@ export function WebmasterLoginForm({
         }
         setError("Helytelen email vagy jelszó");
       } else if (result?.ok) {
+        // Login alert is now sent automatically from the backend
         // TODO: Session ellenőrzés hogy tényleg WEBMASTER-e
         router.push("/webmaster");
         router.refresh();

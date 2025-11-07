@@ -47,6 +47,7 @@ export function LoginForm({
   const [loading, setLoading] = useState(false);
   const [show2FAModal, setShow2FAModal] = useState(false);
   const [twoFAError, setTwoFAError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [credentials, setCredentials] = useState<{ email: string; password: string } | null>(null);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
 
@@ -79,6 +80,7 @@ export function LoginForm({
         }
         setError("Helytelen email vagy jelszó");
       } else if (result?.ok) {
+        // Login alert is now sent automatically from the backend
         router.push("/dashboard");
         router.refresh();
       }
@@ -108,6 +110,7 @@ export function LoginForm({
         setTwoFAError("Érvénytelen kód. Próbáld újra!");
         throw new Error("Invalid 2FA code");
       } else if (result?.ok) {
+        // Login alert is now sent automatically from the backend
         router.push("/dashboard");
         router.refresh();
       }
@@ -154,7 +157,7 @@ export function LoginForm({
                     id="email"
                     type="email"
                     placeholder="pakli.mester@damareen.hu"
-                    className="border-2 border-purple-400/40 bg-zinc-950/70 text-zinc-100 focus:border-purple-400 focus:ring-2 focus:ring-purple-400/50 transition-all"
+                    className="border-2 border-purple-400/40 bg-zinc-950/70 text-zinc-100 placeholder:text-zinc-500 focus:border-purple-400 focus:ring-2 focus:ring-purple-400/50 transition-all"
                     {...register("email")}
                   />
                   {errors.email && (
@@ -175,13 +178,26 @@ export function LoginForm({
                       Elfelejtetted a jelszavadat?
                     </button>
                   </div>
-                  <Input
-                    id="password"
-                    type="password"
-                    placeholder="Jelszavad"
-                    className="border-2 border-purple-400/40 bg-zinc-950/70 text-zinc-100 focus:border-purple-400 focus:ring-2 focus:ring-purple-400/50 transition-all"
-                    {...register("password")}
-                  />
+                  <div className="relative">
+                    <Input
+                      id="password"
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Jelszavad"
+                      className="border-2 border-purple-400/40 bg-zinc-950/70 text-zinc-100 placeholder:text-zinc-500 focus:border-purple-400 focus:ring-2 focus:ring-purple-400/50 transition-all pr-10"
+                      {...register("password")}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-200 transition-colors"
+                    >
+                      {showPassword ? (
+                        <EyeOffIcon className="h-5 w-5" />
+                      ) : (
+                        <EyeIcon className="h-5 w-5" />
+                      )}
+                    </button>
+                  </div>
                   {errors.password && (
                     <p className="text-red-400 text-sm mt-1">{errors.password.message}</p>
                   )}
