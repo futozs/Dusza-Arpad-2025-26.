@@ -72,7 +72,7 @@ export default function TwoFactorSetupModal({
       setError("");
 
       // Jelszó ellenőrzés
-      const response = await fetch("/api/auth/2fa/auth/verify-password", {
+      const response = await fetch("/api/auth/2fa/verify-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ password: data.password }),
