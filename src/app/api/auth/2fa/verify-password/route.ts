@@ -5,7 +5,8 @@ import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 
 /**
- * POST /api/auth/2fa/verify-password
+ * POST /api/auth/2fa/auth/verify
+-password
  * 
  * Jelszó ellenőrzés a 2FA beállítása előtt
  * Extra biztonsági réteg

@@ -40,14 +40,11 @@ export default function ForgotPasswordModal({
     try {
       setLoading(true);
 
-      // Biztonsági okokból mindig 200-al válaszolunk
-      await fetch("/api/auth/forgot-password", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
+      // Használjuk a server action-t
+      const { requestPasswordReset } = await import("@/app/(auth)/auth/actions");
+      await requestPasswordReset(data.email);
 
-      // Mindig sikeres választ mutatunk, még ha hiba is történt
+      // Mindig sikeres választ mutatunk
       setSuccess(true);
       
       setTimeout(() => {

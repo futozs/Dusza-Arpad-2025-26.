@@ -6,7 +6,8 @@ import { z } from "zod";
 import { sendVerificationEmail } from "@/mail/send-verification";
 
 /**
- * POST /api/auth/register
+ * POST /api/auth/auth/register
+
  * 
  * Új felhasználó regisztrációja
  * - Zod validáció

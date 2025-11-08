@@ -29,7 +29,7 @@ export default async function WebmasterDashboardPage() {
   const session = await getServerSession(authOptions);
 
   if (!session) {
-    redirect("/login/webmaster");
+    redirect("/auth/login/webmaster");
   }
 
   // Role check - csak WEBMASTER férhet hozzá

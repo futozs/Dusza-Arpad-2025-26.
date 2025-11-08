@@ -26,7 +26,7 @@ export default async function GamesPage() {
   const session = await getServerSession(authOptions);
 
   if (!session) {
-    redirect("/login");
+    redirect("/auth/login");
   }
 
   // Játékos játékainak lekérése

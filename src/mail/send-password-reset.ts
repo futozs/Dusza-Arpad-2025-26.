@@ -11,7 +11,7 @@ export async function sendPasswordResetEmail(
   try {
     const transporter = createMailTransporter();
 
-    const resetUrl = `${process.env.APP_URL}/reset-password?token=${token}`;
+    const resetUrl = `${process.env.APP_URL}/auth/reset-password?token=${token}`;
 
     const emailHtml = await render(
       PasswordResetEmail({

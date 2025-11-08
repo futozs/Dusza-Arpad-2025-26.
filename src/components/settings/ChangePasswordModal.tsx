@@ -54,18 +54,14 @@ export default function ChangePasswordModal({
       setLoading(true);
       setError("");
 
-      const response = await fetch("/api/auth/change-password", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          currentPassword: data.currentPassword,
-          newPassword: data.newPassword,
-        }),
-      });
+      const { changePassword } = await import("@/app/(auth)/auth/actions");
+      const result = await changePassword(
+        data.currentPassword,
+        data.newPassword,
+        data.confirmPassword
+      );
 
-      const result = await response.json();
-
-      if (!response.ok) {
+      if (!result.success) {
         setError(result.error || "Hiba történt a jelszó módosítása során");
         return;
       }

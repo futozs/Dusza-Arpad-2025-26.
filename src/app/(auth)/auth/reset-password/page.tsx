@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
@@ -12,19 +12,21 @@ import ClientOnly from "@/components/ClientOnly";
 import LiquidEther from "@/components/LiquidEther";
 import { CheckCircle2, AlertTriangle, Lock, Eye, EyeOff } from "lucide-react";
 
-const ResetPasswordSchema = z.object({
-  password: z
-    .string()
-    .min(8, "A jelszónak legalább 8 karakter hosszúnak kell lennie")
-    .regex(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-      "A jelszónak tartalmaznia kell kis- és nagybetűt, valamint számot"
-    ),
-  confirmPassword: z.string().min(1, "Erősítsd meg a jelszót"),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "A jelszavak nem egyeznek",
-  path: ["confirmPassword"],
-});
+const ResetPasswordSchema = z
+  .object({
+    password: z
+      .string()
+      .min(8, "A jelszónak legalább 8 karakter hosszúnak kell lennie")
+      .regex(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
+        "A jelszónak tartalmaznia kell kis- és nagybetűt, valamint számot"
+      ),
+    confirmPassword: z.string().min(1, "Erősítsd meg a jelszót"),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "A jelszavak nem egyeznek",
+    path: ["confirmPassword"],
+  });
 
 type ResetPasswordInput = z.infer<typeof ResetPasswordSchema>;
 
@@ -59,7 +61,7 @@ function ResetPasswordContent() {
       });
 
       const result = await response.json();
-      
+
       if (response.ok && result.valid) {
         setTokenValid(true);
       } else {
@@ -88,25 +90,17 @@ function ResetPasswordContent() {
       setLoading(true);
       setError("");
 
-      const response = await fetch("/api/auth/reset-password", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          token,
-          password: data.password,
-        }),
-      });
+      const { resetPassword } = await import("../actions");
+      const result = await resetPassword(token, data.password, data.confirmPassword);
 
-      const result = await response.json();
-
-      if (!response.ok) {
+      if (!result.success) {
         setError(result.error || "Hiba történt a jelszó visszaállítása során");
         return;
       }
 
       setSuccess(true);
       setTimeout(() => {
-        router.push("/login");
+        router.push("/auth/login");
       }, 3000);
     } catch (err) {
       setError("Váratlan hiba történt");
@@ -122,7 +116,7 @@ function ResetPasswordContent() {
         {/* Fixed LiquidEther Background */}
         <div className="fixed inset-0 z-0">
           <LiquidEther
-            colors={['#5227FF', '#FF9FFC', '#B19EEF']}
+            colors={["#5227FF", "#FF9FFC", "#B19EEF"]}
             mouseForce={20}
             cursorSize={100}
             isViscous={false}
@@ -139,15 +133,18 @@ function ResetPasswordContent() {
             autoRampDuration={0.6}
           />
         </div>
-        
+
         {/* Dark overlay for better readability */}
         <div className="pointer-events-none fixed inset-0 bg-gradient-to-b from-zinc-950/40 via-zinc-950/60 to-zinc-950/80 z-[1]" />
-        
+
         {/* Back Button */}
         <div className="absolute left-4 top-4 md:left-8 md:top-8 z-20">
-          <Link href="/login">
-            <Button 
-              variant="ghost" 
+          <Link
+            href="/auth/login
+"
+          >
+            <Button
+              variant="ghost"
               className="border border-purple-400/30 bg-zinc-950/60 backdrop-blur-md text-purple-200 hover:bg-purple-500/20 hover:text-purple-100 hover:border-purple-400/50 transition-all shadow-lg shadow-purple-900/30"
             >
               ← Vissza a bejelentkezéshez
@@ -158,7 +155,10 @@ function ResetPasswordContent() {
         {/* Reset Password Section */}
         <div className="relative z-10 w-full max-w-md">
           <div className="mb-8 text-center">
-            <Link href="/" className="mb-6 inline-flex items-center gap-3 transition-transform hover:scale-105">
+            <Link
+              href="/"
+              className="mb-6 inline-flex items-center gap-3 transition-transform hover:scale-105"
+            >
               <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500 via-violet-600 to-fuchsia-600 shadow-2xl shadow-purple-900/60 border-2 border-white/20">
                 <Lock className="h-8 w-8 text-white" />
               </div>
@@ -188,11 +188,12 @@ function ResetPasswordContent() {
                       Érvénytelen vagy lejárt link
                     </p>
                     <p className="text-sm text-red-300">
-                      {error || "A jelszó visszaállító link érvénytelen vagy már lejárt. Kérj új linket a bejelentkezési oldalon."}
+                      {error ||
+                        "A jelszó visszaállító link érvénytelen vagy már lejárt. Kérj új linket a bejelentkezési oldalon."}
                     </p>
                   </div>
                 </div>
-                <Link href="/login">
+                <Link href="/auth/login">
                   <Button className="w-full bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-500 hover:to-violet-500 text-white border-0">
                     Vissza a bejelentkezéshez
                   </Button>
@@ -207,13 +208,17 @@ function ResetPasswordContent() {
                       Sikeres jelszó módosítás!
                     </p>
                     <p className="text-sm text-green-300">
-                      A jelszavad sikeresen megváltozott. Átirányítunk a bejelentkezési oldalra...
+                      A jelszavad sikeresen megváltozott. Átirányítunk a
+                      bejelentkezési oldalra...
                     </p>
                   </div>
                 </div>
               </div>
             ) : (
-              <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+              <form
+                onSubmit={form.handleSubmit(handleSubmit)}
+                className="space-y-6"
+              >
                 {error && (
                   <div className="flex items-start gap-3 p-4 rounded-lg bg-red-500/10 border border-red-500/30">
                     <AlertTriangle className="h-5 w-5 text-red-400 flex-shrink-0 mt-0.5" />
@@ -238,7 +243,11 @@ function ResetPasswordContent() {
                       onClick={() => setShowPassword(!showPassword)}
                       className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-300 transition-colors"
                     >
-                      {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                      {showPassword ? (
+                        <EyeOff className="h-5 w-5" />
+                      ) : (
+                        <Eye className="h-5 w-5" />
+                      )}
                     </button>
                   </div>
                   {form.formState.errors.password && (
@@ -263,10 +272,16 @@ function ResetPasswordContent() {
                     />
                     <button
                       type="button"
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
                       className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-300 transition-colors"
                     >
-                      {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                      {showConfirmPassword ? (
+                        <EyeOff className="h-5 w-5" />
+                      ) : (
+                        <Eye className="h-5 w-5" />
+                      )}
                     </button>
                   </div>
                   {form.formState.errors.confirmPassword && (
@@ -304,7 +319,7 @@ function ResetPasswordContent() {
             <p className="text-sm text-zinc-300 drop-shadow-md">
               Már van fiókod?{" "}
               <Link
-                href="/login"
+                href="/auth/login"
                 className="text-purple-300 hover:text-purple-200 hover:underline font-semibold transition-colors"
               >
                 Jelentkezz be!
@@ -319,11 +334,13 @@ function ResetPasswordContent() {
 
 export default function ResetPasswordPage() {
   return (
-    <Suspense fallback={
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-purple-500 border-r-transparent"></div>
-      </div>
-    }>
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen items-center justify-center">
+          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-purple-500 border-r-transparent"></div>
+        </div>
+      }
+    >
       <ResetPasswordContent />
     </Suspense>
   );

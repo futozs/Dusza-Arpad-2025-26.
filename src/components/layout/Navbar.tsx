@@ -32,7 +32,7 @@ export default function Navbar() {
         <div className="relative flex h-16 items-center justify-between px-6">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 transition-transform hover:scale-105">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500 via-violet-500 to-fuchsia-500 shadow-lg shadow-purple-500/50 relative overflow-hidden group">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br ring-2 ring-purple-500 from-purple-500 via-violet-500 to-fuchsia-500 shadow-lg shadow-purple-500/50 relative overflow-hidden group">
               <Image src="/damareen.png" width="100" height="100" alt="damareen logo"/>
             </div>
             <span className="bg-gradient-to-r from-purple-300 via-violet-300 to-fuchsia-300 bg-clip-text text-2xl font-bold text-transparent">
@@ -84,7 +84,7 @@ export default function Navbar() {
               </Link>
             ) : (
               <>
-                <Link href="/login">
+                <Link href="/auth/login">
                   <Button 
                     variant="ghost" 
                     className="text-zinc-300 hover:text-purple-300 hover:bg-purple-500/10 font-medium"
@@ -92,7 +92,7 @@ export default function Navbar() {
                     Belépés
                   </Button>
                 </Link>
-                <Link href="/register">
+                <Link href="/auth/register">
                   <Button className="bg-gradient-to-r from-purple-500 to-violet-500 text-white font-bold shadow-lg shadow-purple-500/30 hover:from-purple-600 hover:to-violet-600 hover:shadow-purple-500/50 transition-all hover:scale-105">
                     Kezdjük el!
                   </Button>
@@ -173,7 +173,7 @@ export default function Navbar() {
                 </Link>
               ) : (
                 <>
-                  <Link href="/login" onClick={() => setIsMenuOpen(false)}>
+                  <Link href="/auth/login" onClick={() => setIsMenuOpen(false)}>
                     <Button 
                       variant="ghost" 
                       className="w-full text-zinc-300 hover:text-purple-300 hover:bg-purple-500/10 font-medium"
@@ -181,7 +181,7 @@ export default function Navbar() {
                       Belépés
                     </Button>
                   </Link>
-                  <Link href="/register" onClick={() => setIsMenuOpen(false)}>
+                  <Link href="/auth/register" onClick={() => setIsMenuOpen(false)}>
                     <Button className="w-full bg-gradient-to-r from-purple-500 to-violet-500 text-white font-bold shadow-lg shadow-purple-500/30 hover:from-purple-600 hover:to-violet-600">
                       Kezdjük el!
                     </Button>
