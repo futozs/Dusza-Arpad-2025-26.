@@ -90,18 +90,10 @@ function ResetPasswordContent() {
       setLoading(true);
       setError("");
 
-      const response = await fetch("/api/auth/auth/reset-password", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          token,
-          password: data.password,
-        }),
-      });
+      const { resetPassword } = await import("../actions");
+      const result = await resetPassword(token, data.password, data.confirmPassword);
 
-      const result = await response.json();
-
-      if (!response.ok) {
+      if (!result.success) {
         setError(result.error || "Hiba történt a jelszó visszaállítása során");
         return;
       }

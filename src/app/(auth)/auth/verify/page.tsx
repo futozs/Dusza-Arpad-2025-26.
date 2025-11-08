@@ -24,16 +24,10 @@ function VerifyEmailContent() {
       }
 
       try {
-        const response = await fetch("/api/auth/auth/verify
--email", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ token }),
-        });
+        const { verifyEmail } = await import("../actions");
+        const result = await verifyEmail(token);
 
-        const result = await response.json();
-
-        if (!response.ok) {
+        if (!result.success) {
           setStatus("error");
           setMessage(result.error || "Hiba történt az email megerősítése során");
           return;
