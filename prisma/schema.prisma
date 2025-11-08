@@ -50,6 +50,7 @@ model User {
   games Game[]
   sessions Session[]
   backupCodes TwoFactorBackupCode[]
+  stats PlayerStats?
 
   @@map("users")
 }
@@ -357,4 +358,81 @@ model Clash {
 
   @@unique([battleId, order])
   @@map("clashes")
+}
+
+// ============================================
+// STATISZTIKÁK
+// ============================================
+
+model PlayerStats {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Kapcsolat a felhasználóhoz
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String   @unique
+
+  // Összes statisztika
+  totalGamesPlayed        Int @default(0)  // Összes játék
+  totalBattlesPlayed      Int @default(0)  // Összes harc
+  totalBattlesWon         Int @default(0)  // Megnyert harcok
+  totalBattlesLost        Int @default(0)  // Elvesztett harcok
+  
+  // Kazamata statisztikák
+  totalDungeonsCompleted  Int @default(0)  // Teljesített kazamaták
+  simpleDungeonsCompleted Int @default(0)  // Egyszerű találkozások
+  smallDungeonsCompleted  Int @default(0)  // Kis kazamaták
+  largeDungeonsCompleted  Int @default(0)  // Nagy kazamaták
+  
+  // Ütközet statisztikák
+  totalClashes            Int @default(0)  // Összes ütközet
+  totalClashesWon         Int @default(0)  // Megnyert ütközetek
+  totalClashesLost        Int @default(0)  // Elvesztett ütközetek
+  clashesWonByDamage      Int @default(0)  // Sebzéssel nyert ütközetek
+  clashesWonByType        Int @default(0)  // Típus előnnyel nyert ütközetek
+  clashesLostByDefault    Int @default(0)  // Döntetlennel vesztett ütközetek
+  
+  // Sebzés és életerő statisztikák
+  totalDamageDealt        Int @default(0)  // Összes okozott sebzés
+  totalDamageTaken        Int @default(0)  // Összes elszenvedett sebzés
+  highestDamageInClash    Int @default(0)  // Legnagyobb sebzés egy ütközetben
+  totalHealthUsed         Int @default(0)  // Összes felhasznált életerő
+  
+  // Kártya típus statisztikák
+  fireCardWins            Int @default(0)  // Tűz kártyákkal nyert ütközetek
+  waterCardWins           Int @default(0)  // Víz kártyákkal nyert ütközetek
+  earthCardWins           Int @default(0)  // Föld kártyákkal nyert ütközetek
+  airCardWins             Int @default(0)  // Levegő kártyákkal nyert ütközetek
+  
+  fireCardLosses          Int @default(0)  // Tűz kártyákkal vesztett ütközetek
+  waterCardLosses         Int @default(0)  // Víz kártyákkal vesztett ütközetek
+  earthCardLosses         Int @default(0)  // Föld kártyákkal vesztett ütközetek
+  airCardLosses           Int @default(0)  // Levegő kártyákkal vesztett ütközetek
+  
+  // Gyűjtemény statisztikák
+  totalCardsCollected     Int @default(0)  // Összes megszerzett kártya
+  totalCardUpgrades       Int @default(0)  // Összes kártya fejlesztés
+  totalDamageUpgrades     Int @default(0)  // Összes sebzés fejlesztés
+  totalHealthUpgrades     Int @default(0)  // Összes életerő fejlesztés
+  
+  // Játék teljesítmény
+  currentWinStreak        Int @default(0)  // Jelenlegi győzelmi sorozat
+  longestWinStreak        Int @default(0)  // Leghosszabb győzelmi sorozat
+  currentLoseStreak       Int @default(0)  // Jelenlegi vesztes sorozat
+  longestLoseStreak       Int @default(0)  // Leghosszabb vesztes sorozat
+  
+  // Idő statisztikák
+  totalPlayTimeMinutes    Int @default(0)  // Összes játékidő percben
+  averageBattleTime       Int @default(0)  // Átlagos harc idő percben
+  fastestBattleWin        Int @default(0)  // Leggyorsabb győzelem (perc)
+  
+  // Pakli statisztikák
+  totalDecksCreated       Int @default(0)  // Létrehozott paklik száma
+  mostUsedDeckId          String?          // Legtöbbet használt pakli
+  
+  // Környezet statisztikák
+  totalEnvironmentsPlayed Int @default(0)  // Játszott környezetek száma
+  
+  @@map("player_stats")
 }
