@@ -96,6 +96,7 @@ const DUNGEON_TYPE_NAMES: Record<string, string> = {
 const BATTLE_STATUS_NAMES: Record<string, string> = {
   WON: "Győzelem",
   LOST: "Vereség",
+  DRAW: "Döntetlen",
   IN_PROGRESS: "Folyamatban",
 };
 
@@ -467,6 +468,8 @@ export default function PlayerProfilePage() {
                             ? "bg-green-500/10 text-green-400"
                             : battle.status === "LOST"
                             ? "bg-red-500/10 text-red-400"
+                            : battle.status === "DRAW"
+                            ? "bg-yellow-500/10 text-yellow-400"
                             : "bg-blue-500/10 text-blue-400"
                         }`}
                       >

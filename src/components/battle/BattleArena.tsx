@@ -214,6 +214,7 @@ export default function BattleArena({
   const [showDungeonDamage, setShowDungeonDamage] = useState(0);
   const [clashComplete, setClashComplete] = useState(false);
   const [allComplete, setAllComplete] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
   
   // Valós idejű pontszám - csak befejezett clash-ek számítanak!
   const [playerWins, setPlayerWins] = useState(0);
@@ -263,7 +264,9 @@ export default function BattleArena({
 
   // Automatikus harc - A backend által meghatározott eredmény alapján
   const playClash = async () => {
-    if (!playerCard || !dungeonCard || clashComplete) return;
+    if (!playerCard || !dungeonCard || clashComplete || isProcessing) return;
+    
+    setIsProcessing(true);
 
     // Várakozás
     await new Promise((r) => setTimeout(r, 500));
@@ -307,9 +310,13 @@ export default function BattleArena({
     } else {
       setDungeonWins(prev => prev + 1);
     }
+    
+    setIsProcessing(false);
   };
 
   const nextClash = () => {
+    if (isProcessing) return;
+    
     if (isLastClash) {
       setAllComplete(true);
     } else {
@@ -442,7 +449,7 @@ export default function BattleArena({
           className="text-center space-y-6 py-8"
         >
           <div>
-            {finalPlayerWins >= finalDungeonWins ? (
+            {finalPlayerWins > finalDungeonWins ? (
               <div className="space-y-4">
                 <Trophy className="w-24 h-24 text-yellow-400 mx-auto" />
                 <h2 className="text-5xl font-black text-green-400">
@@ -450,6 +457,16 @@ export default function BattleArena({
                 </h2>
                 <p className="text-xl text-zinc-300">
                   Legyőzted a kazamatát!
+                </p>
+              </div>
+            ) : finalPlayerWins === finalDungeonWins ? (
+              <div className="space-y-4">
+                <Swords className="w-24 h-24 text-yellow-500 mx-auto" />
+                <h2 className="text-5xl font-black text-yellow-500">
+                  ⚔️ DÖNTETLEN ⚔️
+                </h2>
+                <p className="text-xl text-zinc-300">
+                  Egyenlő erővel csaptak össze a seregek!
                 </p>
               </div>
             ) : (
@@ -486,8 +503,9 @@ export default function BattleArena({
           {!clashComplete ? (
             <Button
               onClick={playClash}
+              disabled={isProcessing}
               size="lg"
-              className="bg-gradient-to-r from-purple-500 to-violet-500 text-lg px-8"
+              className="bg-gradient-to-r from-purple-500 to-violet-500 text-lg px-8 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Sparkles className="w-5 h-5 mr-2" />
               Harc!
@@ -495,9 +513,10 @@ export default function BattleArena({
           ) : (
             <Button
               onClick={nextClash}
+              disabled={isProcessing}
               size="lg"
               variant="outline"
-              className="border-purple-500/50 text-purple-400 text-lg px-8"
+              className="border-purple-500/50 text-purple-400 text-lg px-8 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLastClash ? (
                 <>
