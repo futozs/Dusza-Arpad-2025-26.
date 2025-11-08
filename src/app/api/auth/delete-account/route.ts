@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { PrismaClient } from "@/generated/prisma/client";
+import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
 
@@ -40,7 +40,7 @@ export async function DELETE(request: Request) {
 
     // Delete all user related data
     // Delete backup codes first
-    await prisma.backupCode.deleteMany({
+    await prisma.twoFactorBackupCode.deleteMany({
       where: { userId: user.id },
     });
 

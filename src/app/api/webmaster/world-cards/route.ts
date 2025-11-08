@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { PrismaClient, CardType } from "@/generated/prisma";
 
-// Prisma client imported from singleton
+import { prisma } from "@/lib/prisma";
 
 const VALID_CARD_TYPES: CardType[] = ["EARTH", "AIR", "WATER", "FIRE"];
 

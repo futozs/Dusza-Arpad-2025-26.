@@ -4,7 +4,6 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 
-// Prisma client imported from singleton
 
 /**
  * GET /api/webmaster/users

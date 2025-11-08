@@ -5,8 +5,6 @@ import { SignUpSchema } from "@/schemas/auth.schemas";
 import { z } from "zod";
 import { sendVerificationEmail } from "@/mail/send-verification";
 
-// Prisma client imported from singleton
-
 /**
  * POST /api/auth/register
  * 

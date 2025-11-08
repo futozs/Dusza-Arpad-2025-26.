@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef } from 'react';
-import { motion, useInView } from 'framer-motion';
+import { motion, useInView, Easing } from 'framer-motion';
 
 interface AnimatedContentProps {
   children: React.ReactNode;
@@ -9,9 +9,8 @@ interface AnimatedContentProps {
   direction?: 'horizontal' | 'vertical';
   reverse?: boolean;
   duration?: number;
-  ease?: string;
+  ease?: Easing | Easing[];
   initialOpacity?: number;
-  animateOpacity?: boolean;
   scale?: number;
   threshold?: number;
   delay?: number;
@@ -23,9 +22,8 @@ const AnimatedContent = ({
   direction = 'vertical',
   reverse = false,
   duration = 1.2,
-  ease = 'bounce.out',
+  ease = [0.6, 0.01, -0.05, 0.95] as Easing,
   initialOpacity = 0.2,
-  animateOpacity = true,
   scale = 1.1,
   threshold = 0.2,
   delay = 0.3

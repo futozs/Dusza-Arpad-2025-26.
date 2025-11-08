@@ -18,7 +18,6 @@ import {
   Loader2,
   Plus,
   Check,
-  BarChart3,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -302,7 +301,8 @@ export default function PlayGamePage() {
 
   useEffect(() => {
     loadGameData();
-  }, [loadGameData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [gameId, router]);
 
   const handleBuildDeck = async () => {
     if (selectedCards.length === 0) return;

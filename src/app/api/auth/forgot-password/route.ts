@@ -3,7 +3,6 @@ import { prisma } from "@/lib/prisma";
 import crypto from "crypto";
 import { sendPasswordResetEmail } from "@/mail/send-password-reset";
 
-// Prisma client imported from singleton
 
 export async function POST(request: NextRequest) {
   try {

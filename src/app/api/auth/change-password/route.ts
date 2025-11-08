@@ -4,8 +4,6 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 
-// Prisma client imported from singleton
-
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);

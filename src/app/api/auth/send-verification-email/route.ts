@@ -5,7 +5,6 @@ import { prisma } from "@/lib/prisma";
 import { sendVerificationEmail } from "@/mail/send-verification";
 import crypto from "crypto";
 
-// Prisma client imported from singleton
 
 export async function POST() {
   try {

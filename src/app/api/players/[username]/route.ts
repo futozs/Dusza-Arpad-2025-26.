@@ -1,13 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { PrismaClient, CardType } from "@/generated/prisma";
+import { prisma } from "@/lib/prisma";
+import type { CardType } from "@/generated/prisma";
 
 // Prisma client imported from singleton
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { username: string } }
+  { params }: { params: Promise<{ username: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -19,7 +20,7 @@ export async function GET(
       );
     }
 
-    const username = params.username;
+    const { username } = await params;
 
     // Játékos keresése
     const player = await prisma.user.findUnique({

@@ -7,7 +7,6 @@ import * as QRCode from "qrcode";
 import { TwoFactorSetupSchema } from "@/schemas/auth.schemas";
 import bcrypt from "bcryptjs";
 
-// Prisma client imported from singleton
 
 /**
  * GET /api/auth/2fa/setup
@@ -16,7 +15,7 @@ import bcrypt from "bcryptjs";
  * - Generál egy TOTP secretet
  * - Visszaad egy QR kódot és backup kódokat
  */
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const session = await getServerSession(authOptions);
 

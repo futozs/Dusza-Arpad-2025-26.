@@ -62,8 +62,8 @@ export default function PrivacySettingsModal({
         onClose();
         setSuccess(false);
       }, 1500);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Hiba történt");
     } finally {
       setLoading(false);
     }

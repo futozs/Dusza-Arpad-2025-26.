@@ -3,7 +3,6 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
-// Prisma client imported from singleton
 
 // GET - Lista összes környezetről
 export async function GET() {
