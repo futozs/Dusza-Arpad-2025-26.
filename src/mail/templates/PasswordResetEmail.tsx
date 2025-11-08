@@ -10,7 +10,7 @@ import {
   Text,
   Hr,
   Tailwind,
-} from '@react-email/components';
+} from "@react-email/components";
 
 interface PasswordResetEmailProps {
   name?: string;
@@ -21,11 +21,11 @@ interface PasswordResetEmailProps {
 }
 
 export const PasswordResetEmail = ({
-  name = 'Játékos',
-  resetUrl = 'https://damareen.hu/reset-password',
-  expiresIn = '1 óra',
-  supportEmail = 'support@damareen.hu',
-  company = 'Damareen',
+  name = "Játékos",
+  resetUrl = "https://damareen.hu/auth/reset-password",
+  expiresIn = "1 óra",
+  supportEmail = "support@damareen.hu",
+  company = "Damareen",
 }: PasswordResetEmailProps) => {
   return (
     <Html>
@@ -49,17 +49,23 @@ export const PasswordResetEmail = ({
               <Heading className="m-0 mb-4 text-4xl font-bold text-zinc-50 tracking-tight">
                 Jelszó visszaállítás 🔒
               </Heading>
-              
+
               <Text className="mb-8 text-lg leading-relaxed text-zinc-300">
-                Szia, <span className="text-purple-400 font-semibold">{name}</span>!
+                Szia,{" "}
+                <span className="text-purple-400 font-semibold">{name}</span>!
               </Text>
 
               <Text className="mb-6 text-base leading-relaxed text-zinc-400">
-                Jelszó visszaállítási kérelmet kaptunk a fiókodhoz. Ha te voltál, kattints az alábbi gombra egy új jelszó beállításához.
+                Jelszó visszaállítási kérelmet kaptunk a fiókodhoz. Ha te
+                voltál, kattints az alábbi gombra egy új jelszó beállításához.
               </Text>
 
               <Text className="mb-10 text-base leading-relaxed text-zinc-400">
-                Ez a link <span className="text-purple-400 font-semibold">{expiresIn}</span> múlva lejár biztonsági okokból.
+                Ez a link{" "}
+                <span className="text-purple-400 font-semibold">
+                  {expiresIn}
+                </span>{" "}
+                múlva lejár biztonsági okokból.
               </Text>
 
               {/* CTA Button */}
@@ -87,7 +93,7 @@ export const PasswordResetEmail = ({
                 <Heading className="mb-6 text-2xl font-bold text-zinc-100">
                   Biztonsági tippek 🛡️
                 </Heading>
-                
+
                 <div className="space-y-5">
                   <div className="flex items-start gap-4">
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-purple-500/15 border border-purple-500/30 text-xl">
@@ -98,11 +104,12 @@ export const PasswordResetEmail = ({
                         Erős jelszó
                       </Text>
                       <Text className="m-0 text-sm text-zinc-500">
-                        Használj legalább 8 karaktert, nagy- és kisbetűket, számokat és speciális karaktereket
+                        Használj legalább 8 karaktert, nagy- és kisbetűket,
+                        számokat és speciális karaktereket
                       </Text>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-start gap-4">
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-purple-500/15 border border-purple-500/30 text-xl">
                       🚫
@@ -116,7 +123,7 @@ export const PasswordResetEmail = ({
                       </Text>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-start gap-4">
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-purple-500/15 border border-purple-500/30 text-xl">
                       🔒
@@ -126,7 +133,8 @@ export const PasswordResetEmail = ({
                         2FA aktiválása
                       </Text>
                       <Text className="m-0 text-sm text-zinc-500">
-                        Beállításokban aktiváld a kétfaktoros hitelesítést még nagyobb biztonságért
+                        Beállításokban aktiváld a kétfaktoros hitelesítést még
+                        nagyobb biztonságért
                       </Text>
                     </div>
                   </div>
@@ -138,17 +146,20 @@ export const PasswordResetEmail = ({
               {/* Warning */}
               <Section className="rounded-xl border border-red-500/20 bg-red-950/20 p-5 mb-6">
                 <Text className="m-0 text-sm leading-relaxed text-red-300">
-                  <span className="font-bold">⚠️ Nem te voltál?</span> Ha nem te kértél jelszó visszaállítást, hagyd figyelmen kívül ezt az emailt. 
-                  A fiókod biztonságban van, senki sem fér hozzá ezen link nélkül. Ha aggódsz a fiókod biztonsága miatt, 
-                  jelezd nekünk: <span className="font-semibold">{supportEmail}</span>
+                  <span className="font-bold">⚠️ Nem te voltál?</span> Ha nem te
+                  kértél jelszó visszaállítást, hagyd figyelmen kívül ezt az
+                  emailt. A fiókod biztonságban van, senki sem fér hozzá ezen
+                  link nélkül. Ha aggódsz a fiókod biztonsága miatt, jelezd
+                  nekünk: <span className="font-semibold">{supportEmail}</span>
                 </Text>
               </Section>
 
               {/* Additional Info */}
               <Section className="rounded-xl border border-blue-500/20 bg-blue-950/20 p-5">
                 <Text className="m-0 text-sm leading-relaxed text-blue-300">
-                  <span className="font-bold">ℹ️ Hasznos információ:</span> Ha lejár ez a link, bármikor kérhetsz újat a bejelentkezési oldalon 
-                  az "Elfelejtett jelszó" gombra kattintva.
+                  <span className="font-bold">ℹ️ Hasznos információ:</span> Ha
+                  lejár ez a link, bármikor kérhetsz újat a bejelentkezési
+                  oldalon az "Elfelejtett jelszó" gombra kattintva.
                 </Text>
               </Section>
             </Section>
@@ -162,8 +173,11 @@ export const PasswordResetEmail = ({
                 © {new Date().getFullYear()} {company}. Minden jog fenntartva.
               </Text>
               <Text className="mt-5 text-xs text-zinc-600">
-                Kérdésed van? Írj nekünk:{' '}
-                <a href={`mailto:${supportEmail}`} className="text-purple-400 hover:text-purple-300 underline">
+                Kérdésed van? Írj nekünk:{" "}
+                <a
+                  href={`mailto:${supportEmail}`}
+                  className="text-purple-400 hover:text-purple-300 underline"
+                >
                   {supportEmail}
                 </a>
               </Text>

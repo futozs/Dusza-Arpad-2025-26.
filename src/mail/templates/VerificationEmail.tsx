@@ -22,7 +22,7 @@ interface VerificationEmailProps {
 
 export const VerificationEmail = ({
   name = 'Játékos',
-  verificationUrl = 'https://damareen.hu/verify',
+  verificationUrl = 'https://damareen.hu/auth/verify',
   expiresIn = '24 óra',
   supportEmail = 'support@damareen.hu',
   company = 'Damareen',

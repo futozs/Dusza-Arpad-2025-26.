@@ -1,7 +1,6 @@
 import { render } from "@react-email/components";
 import { createMailTransporter } from "./email";
 import { VerificationEmail } from "./templates/VerificationEmail";
-import { text } from "stream/consumers";
 
 export async function sendVerificationEmail(
   to: string,
@@ -12,7 +11,7 @@ export async function sendVerificationEmail(
   try {
     const transporter = createMailTransporter();
 
-    const verificationUrl = `${process.env.APP_URL}/verify?token=${token}`;
+    const verificationUrl = `${process.env.APP_URL}/auth/verify?token=${token}`;
 
     const emailHtml = await render(
       VerificationEmail({

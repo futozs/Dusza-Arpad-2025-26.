@@ -42,7 +42,7 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
       setLoading(true);
       setError("");
 
-      const response = await fetch("/api/auth/register", {
+      const response = await fetch("/api/auth/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -59,7 +59,7 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
 
       setSuccess(true);
       setTimeout(() => {
-        router.push("/login");
+        router.push("/auth/login");
       }, 2000);
     } catch (error) {
       console.error("Registration error:", error);
@@ -98,7 +98,10 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
             )}
 
             <Field>
-              <FieldLabel htmlFor="username" className="text-zinc-200 font-semibold">
+              <FieldLabel
+                htmlFor="username"
+                className="text-zinc-200 font-semibold"
+              >
                 Felhasználónév
               </FieldLabel>
               <Input
@@ -109,12 +112,17 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
                 {...register("username")}
               />
               {errors.username && (
-                <p className="text-red-400 text-sm mt-1">{errors.username.message}</p>
+                <p className="text-red-400 text-sm mt-1">
+                  {errors.username.message}
+                </p>
               )}
             </Field>
 
             <Field>
-              <FieldLabel htmlFor="email" className="text-zinc-200 font-semibold">
+              <FieldLabel
+                htmlFor="email"
+                className="text-zinc-200 font-semibold"
+              >
                 Email
               </FieldLabel>
               <Input
@@ -125,7 +133,9 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
                 {...register("email")}
               />
               {errors.email && (
-                <p className="text-red-400 text-sm mt-1">{errors.email.message}</p>
+                <p className="text-red-400 text-sm mt-1">
+                  {errors.email.message}
+                </p>
               )}
               <FieldDescription className="text-zinc-400">
                 Biztosan tároljuk, nem adjuk ki senkinek.
@@ -133,7 +143,10 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
             </Field>
 
             <Field>
-              <FieldLabel htmlFor="password" className="text-zinc-200 font-semibold">
+              <FieldLabel
+                htmlFor="password"
+                className="text-zinc-200 font-semibold"
+              >
                 Jelszó
               </FieldLabel>
               <div className="relative">
@@ -157,7 +170,9 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
                 </button>
               </div>
               {errors.password && (
-                <p className="text-red-400 text-sm mt-1">{errors.password.message}</p>
+                <p className="text-red-400 text-sm mt-1">
+                  {errors.password.message}
+                </p>
               )}
               <FieldDescription className="text-zinc-400">
                 Minimum 8 karakter, kis- és nagybetű, szám.

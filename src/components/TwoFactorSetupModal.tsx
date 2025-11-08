@@ -5,7 +5,14 @@ import { createPortal } from "react-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { X, Shield, Copy, CheckCircle2, Download, AlertTriangle } from "lucide-react";
+import {
+  X,
+  Shield,
+  Copy,
+  CheckCircle2,
+  Download,
+  AlertTriangle,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
@@ -65,7 +72,7 @@ export default function TwoFactorSetupModal({
       setError("");
 
       // Jelszó ellenőrzés
-      const response = await fetch("/api/auth/2fa/verify-password", {
+      const response = await fetch("/api/auth/2fa/auth/verify-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ password: data.password }),
@@ -187,21 +194,21 @@ Generálva: ${new Date().toLocaleString("hu-HU")}
   if (!mounted) return null;
 
   const modalContent = (
-    <div 
+    <div
       className="fixed inset-0 flex items-center justify-center p-4 bg-black/90 backdrop-blur-xl"
-      style={{ 
+      style={{
         zIndex: 999999,
-        position: 'fixed',
+        position: "fixed",
         top: 0,
         left: 0,
         right: 0,
         bottom: 0,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center'
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
       }}
     >
-      <div 
+      <div
         className="relative w-full max-w-2xl bg-zinc-900 border border-zinc-700 shadow-[0_0_100px_rgba(0,0,0,0.9)] overflow-hidden rounded-xl"
         style={{ zIndex: 1000000 }}
       >

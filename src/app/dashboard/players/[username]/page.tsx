@@ -111,7 +111,7 @@ export default function PlayerProfilePage() {
 
   useEffect(() => {
     if (status === "unauthenticated") {
-      router.push("/login");
+      router.push("/auth/login");
       return;
     }
 

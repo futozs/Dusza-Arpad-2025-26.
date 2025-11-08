@@ -85,7 +85,7 @@ export default function Home() {
 
           
             <div className="flex flex-col items-center justify-center gap-5 sm:flex-row mb-16">
-              <Link href="/register">
+              <Link href="/auth/register">
                 <Button
                   size="lg"
                   className="group relative overflow-hidden bg-purple-600 px-10 py-7 text-xl font-bold text-white shadow-2xl shadow-purple-600/60 transition-all hover:scale-105 hover:bg-purple-700 hover:shadow-purple-600/80"
@@ -246,7 +246,7 @@ export default function Home() {
                   a végtelenségig fejleszthetőek!
                 </p>
                 <div className="flex gap-4">
-                  <Link href="/register">
+                  <Link href="/auth/register">
                     <Button className="bg-purple-600 hover:bg-purple-700 text-white shadow-lg shadow-purple-900/50">
                       Próbáld ki!
                     </Button>
@@ -443,7 +443,7 @@ export default function Home() {
                   Vajon a gondosan kidolgozott stratégiád diadalt arat, vagy a kazamaták mélye örökre elnyel?
                 </p>
                 <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
-                  <Link href="/register">
+                  <Link href="/auth/register">
                     <Button
                       size="lg"
                       className="bg-purple-600 hover:bg-purple-700 px-8 py-6 text-lg text-white shadow-2xl shadow-purple-900/50 transition-all hover:scale-105"
@@ -451,7 +451,7 @@ export default function Home() {
                       Kezdd el most! →
                     </Button>
                   </Link>
-                  <Link href="/login">
+                  <Link href="/auth/login">
                     <Button
                       size="lg"
                       variant="outline"

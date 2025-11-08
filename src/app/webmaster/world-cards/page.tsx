@@ -29,7 +29,7 @@ export default async function WorldCardsPage() {
   const session = await getServerSession(authOptions);
 
   if (!session || session.user.role !== "WEBMASTER") {
-    redirect("/login/webmaster");
+    redirect("/auth/login/webmaster");
   }
 
   const environments = await prisma.environment.findMany({

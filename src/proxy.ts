@@ -26,7 +26,7 @@ export default withAuth(
       console.warn(`Deleted user attempted to access ${path} - forcing logout`);
       // Átirányítás loginra a session törlésével
       const url = new URL("/api/auth/signout", req.url);
-      url.searchParams.set("callbackUrl", "/login");
+      url.searchParams.set("callbackUrl", "/auth/login");
       return NextResponse.redirect(url);
     }
 
@@ -52,7 +52,7 @@ export default withAuth(
         const path = req.nextUrl.pathname;
 
         // Publikus route-ok (nem kell auth)
-        const publicPaths = ["/", "/login", "/register", "/signup", "/login/webmaster"];
+        const publicPaths = ["/", "/auth/login", "/auth/register", "/signup", "/auth/login/webmaster"];
         if (publicPaths.includes(path)) {
           return true;
         }
@@ -70,7 +70,7 @@ export default withAuth(
       },
     },
     pages: {
-      signIn: "/login",
+      signIn: "/auth/login",
     },
   }
 );

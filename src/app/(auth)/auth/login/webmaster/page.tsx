@@ -35,7 +35,8 @@ export default function WebmasterLoginPage() {
           <div className="w-full max-w-md">
             <div className="mb-6 text-center">
               <Link 
-                href="/login" 
+                href="/auth/login
+" 
                 className="text-sm text-zinc-400 hover:text-zinc-200 transition-colors"
               >
                 ← Vissza a normál belépéshez

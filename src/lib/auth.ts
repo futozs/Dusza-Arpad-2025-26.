@@ -107,9 +107,9 @@ export const authOptions: NextAuthOptions = {
 
   // Pages - custom login/signup oldalak
   pages: {
-    signIn: "/login",
+    signIn: "/auth/login",
     signOut: "/",
-    error: "/login", // Error code passed as query param
+    error: "/auth/login", // Error code passed as query param
   },
 
   providers: [
