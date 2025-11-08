@@ -113,7 +113,7 @@ export default function DashboardNavbar() {
             </div>
 
             <Button 
-              onClick={() => signOut({ callbackUrl: "/" })}
+              onClick={() => signOut({ callbackUrl: `${window.location.origin}/dashboard` })}
               variant="ghost"
               className="text-zinc-400 hover:text-red-400 hover:bg-red-500/10 transition-all"
             >
@@ -191,7 +191,7 @@ export default function DashboardNavbar() {
                 <span className="text-sm font-medium text-white">{session?.user.username}</span>
               </div>
               <Button 
-                onClick={() => signOut({ callbackUrl: "/" })}
+                onClick={() => signOut({ callbackUrl: `${window.location.origin}/dashboard` })}
                 variant="ghost"
                 className="w-full mt-2 text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-all flex items-center justify-center gap-2"
               >
