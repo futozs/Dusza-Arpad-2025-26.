@@ -83,9 +83,15 @@ export async function GET(
             baseCard: {
               select: {
                 name: true,
-                damage: true,
-                health: true,
-                type: true,
+                boostType: true,
+                baseCard: {
+                  select: {
+                    name: true,
+                    damage: true,
+                    health: true,
+                    type: true,
+                  },
+                },
               },
             },
           },
@@ -133,17 +139,17 @@ export async function GET(
     const topCards = allPlayerCards
       .map((pc) => ({
         name: pc.baseCard.name,
-        baseDamage: pc.baseCard.damage,
-        baseHealth: pc.baseCard.health,
-        type: pc.baseCard.type,
-        totalDamage: pc.baseCard.damage + pc.damageBoost,
-        totalHealth: pc.baseCard.health + pc.healthBoost,
+        baseDamage: pc.baseCard.baseCard.damage,
+        baseHealth: pc.baseCard.baseCard.health,
+        type: pc.baseCard.baseCard.type,
+        totalDamage: pc.baseCard.baseCard.damage + pc.damageBoost,
+        totalHealth: pc.baseCard.baseCard.health + pc.healthBoost,
         damageBoost: pc.damageBoost,
         healthBoost: pc.healthBoost,
         totalPower:
-          pc.baseCard.damage +
+          pc.baseCard.baseCard.damage +
           pc.damageBoost +
-          pc.baseCard.health +
+          pc.baseCard.baseCard.health +
           pc.healthBoost,
       }))
       .sort((a, b) => b.totalPower - a.totalPower)
@@ -158,7 +164,7 @@ export async function GET(
     };
 
     allPlayerCards.forEach((pc) => {
-      cardTypeDistribution[pc.baseCard.type]++;
+      cardTypeDistribution[pc.baseCard.baseCard.type]++;
     });
 
     // Kedvenc környezet (legtöbb játék)
