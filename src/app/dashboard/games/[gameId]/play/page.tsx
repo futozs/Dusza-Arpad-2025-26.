@@ -457,9 +457,10 @@ export default function PlayGamePage() {
       <div className="pt-24 px-4 md:px-8 pb-8">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
-          <div className="mb-8">
+          <div className="mb-6">
             <Button
               variant="ghost"
+              size="sm"
               className="mb-4 text-zinc-400 hover:text-white"
               onClick={() => router.push("/dashboard/games")}
             >
@@ -467,45 +468,34 @@ export default function PlayGamePage() {
               Vissza
             </Button>
 
-            <div className="flex items-center justify-between">
+            <div className="flex items-start justify-between gap-4">
               <div>
-                <h1 className="text-4xl font-bold text-white mb-2">{game.name}</h1>
-                <p className="text-zinc-400">
-                  Környezet: {game.environment.name}
-                </p>
+                <h1 className="text-3xl font-bold text-white mb-1">{game.name}</h1>
+                <p className="text-sm text-zinc-500">{game.environment.name}</p>
               </div>
 
-              <div className="flex gap-3">
-                {deck && deck.deckCards && deck.deckCards.length > 0 ? (
-                  <Button
-                    onClick={handleEditDeck}
-                    variant="outline"
-                    className="border-purple-500/50 text-purple-400 hover:bg-purple-500/10"
-                  >
-                    <Shield className="w-4 h-4 mr-2" />
-                    Pakli szerkesztése
-                  </Button>
-                ) : (
-                  <Button
-                    onClick={() => setShowDeckBuilder(true)}
-                    variant="outline"
-                    className="border-purple-500/50 text-purple-400 hover:bg-purple-500/10"
-                  >
-                    <Shield className="w-4 h-4 mr-2" />
-                    Pakli összeállítása
-                  </Button>
-                )}
-              </div>
+              {(collection.length > 0 || (deck && deck.deckCards && deck.deckCards.length > 0)) && (
+                <Button
+                  onClick={deck && deck.deckCards && deck.deckCards.length > 0 ? handleEditDeck : () => setShowDeckBuilder(true)}
+                  size="sm"
+                  className="bg-purple-500/10 border border-purple-500/50 text-purple-400 hover:bg-purple-500/20"
+                >
+                  <Shield className="w-4 h-4 mr-2" />
+                  {deck && deck.deckCards && deck.deckCards.length > 0 ? "Pakli szerkesztése" : "Pakli összeállítása"}
+                </Button>
+              )}
             </div>
           </div>
 
-          <Tabs defaultValue="deck" className="w-full">
+          <Tabs defaultValue="dungeons" className="w-full">
             <TabsList className="bg-zinc-900/50 border border-zinc-800">
-              <TabsTrigger value="deck">
-                Pakli ({deck?.deckCards?.length || 0})
-              </TabsTrigger>
               <TabsTrigger value="dungeons">
-                Kazamaták ({dungeons.length})
+                <Swords className="w-4 h-4 mr-2" />
+                Kazamaták
+              </TabsTrigger>
+              <TabsTrigger value="deck">
+                <Shield className="w-4 h-4 mr-2" />
+                Pakli ({deck?.deckCards?.length || 0})
               </TabsTrigger>
               <TabsTrigger value="collection">
                 Gyűjtemény ({collection.length})
@@ -516,115 +506,82 @@ export default function PlayGamePage() {
               {collection.length === 0 ? (
                 <Card className="border-zinc-800 bg-zinc-900/50">
                   <CardContent className="p-12 text-center">
-                    <p className="text-zinc-400 mb-4">
-                      A gyűjteményed még üres. Add hozzá az első kártyádat a környezet világkártyáiból!
-                    </p>
-                    <Button
-                      onClick={async () => {
-                        // Kezdő vezérkártyák hozzáadása a gyűjteményhez
-                        if (game?.environment?.id) {
-                          const envRes = await fetch(`/api/environments/${game.environment.id}`, { cache: 'no-store' });
-                          const envData = await envRes.json();
-                          if (envData.leaderCards && envData.leaderCards.length > 0) {
-                            // Első 3 vezérkártya hozzáadása
-                            for (let i = 0; i < Math.min(3, envData.leaderCards.length); i++) {
-                              await fetch(`/api/game/${gameId}/collection`, {
-                                method: "POST",
-                                headers: { "Content-Type": "application/json" },
-                                body: JSON.stringify({ leaderCardId: envData.leaderCards[i].id }),
-                              });
+                    <div className="max-w-md mx-auto">
+                      <Shield className="w-16 h-16 mx-auto mb-4 text-zinc-700" />
+                      <p className="text-zinc-400 mb-4">
+                        A gyűjteményed még üres. Add hozzá az első kártyádat!
+                      </p>
+                      <Button
+                        onClick={async () => {
+                          if (game?.environment?.id) {
+                            const envRes = await fetch(`/api/environments/${game.environment.id}`, { cache: 'no-store' });
+                            const envData = await envRes.json();
+                            if (envData.leaderCards && envData.leaderCards.length > 0) {
+                              for (let i = 0; i < Math.min(3, envData.leaderCards.length); i++) {
+                                await fetch(`/api/game/${gameId}/collection`, {
+                                  method: "POST",
+                                  headers: { "Content-Type": "application/json" },
+                                  body: JSON.stringify({ leaderCardId: envData.leaderCards[i].id }),
+                                });
+                              }
+                              await loadGameData();
                             }
-                            await loadGameData();
                           }
-                        }
-                      }}
-                      variant="outline"
-                      className="border-purple-500/50 text-purple-400"
-                    >
-                      <Plus className="w-4 h-4 mr-2" />
-                      Kezdő vezérkártyák hozzáadása
-                    </Button>
+                        }}
+                        className="bg-purple-500/10 border border-purple-500/50 text-purple-400 hover:bg-purple-500/20"
+                      >
+                        <Plus className="w-4 h-4 mr-2" />
+                        Kezdő vezérkártyák hozzáadása
+                      </Button>
+                    </div>
                   </CardContent>
                 </Card>
               ) : (
-                <>
-                  <div className="mb-4 flex justify-end">
-                    <Button
-                      onClick={() => setShowDeckBuilder(true)}
-                      variant="outline"
-                      size="sm"
-                      className="border-purple-500/50 text-purple-400 hover:bg-purple-500/10"
-                    >
-                      <Shield className="w-4 h-4 mr-2" />
-                      Pakli összeállítása
-                    </Button>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
                   {collection.map((card) => {
-                    // Vezérkártya alap értékei (baseCard.baseCard = WorldCard)
                     const baseDamage = card.baseCard.baseCard.damage;
                     const baseHealth = card.baseCard.baseCard.health;
-                    
-                    // Vezérkártya boost alkalmazása
                     const leaderDamage = card.baseCard.boostType === "DAMAGE_DOUBLE" ? baseDamage * 2 : baseDamage;
                     const leaderHealth = card.baseCard.boostType === "HEALTH_DOUBLE" ? baseHealth * 2 : baseHealth;
-                    
-                    // Játékos boostok hozzáadása
                     const totalDamage = leaderDamage + card.damageBoost;
                     const totalHealth = leaderHealth + card.healthBoost;
                     
                     return (
-                    <Card
-                      key={card.id}
-                      className="border-zinc-800 bg-zinc-900/50 hover:border-purple-500/50 transition-all"
-                    >
-                      <CardHeader>
-                        <CardTitle className="flex items-center justify-between">
-                          <span className="text-lg">{card.baseCard.name}</span>
-                          <Badge
-                            className={`${getCardTypeColor(
-                              card.baseCard.baseCard.type
-                            )} border`}
-                          >
-                            {getCardTypeIcon(card.baseCard.baseCard.type)}
-                          </Badge>
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="space-y-2">
-                          <div className="flex items-center justify-between">
-                            <span className="text-zinc-400 flex items-center gap-1">
-                              <Swords className="w-4 h-4" /> Sebzés
-                            </span>
-                            <span className="text-white font-bold">
+                      <Card
+                        key={card.id}
+                        className="border-zinc-800 bg-zinc-900/50 hover:border-purple-500/50 transition-all group cursor-pointer"
+                        onClick={() => setShowDeckBuilder(true)}
+                      >
+                        <CardContent className="p-4">
+                          <div className="flex items-start justify-between mb-3">
+                            <h3 className="font-semibold text-white text-sm group-hover:text-purple-400 transition-colors">
+                              {card.baseCard.name}
+                            </h3>
+                            <Badge className={`${getCardTypeColor(card.baseCard.baseCard.type)} border`}>
+                              {getCardTypeIcon(card.baseCard.baseCard.type)}
+                            </Badge>
+                          </div>
+                          <div className="flex items-center gap-3 text-sm">
+                            <span className="text-zinc-300 font-medium flex items-center gap-1">
+                              <Swords className="w-3.5 h-3.5 text-red-400" />
                               {totalDamage}
                               {card.damageBoost > 0 && (
-                                <span className="text-green-400 text-sm ml-1">
-                                  (+{card.damageBoost})
-                                </span>
+                                <span className="text-green-400 text-xs">+{card.damageBoost}</span>
                               )}
                             </span>
-                          </div>
-                          <div className="flex items-center justify-between">
-                            <span className="text-zinc-400 flex items-center gap-1">
-                              <Heart className="w-4 h-4" /> Életerő
-                            </span>
-                            <span className="text-white font-bold">
+                            <span className="text-zinc-300 font-medium flex items-center gap-1">
+                              <Heart className="w-3.5 h-3.5 text-pink-400" />
                               {totalHealth}
                               {card.healthBoost > 0 && (
-                                <span className="text-green-400 text-sm ml-1">
-                                  (+{card.healthBoost})
-                                </span>
+                                <span className="text-green-400 text-xs">+{card.healthBoost}</span>
                               )}
                             </span>
                           </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  );
+                        </CardContent>
+                      </Card>
+                    );
                   })}
-                  </div>
-                </>
+                </div>
               )}
             </TabsContent>
 
@@ -632,207 +589,173 @@ export default function PlayGamePage() {
               {!deck || !deck.deckCards || deck.deckCards.length === 0 ? (
                 <Card className="border-zinc-800 bg-zinc-900/50">
                   <CardContent className="p-12 text-center">
-                    <p className="text-zinc-400 mb-4">
-                      Nincs összeállított pakli. Állíts össze egyet a gyűjteményedből!
-                    </p>
-                    <Button
-                      onClick={() => setShowDeckBuilder(true)}
-                      variant="outline"
-                      className="border-purple-500/50 text-purple-400"
-                    >
-                      <Shield className="w-4 h-4 mr-2" />
-                      Pakli összeállítása
-                    </Button>
+                    <div className="max-w-md mx-auto">
+                      <Shield className="w-16 h-16 mx-auto mb-4 text-zinc-700" />
+                      <p className="text-zinc-400 mb-4">
+                        Nincs összeállított pakli. Állíts össze egyet a gyűjteményedből!
+                      </p>
+                      {collection.length > 0 && (
+                        <Button
+                          onClick={() => setShowDeckBuilder(true)}
+                          className="bg-purple-500/10 border border-purple-500/50 text-purple-400 hover:bg-purple-500/20"
+                        >
+                          <Shield className="w-4 h-4 mr-2" />
+                          Pakli összeállítása
+                        </Button>
+                      )}
+                    </div>
                   </CardContent>
                 </Card>
               ) : (
-                <>
-                  <div className="mb-4 flex justify-end">
-                    <Button
-                      onClick={handleEditDeck}
-                      variant="outline"
-                      size="sm"
-                      className="border-purple-500/50 text-purple-400 hover:bg-purple-500/10"
-                    >
-                      <Shield className="w-4 h-4 mr-2" />
-                      Pakli szerkesztése
-                    </Button>
-                  </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
                   {deck.deckCards
                     .sort((a, b) => a.order - b.order)
                     .map((deckCard, index) => {
                       const card = deckCard.playerCard;
-                      
-                      // Vezérkártya alap értékei
                       const baseDamage = card.baseCard.baseCard.damage;
                       const baseHealth = card.baseCard.baseCard.health;
-                      
-                      // Vezérkártya boost alkalmazása
                       const leaderDamage = card.baseCard.boostType === "DAMAGE_DOUBLE" ? baseDamage * 2 : baseDamage;
                       const leaderHealth = card.baseCard.boostType === "HEALTH_DOUBLE" ? baseHealth * 2 : baseHealth;
-                      
-                      // Játékos boostok hozzáadása
                       const totalDamage = leaderDamage + card.damageBoost;
                       const totalHealth = leaderHealth + card.healthBoost;
                       
                       return (
                         <Card
                           key={deckCard.id}
-                          className="border-zinc-800 bg-zinc-900/50 hover:border-purple-500/50 transition-all relative"
+                          className="border-zinc-800 bg-zinc-900/50 hover:border-purple-500/50 transition-all relative group cursor-pointer"
+                          onClick={handleEditDeck}
                         >
-                          <div className="absolute top-2 left-2 w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center font-bold text-white shadow-lg">
+                          <div className="absolute -top-2 -left-2 w-7 h-7 bg-purple-500 rounded-full flex items-center justify-center font-bold text-white text-sm shadow-lg z-10">
                             {index + 1}
                           </div>
-                          <CardHeader className="pt-12">
-                            <CardTitle className="flex items-center justify-between">
-                              <span className="text-lg">
+                          <CardContent className="p-4">
+                            <div className="flex items-start justify-between mb-3">
+                              <h3 className="font-semibold text-white text-sm group-hover:text-purple-400 transition-colors">
                                 {card.baseCard.name}
-                              </span>
-                              <Badge
-                                className={`${getCardTypeColor(
-                                  card.baseCard.baseCard.type
-                                )} border`}
-                              >
+                              </h3>
+                              <Badge className={`${getCardTypeColor(card.baseCard.baseCard.type)} border`}>
                                 {getCardTypeIcon(card.baseCard.baseCard.type)}
                               </Badge>
-                            </CardTitle>
-                          </CardHeader>
-                          <CardContent>
-                            <div className="space-y-2">
-                              <div className="flex items-center justify-between">
-                                <span className="text-zinc-400 flex items-center gap-1">
-                                  <Swords className="w-4 h-4" /> Sebzés
-                                </span>
-                                <span className="text-white font-bold">
-                                  {totalDamage}
-                                  {card.damageBoost > 0 && (
-                                    <span className="text-green-400 text-sm ml-1">
-                                      (+{card.damageBoost})
-                                    </span>
-                                  )}
-                                </span>
-                              </div>
-                              <div className="flex items-center justify-between">
-                                <span className="text-zinc-400 flex items-center gap-1">
-                                  <Heart className="w-4 h-4" /> Életerő
-                                </span>
-                                <span className="text-white font-bold">
-                                  {totalHealth}
-                                  {card.healthBoost > 0 && (
-                                    <span className="text-green-400 text-sm ml-1">
-                                      (+{card.healthBoost})
-                                    </span>
-                                  )}
-                                </span>
-                              </div>
+                            </div>
+                            <div className="flex items-center gap-3 text-sm">
+                              <span className="text-zinc-300 font-medium flex items-center gap-1">
+                                <Swords className="w-3.5 h-3.5 text-red-400" />
+                                {totalDamage}
+                                {card.damageBoost > 0 && (
+                                  <span className="text-green-400 text-xs">+{card.damageBoost}</span>
+                                )}
+                              </span>
+                              <span className="text-zinc-300 font-medium flex items-center gap-1">
+                                <Heart className="w-3.5 h-3.5 text-pink-400" />
+                                {totalHealth}
+                                {card.healthBoost > 0 && (
+                                  <span className="text-green-400 text-xs">+{card.healthBoost}</span>
+                                )}
+                              </span>
                             </div>
                           </CardContent>
                         </Card>
                       );
                     })}
                 </div>
-                </>
               )}
             </TabsContent>
 
             <TabsContent value="dungeons" className="mt-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {dungeons.map((dungeon) => {
                   const isLocked = dungeon.isLocked || false;
+                  const canBattle = !isLocked && deck && deck.deckCards && 
+                                   deck.deckCards.length === dungeon.dungeonCards.length;
+                  const wrongDeckSize = !isLocked && deck && deck.deckCards && 
+                                       deck.deckCards.length > 0 && 
+                                       deck.deckCards.length !== dungeon.dungeonCards.length;
                   
                   return (
                     <Card
                       key={dungeon.id}
-                      className={`border-zinc-800 transition-all ${
+                      className={`border transition-all ${
                         isLocked 
-                          ? "bg-zinc-900/30 opacity-60" 
-                          : "bg-zinc-900/50 hover:border-purple-500/50"
+                          ? "border-zinc-800/50 bg-zinc-900/30 opacity-50" 
+                          : canBattle
+                          ? "border-purple-500/50 bg-zinc-900/50 hover:border-purple-500 hover:shadow-lg hover:shadow-purple-500/20"
+                          : "border-zinc-800 bg-zinc-900/50"
                       }`}
                     >
-                      <CardHeader>
-                        <CardTitle className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <span>{dungeon.name}</span>
-                            {isLocked && (
-                              <Badge variant="destructive" className="text-xs">
-                                🔒 Zárolt
-                              </Badge>
-                            )}
+                      <CardHeader className="pb-3">
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex-1">
+                            <CardTitle className="text-base mb-1 flex items-center gap-2">
+                              {dungeon.name}
+                              {isLocked && (
+                                <span className="text-xs text-zinc-500">🔒</span>
+                              )}
+                            </CardTitle>
+                            <p className="text-xs text-zinc-500">
+                              {getDungeonTypeLabel(dungeon.type)}
+                            </p>
                           </div>
-                          <Badge variant="outline" className="text-purple-400">
-                            {getDungeonTypeLabel(dungeon.type)}
-                          </Badge>
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="space-y-3">
-                          {isLocked && (
-                            <div className="text-sm text-yellow-400 mb-2">
-                              ⚠️ {dungeon.requiredWins} győzelem szükséges
-                            </div>
-                          )}
-                          <div className="flex items-center justify-between text-sm">
-                            <span className="text-zinc-400">Kártyák száma:</span>
-                            <span className="text-white font-bold">
-                              {dungeon.dungeonCards.length} kártya
-                            </span>
-                          </div>
-                          <div className="flex items-center justify-between text-sm">
-                            <span className="text-zinc-400">Jutalom:</span>
-                            <span className="text-green-400 font-bold">
-                              {getDungeonReward(dungeon.type)}
-                            </span>
-                          </div>
-                          
-                          {/* Pakli méret figyelmeztetés */}
-                          {!isLocked && deck && deck.deckCards && deck.deckCards.length > 0 && 
-                           deck.deckCards.length !== dungeon.dungeonCards.length && (
-                            <Alert className="bg-yellow-500/10 border-yellow-500/50 py-2">
-                              <AlertDescription className="text-yellow-400 text-xs">
-                                ⚠️ A paklidban {deck.deckCards.length} kártya van, de ehhez a kazamatához {dungeon.dungeonCards.length} kártya szükséges!
-                              </AlertDescription>
-                            </Alert>
-                          )}
-                          
-                          <Button
-                            onClick={() => handleStartBattle(dungeon)}
-                            disabled={
-                              isLocked ||
-                              !deck ||
-                              !deck.deckCards ||
-                              deck.deckCards.length === 0 ||
-                              deck.deckCards.length !== dungeon.dungeonCards.length ||
-                              battleLoading
-                            }
-                            className="w-full bg-gradient-to-r from-purple-500 to-violet-500 disabled:opacity-30"
-                          >
-                            {battleLoading ? (
-                              <>
-                                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                                Harc...
-                              </>
-                            ) : isLocked ? (
-                              <>
-                                🔒 Zárolt
-                              </>
-                            ) : !deck || !deck.deckCards || deck.deckCards.length === 0 ? (
-                              <>
-                                <Shield className="w-4 h-4 mr-2" />
-                                Nincs pakli
-                              </>
-                            ) : deck.deckCards.length !== dungeon.dungeonCards.length ? (
-                              <>
-                                ⚠️ Rossz pakli méret
-                              </>
-                            ) : (
-                              <>
-                                <Swords className="w-4 h-4 mr-2" />
-                                Harc indítása
-                              </>
-                            )}
-                          </Button>
                         </div>
+                      </CardHeader>
+                      <CardContent className="space-y-3">
+                        {isLocked && (
+                          <Alert className="bg-yellow-500/10 border-yellow-500/50 py-2">
+                            <AlertDescription className="text-yellow-400 text-xs">
+                              🏆 {dungeon.requiredWins} győzelem szükséges
+                            </AlertDescription>
+                          </Alert>
+                        )}
+                        
+                        <div className="flex items-center justify-between text-xs">
+                          <span className="text-zinc-500">Kártyák</span>
+                          <span className="text-zinc-300 font-medium">
+                            {dungeon.dungeonCards.length} db
+                          </span>
+                        </div>
+                        
+                        <div className="flex items-center justify-between text-xs">
+                          <span className="text-zinc-500">Jutalom</span>
+                          <span className="text-green-400 font-semibold">
+                            {getDungeonReward(dungeon.type)}
+                          </span>
+                        </div>
+                        
+                        {wrongDeckSize && (
+                          <Alert className="bg-orange-500/10 border-orange-500/50 py-2">
+                            <AlertDescription className="text-orange-400 text-xs">
+                              ⚠️ Pakli: {deck.deckCards.length} ≠ {dungeon.dungeonCards.length}
+                            </AlertDescription>
+                          </Alert>
+                        )}
+                        
+                        <Button
+                          onClick={() => handleStartBattle(dungeon)}
+                          disabled={!canBattle || battleLoading}
+                          size="sm"
+                          className={`w-full ${
+                            canBattle
+                              ? "bg-linear-to-r from-purple-500 to-violet-500 hover:from-purple-600 hover:to-violet-600"
+                              : "bg-zinc-800 text-zinc-500"
+                          } disabled:opacity-50`}
+                        >
+                          {battleLoading ? (
+                            <>
+                              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                              Harc...
+                            </>
+                          ) : isLocked ? (
+                            "Zárolt"
+                          ) : !deck || !deck.deckCards || deck.deckCards.length === 0 ? (
+                            "Nincs pakli"
+                          ) : wrongDeckSize ? (
+                            "Rossz pakli méret"
+                          ) : (
+                            <>
+                              <Swords className="w-4 h-4 mr-2" />
+                              Harc indítása
+                            </>
+                          )}
+                        </Button>
                       </CardContent>
                     </Card>
                   );
@@ -850,37 +773,34 @@ export default function PlayGamePage() {
           setSelectedCards([]);
         }
       }}>
-        <DialogContent className="max-w-4xl max-h-[80vh] bg-zinc-900 border-zinc-800">
+        <DialogContent className="max-w-4xl max-h-[85vh] bg-zinc-900 border-zinc-800">
           <DialogHeader>
-            <DialogTitle className="text-white">
+            <DialogTitle className="text-white text-lg">
               {deck && deck.deckCards && deck.deckCards.length > 0 
                 ? "Pakli szerkesztése" 
                 : "Pakli összeállítása"}
             </DialogTitle>
-            <DialogDescription className="text-zinc-400">
-              Válaszd ki a kártyákat a gyűjteményedből ({selectedCards.length} kiválasztva)
-            </DialogDescription>
-            <Alert className="bg-blue-500/10 border-blue-500/50 mt-2">
-              <AlertDescription className="text-blue-400 text-sm">
-                💡 <strong>Fontos:</strong> A pakli kártyaszámának pontosan meg kell egyeznie a kiválasztott kazamata kártyaszámával!
-                <br />
-                • <strong>Egyszerű találkozás:</strong> 1 kártya
-                <br />
-                • <strong>Kis kazamata:</strong> 4 kártya (3 sima + 1 vezér)
-                <br />
-                • <strong>Nagy kazamata:</strong> 6 kártya (5 sima + 1 vezér)
-                <br /><br />
-                🎯 <strong>Tipp:</strong> Építs külön paklit minden kazamata típushoz!
-              </AlertDescription>
-            </Alert>
+            <div className="flex items-center justify-between pt-2">
+              <DialogDescription className="text-zinc-400 text-sm">
+                {selectedCards.length} kártya kiválasztva
+              </DialogDescription>
+              {selectedCards.length > 0 && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setSelectedCards([])}
+                  className="text-zinc-400 hover:text-white h-7 text-xs"
+                >
+                  Kijelölés törlése
+                </Button>
+              )}
+            </div>
           </DialogHeader>
           
-          <ScrollArea className="h-[400px] pr-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <ScrollArea className="h-[450px] pr-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-2.5">
               {collection.map((card) => {
                 const isSelected = selectedCards.includes(card.id);
-                
-                // Vezérkártya értékek számítása
                 const baseDamage = card.baseCard.baseCard.damage;
                 const baseHealth = card.baseCard.baseCard.health;
                 const leaderDamage = card.baseCard.boostType === "DAMAGE_DOUBLE" ? baseDamage * 2 : baseDamage;
@@ -894,33 +814,37 @@ export default function PlayGamePage() {
                     onClick={() => toggleCardSelection(card.id)}
                     className={`border-2 cursor-pointer transition-all ${
                       isSelected
-                        ? "border-purple-500 bg-purple-500/10"
-                        : "border-zinc-800 bg-zinc-900/50 hover:border-zinc-700"
+                        ? "border-purple-500 bg-purple-500/20 shadow-lg shadow-purple-500/20"
+                        : "border-zinc-800 bg-zinc-900/50 hover:border-zinc-700 hover:bg-zinc-900"
                     }`}
                   >
-                    <CardContent className="p-4">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="font-bold text-white">
+                    <CardContent className="p-3">
+                      <div className="flex items-start justify-between mb-2">
+                        <h4 className="font-semibold text-white text-xs leading-tight flex-1">
                           {card.baseCard.name}
-                        </span>
-                        {isSelected && (
-                          <Check className="w-5 h-5 text-purple-400" />
+                        </h4>
+                        {isSelected ? (
+                          <div className="w-5 h-5 bg-purple-500 rounded-full flex items-center justify-center shrink-0 ml-1">
+                            <Check className="w-3 h-3 text-white" />
+                          </div>
+                        ) : (
+                          <div className="w-5 h-5 border-2 border-zinc-700 rounded-full shrink-0 ml-1" />
                         )}
                       </div>
-                      <div className="flex items-center gap-4 text-sm">
-                        <Badge
-                          className={`${getCardTypeColor(card.baseCard.baseCard.type)} border`}
-                        >
+                      <div className="flex items-center justify-between text-xs">
+                        <Badge className={`${getCardTypeColor(card.baseCard.baseCard.type)} border text-xs`}>
                           {getCardTypeIcon(card.baseCard.baseCard.type)}
                         </Badge>
-                        <span className="text-zinc-400">
-                          <Swords className="w-3 h-3 inline mr-1" />
-                          {totalDamage}
-                        </span>
-                        <span className="text-zinc-400">
-                          <Heart className="w-3 h-3 inline mr-1" />
-                          {totalHealth}
-                        </span>
+                        <div className="flex items-center gap-2">
+                          <span className="text-zinc-400 flex items-center gap-0.5">
+                            <Swords className="w-3 h-3 text-red-400" />
+                            {totalDamage}
+                          </span>
+                          <span className="text-zinc-400 flex items-center gap-0.5">
+                            <Heart className="w-3 h-3 text-pink-400" />
+                            {totalHealth}
+                          </span>
+                        </div>
                       </div>
                     </CardContent>
                   </Card>
@@ -929,42 +853,43 @@ export default function PlayGamePage() {
             </div>
           </ScrollArea>
 
-          <DialogFooter>
+          <DialogFooter className="gap-2">
             <Button
               variant="outline"
               onClick={() => {
                 setSelectedCards([]);
                 setShowDeckBuilder(false);
               }}
+              size="sm"
             >
               Mégse
             </Button>
             <Button
               onClick={handleBuildDeck}
               disabled={selectedCards.length === 0}
-              className="bg-gradient-to-r from-purple-500 to-violet-500"
+              size="sm"
+              className="bg-linear-to-r from-purple-500 to-violet-500 hover:from-purple-600 hover:to-violet-600"
             >
               <Check className="w-4 h-4 mr-2" />
-              Pakli mentése
+              Pakli mentése ({selectedCards.length})
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      {/* Battle Arena - Új animált harc */}
+      {/* Battle Arena */}
       <Dialog open={showBattleArena} onOpenChange={(open) => {
         setShowBattleArena(open);
         if (!open) {
           setShowBattleResult(false);
           setCurrentBattle(null);
-          // Újratöltjük az adatokat a harc után
           loadGameData();
         }
       }}>
         <DialogContent className="max-w-6xl max-h-[90vh] bg-zinc-900 border-zinc-800">
           <DialogHeader>
             <DialogTitle className="text-white text-center text-2xl">
-              <span className="bg-gradient-to-r from-purple-500 to-violet-500 bg-clip-text text-transparent">
+              <span className="bg-linear-to-r from-purple-500 to-violet-500 bg-clip-text text-transparent">
                 Harc Aréna
               </span>
             </DialogTitle>
@@ -977,16 +902,11 @@ export default function PlayGamePage() {
               dungeonWins={currentBattle.dungeonWins}
               onComplete={() => {
                 setShowBattleArena(false);
-                
-                // Ha győztünk, akkor mutassuk a jutalom választót
                 if (currentBattle.status === "WON") {
                   setShowRewardSelector(true);
                 } else {
-                  // Ha vesztettünk, mutassuk az eredmény összefoglalót
                   setShowBattleResult(true);
                 }
-                
-                // Újratöltjük az adatokat a harc után
                 loadGameData();
               }}
             />
@@ -994,172 +914,79 @@ export default function PlayGamePage() {
         </DialogContent>
       </Dialog>
 
-      {/* Harc eredmény összefoglaló */}
+      {/* Harc eredmény összefoglaló - csak vereség esetén */}
       <Dialog open={showBattleResult} onOpenChange={setShowBattleResult}>
-        <DialogContent className="max-w-4xl max-h-[80vh] bg-zinc-900 border-zinc-800">
+        <DialogContent className="max-w-2xl bg-zinc-900 border-zinc-800">
           <DialogHeader>
-            <DialogTitle className="text-white flex items-center gap-3">
-              {currentBattle?.status === "WON" ? (
-                <>
-                  <Trophy className="w-6 h-6 text-yellow-400" />
-                  Győzelem!
-                </>
-              ) : (
-                <>
-                  <Swords className="w-6 h-6 text-red-400" />
-                  Vereség
-                </>
-              )}
+            <DialogTitle className="text-white flex items-center gap-3 text-xl">
+              <div className="w-10 h-10 bg-red-500/20 rounded-full flex items-center justify-center">
+                <Swords className="w-5 h-5 text-red-400" />
+              </div>
+              Vereség
             </DialogTitle>
             <DialogDescription className="text-zinc-400">
-              {currentBattle?.status === "WON"
-                ? "Gratulálunk! Legyőzted a kazamatát!"
-                : "Sajnos ez alkalommal nem sikerült..."}
+              Sajnos ez alkalommal nem sikerült. Próbáld újra!
             </DialogDescription>
           </DialogHeader>
 
           {currentBattle && (
-            <>
-              <div className="mb-4">
-                <div className="flex items-center justify-between p-4 bg-zinc-800/50 rounded-lg">
-                  <div className="text-center">
-                    <p className="text-zinc-400 text-sm mb-1">Nyert ütközetek</p>
-                    <p className="text-2xl font-bold text-white">
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-3">
+                <Card className="border-green-500/30 bg-green-500/5">
+                  <CardContent className="p-4 text-center">
+                    <p className="text-zinc-500 text-xs mb-1">Nyert</p>
+                    <p className="text-2xl font-bold text-green-400">
                       {currentBattle.playerWins}
                     </p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-zinc-400 text-sm mb-1">Elvesztett</p>
-                    <p className="text-2xl font-bold text-white">
+                  </CardContent>
+                </Card>
+                <Card className="border-red-500/30 bg-red-500/5">
+                  <CardContent className="p-4 text-center">
+                    <p className="text-zinc-500 text-xs mb-1">Vesztett</p>
+                    <p className="text-2xl font-bold text-red-400">
                       {currentBattle.dungeonWins}
                     </p>
-                  </div>
-                </div>
+                  </CardContent>
+                </Card>
               </div>
 
-              <ScrollArea className="h-[300px] pr-4">
-                <div className="space-y-3">
-                  {currentBattle.clashes.map((clash, index) => (
-                    <Card
-                      key={index}
-                      className={`border-2 ${
-                        clash.winner === "PLAYER"
-                          ? "border-green-500/50 bg-green-500/10"
-                          : "border-red-500/50 bg-red-500/10"
-                      }`}
-                    >
-                      <CardContent className="p-4">
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-sm text-zinc-400">
-                            Ütközet #{index + 1}
-                          </span>
-                          <Badge
-                            className={
-                              clash.winner === "PLAYER"
-                                ? "bg-green-500/20 text-green-400"
-                                : "bg-red-500/20 text-red-400"
-                            }
-                          >
-                            {clash.winner === "PLAYER" ? "Győzelem" : "Vereség"}
-                          </Badge>
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-4 text-sm">
-                          <div className="space-y-1">
-                            <p className="font-bold text-white">
-                              {clash.playerCardName}
-                            </p>
-                            <div className="flex items-center gap-2">
-                              <Badge
-                                className={`${getCardTypeColor(
-                                  clash.playerCardType
-                                )} border text-xs`}
-                              >
-                                {getCardTypeIcon(clash.playerCardType)}
-                              </Badge>
-                              <span className="text-zinc-400">
-                                <Swords className="w-3 h-3 inline mr-1" />
-                                {clash.playerDamage}
-                              </span>
-                              <span className="text-zinc-400">
-                                <Heart className="w-3 h-3 inline mr-1" />
-                                {clash.playerHealth}
-                              </span>
-                            </div>
-                          </div>
-
-                          <div className="space-y-1">
-                            <p className="font-bold text-white">
-                              {clash.dungeonCardName}
-                            </p>
-                            <div className="flex items-center gap-2">
-                              <Badge
-                                className={`${getCardTypeColor(
-                                  clash.dungeonCardType
-                                )} border text-xs`}
-                              >
-                                {getCardTypeIcon(clash.dungeonCardType)}
-                              </Badge>
-                              <span className="text-zinc-400">
-                                <Swords className="w-3 h-3 inline mr-1" />
-                                {clash.dungeonDamage}
-                              </span>
-                              <span className="text-zinc-400">
-                                <Heart className="w-3 h-3 inline mr-1" />
-                                {clash.dungeonHealth}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-
-                        <p className="text-xs text-zinc-500 mt-2">
-                          Győzelem oka:{" "}
-                          {clash.winReason === "DAMAGE"
-                            ? "Sebzés alapján"
-                            : clash.winReason === "TYPE_ADVANTAGE"
-                            ? "Típus előny"
-                            : "Döntetlen (kazamata nyer)"}
-                        </p>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              </ScrollArea>
-            </>
+              <Button
+                onClick={() => {
+                  setShowBattleResult(false);
+                  setCurrentBattle(null);
+                }}
+                className="w-full bg-zinc-800 hover:bg-zinc-700"
+              >
+                Bezárás
+              </Button>
+            </div>
           )}
-
-          <DialogFooter>
-            <Button
-              onClick={() => {
-                setShowBattleResult(false);
-                setCurrentBattle(null);
-              }}
-              variant="outline"
-            >
-              Bezárás
-            </Button>
-          </DialogFooter>
         </DialogContent>
       </Dialog>
 
       {/* Jutalom választó dialog */}
       <Dialog open={showRewardSelector} onOpenChange={setShowRewardSelector}>
-        <DialogContent className="max-w-2xl bg-zinc-900 border-zinc-800">
+        <DialogContent className="max-w-3xl max-h-[85vh] bg-zinc-900 border-zinc-800">
           <DialogHeader>
-            <DialogTitle className="text-white flex items-center gap-3">
-              <Trophy className="w-6 h-6 text-yellow-400" />
-              Válaszd ki a fejlesztendő kártyát!
+            <DialogTitle className="text-white flex items-center gap-3 text-xl">
+              <div className="w-10 h-10 bg-yellow-500/20 rounded-full flex items-center justify-center">
+                <Trophy className="w-5 h-5 text-yellow-400" />
+              </div>
+              Győzelem!
             </DialogTitle>
             <DialogDescription className="text-zinc-400">
-              {currentBattle &&
-                `Jutalom: ${getDungeonReward(currentBattle.dungeon.type)}`}
+              Válaszd ki a kártyát, amit fejleszteni szeretnél
+              {currentBattle && (
+                <span className="ml-2 text-green-400 font-semibold">
+                  ({getDungeonReward(currentBattle.dungeon.type)})
+                </span>
+              )}
             </DialogDescription>
           </DialogHeader>
 
-          <ScrollArea className="h-[300px] pr-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <ScrollArea className="h-[450px] pr-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-2.5">
               {collection.map((card) => {
-                // Vezérkártya értékek számítása
                 const baseDamage = card.baseCard.baseCard.damage;
                 const baseHealth = card.baseCard.baseCard.health;
                 const leaderDamage = card.baseCard.boostType === "DAMAGE_DOUBLE" ? baseDamage * 2 : baseDamage;
@@ -1168,35 +995,33 @@ export default function PlayGamePage() {
                 const totalHealth = leaderHealth + card.healthBoost;
                 
                 return (
-                <Card
-                  key={card.id}
-                  onClick={() => handleClaimReward(card.id)}
-                  className="border-zinc-800 bg-zinc-900/50 hover:border-purple-500 cursor-pointer transition-all"
-                >
-                  <CardContent className="p-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="font-bold text-white">
-                        {card.baseCard.name}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-4 text-sm">
-                      <Badge
-                        className={`${getCardTypeColor(card.baseCard.baseCard.type)} border`}
-                      >
-                        {getCardTypeIcon(card.baseCard.baseCard.type)}
-                      </Badge>
-                      <span className="text-zinc-400">
-                        <Swords className="w-3 h-3 inline mr-1" />
-                        {totalDamage}
-                      </span>
-                      <span className="text-zinc-400">
-                        <Heart className="w-3 h-3 inline mr-1" />
-                        {totalHealth}
-                      </span>
-                    </div>
-                  </CardContent>
-                </Card>
-              );
+                  <Card
+                    key={card.id}
+                    onClick={() => handleClaimReward(card.id)}
+                    className="border-2 border-zinc-800 bg-zinc-900/50 hover:border-yellow-500 hover:bg-yellow-500/10 cursor-pointer transition-all hover:shadow-lg hover:shadow-yellow-500/20"
+                  >
+                    <CardContent className="p-3">
+                      <div className="flex items-start justify-between mb-2">
+                        <h4 className="font-semibold text-white text-xs leading-tight flex-1">
+                          {card.baseCard.name}
+                        </h4>
+                        <Badge className={`${getCardTypeColor(card.baseCard.baseCard.type)} border text-xs ml-1`}>
+                          {getCardTypeIcon(card.baseCard.baseCard.type)}
+                        </Badge>
+                      </div>
+                      <div className="flex items-center gap-2 text-xs">
+                        <span className="text-zinc-400 flex items-center gap-0.5">
+                          <Swords className="w-3 h-3 text-red-400" />
+                          {totalDamage}
+                        </span>
+                        <span className="text-zinc-400 flex items-center gap-0.5">
+                          <Heart className="w-3 h-3 text-pink-400" />
+                          {totalHealth}
+                        </span>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
               })}
             </div>
           </ScrollArea>
