@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { CheckCircle2, AlertTriangle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import LiquidEther from "@/components/LiquidEther";
 import Link from "next/link";
 
-export default function VerifyEmailPage() {
+function VerifyEmailContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [status, setStatus] = useState<"loading" | "success" | "error">("loading");
@@ -140,5 +140,33 @@ export default function VerifyEmailPage() {
         </div>
       </div>
     </main>
+  );
+}
+
+export default function VerifyEmailPage() {
+  return (
+    <Suspense fallback={
+      <main className="min-h-screen bg-zinc-950 text-zinc-100 flex flex-col">
+        <div className="relative flex-1 flex items-center justify-center px-6 py-20">
+          <div className="absolute inset-0 pointer-events-none">
+            <LiquidEther
+              className="w-full h-full"
+              colors={["#5227FF", "#FF9FFC", "#B19EEF"]}
+              autoDemo
+            />
+          </div>
+          <div className="relative z-10 w-full max-w-3xl rounded-2xl border border-purple-400/20 bg-zinc-950/70 backdrop-blur-lg p-12 text-center shadow-2xl">
+            <div className="space-y-6">
+              <Loader2 className="w-20 h-20 text-purple-400 animate-spin mx-auto" />
+              <h1 className="text-4xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-purple-300 via-violet-300 to-fuchsia-300">
+                Betöltés...
+              </h1>
+            </div>
+          </div>
+        </div>
+      </main>
+    }>
+      <VerifyEmailContent />
+    </Suspense>
   );
 }

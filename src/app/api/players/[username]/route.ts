@@ -8,7 +8,7 @@ import type { CardType } from "@/generated/prisma";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { username: string } }
+  { params }: { params: Promise<{ username: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -20,7 +20,7 @@ export async function GET(
       );
     }
 
-    const username = params.username;
+    const { username } = await params;
 
     // Játékos keresése
     const player = await prisma.user.findUnique({
