@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { PrismaClient } from "@/generated/prisma";
+import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 
-const prisma = new PrismaClient();
+// Prisma client imported from singleton
 
 /**
  * POST /api/auth/2fa/verify-password

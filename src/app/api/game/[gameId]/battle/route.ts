@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { PrismaClient, CardType, ClashWinner, ClashWinReason, BattleStatus } from "@/generated/prisma";
-
-const prisma = new PrismaClient();
+import { CardType, ClashWinner, ClashWinReason, BattleStatus } from "@/generated/prisma";
+import { prisma } from "@/lib/prisma";
 
 // Típus előnyök meghatározása
 function getTypeAdvantage(attackerType: CardType, defenderType: CardType): boolean {
@@ -17,7 +16,10 @@ function getTypeAdvantage(attackerType: CardType, defenderType: CardType): boole
   return advantages[attackerType] === defenderType;
 }
 
-// Ütközet kiértékelése
+// Ütközet kiértékelése - DOKUMENTÁCIÓ SZERINT!
+// 1. Sebzés alapján: kártya nyer ha sebzése > ellenfél életereje
+// 2. Ha ez alapján nincs egyértelmű győztes, típus előny
+// 3. Ha ez alapján sincs, kazamata nyer
 function evaluateClash(
   playerDamage: number,
   playerHealth: number,
@@ -26,29 +28,52 @@ function evaluateClash(
   dungeonHealth: number,
   dungeonType: CardType
 ): { winner: ClashWinner; reason: ClashWinReason } {
-  // 1. Sebzés vs életerő
-  const playerWinsByDamage = playerDamage > dungeonHealth;
-  const dungeonWinsByDamage = dungeonDamage > playerHealth;
+  // Debug log
+  console.log("=== CLASH EVALUATION ===");
+  console.log("Player:", { damage: playerDamage, health: playerHealth, type: playerType });
+  console.log("Dungeon:", { damage: dungeonDamage, health: dungeonHealth, type: dungeonType });
+  
+  // 1. Sebzés vs életerő - DOKUMENTÁCIÓ SZERINT
+  // "Két kártya közül az nyer, amelyiknek a sebzés értéke nagyobb a másik kártya életerejénél"
+  const playerDefeatsEnemy = playerDamage > dungeonHealth;
+  const dungeonDefeatsPlayer = dungeonDamage > playerHealth;
 
-  if (playerWinsByDamage && !dungeonWinsByDamage) {
+  console.log("Sebzés check:", { 
+    playerDefeatsEnemy: `${playerDamage} > ${dungeonHealth} = ${playerDefeatsEnemy}`,
+    dungeonDefeatsPlayer: `${dungeonDamage} > ${playerHealth} = ${dungeonDefeatsPlayer}`
+  });
+
+  // Ha csak az egyik kártya győz sebzés alapján
+  if (playerDefeatsEnemy && !dungeonDefeatsPlayer) {
+    console.log("Result: PLAYER wins by DAMAGE");
     return { winner: "PLAYER", reason: "DAMAGE" };
   }
-  if (dungeonWinsByDamage && !playerWinsByDamage) {
+  if (dungeonDefeatsPlayer && !playerDefeatsEnemy) {
+    console.log("Result: DUNGEON wins by DAMAGE");
     return { winner: "DUNGEON", reason: "DAMAGE" };
   }
 
-  // 2. Típus előny
+  // 2. Típus előny - ha sebzés alapján nincs egyértelmű győztes
+  // "Ha nem lehet eldönteni a győztest ez alapján, akkor a kártyák típusa határozza meg"
   const playerHasTypeAdvantage = getTypeAdvantage(playerType, dungeonType);
   const dungeonHasTypeAdvantage = getTypeAdvantage(dungeonType, playerType);
 
+  console.log("Típus check:", {
+    playerHasTypeAdvantage,
+    dungeonHasTypeAdvantage
+  });
+
   if (playerHasTypeAdvantage && !dungeonHasTypeAdvantage) {
+    console.log("Result: PLAYER wins by TYPE_ADVANTAGE");
     return { winner: "PLAYER", reason: "TYPE_ADVANTAGE" };
   }
   if (dungeonHasTypeAdvantage && !playerHasTypeAdvantage) {
+    console.log("Result: DUNGEON wins by TYPE_ADVANTAGE");
     return { winner: "DUNGEON", reason: "TYPE_ADVANTAGE" };
   }
 
-  // 3. Döntetlen -> kazamata nyer
+  // 3. Döntetlen -> kazamata nyer (dokumentáció szerint)
+  console.log("Result: DUNGEON wins by DEFAULT (döntetlen)");
   return { winner: "DUNGEON", reason: "DEFAULT" };
 }
 
@@ -244,9 +269,9 @@ export async function POST(
       }
     }
 
-    // Harc eredménye
-    const totalCards = dungeon.dungeonCards.length;
-    const status: BattleStatus = playerWins >= totalCards / 2 ? "WON" : "LOST";
+    // Harc eredménye - DOKUMENTÁCIÓ SZERINT
+    // "A játékos akkor nyer a harc végén, ha összességében legalább annyi kártyája nyert mint amennyi a kazamatának"
+    const status: BattleStatus = playerWins >= dungeonWins ? "WON" : "LOST";
 
     // Harc mentése az adatbázisba
     const battle = await prisma.battle.create({

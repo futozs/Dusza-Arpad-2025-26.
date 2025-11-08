@@ -1,11 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { PrismaClient } from "@/generated/prisma";
+import { prisma } from "@/lib/prisma";
 
-const prisma = new PrismaClient();
-
-// GET /api/game - játékos játékainak listázása
+// GET /api/game - Játékos játékainak lekérése
 export async function GET() {
   try {
     const session = await getServerSession(authOptions);

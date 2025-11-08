@@ -4,7 +4,7 @@ import { authOptions } from "@/lib/auth";
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -13,7 +13,7 @@ export async function DELETE(
       return NextResponse.json({ error: "Nem vagy bejelentkezve" }, { status: 401 });
     }
 
-    const sessionId = params.id;
+    const { id: sessionId } = await params;
 
     // TODO: Implement actual session revocation
     // This would typically remove the session from your session store

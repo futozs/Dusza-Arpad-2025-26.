@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@/generated/prisma";
+import { prisma } from "@/lib/prisma";
 
-const prisma = new PrismaClient();
-
-// GET /api/environments/[environmentId] - Egy környezet részletes adatainak lekérése
+// GET /api/environments/[environmentId] - Környezet lekérése
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ environmentId: string }> }

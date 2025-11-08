@@ -1,11 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { PrismaClient } from "@/generated/prisma";
+import { prisma } from "@/lib/prisma";
 
-const prisma = new PrismaClient();
-
-// POST /api/game/[gameId]/battle/[battleId]/reward - Jutalom alkalmazása
+// POST /api/game/[gameId]/battle/[battleId]/reward - Jutalom igénylése harc után
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ gameId: string; battleId: string }> }

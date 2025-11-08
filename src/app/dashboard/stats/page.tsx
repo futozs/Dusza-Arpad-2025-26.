@@ -1,64 +1,128 @@
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
-import { redirect } from "next/navigation";
+"use client";
+
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { PrismaClient } from "@/generated/prisma";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
+import BattleArena from "@/components/battle/BattleArena";
 import { 
   BarChart3, 
   TrendingUp,
   Trophy,
   Target,
-  Zap,
-  Award,
-  Flame,
-  Shield,
   Swords,
-  Crown
+  Crown,
+  Play,
+  Calendar,
+  CheckCircle2,
+  XCircle,
+  Loader2,
 } from "lucide-react";
 
-const prisma = new PrismaClient();
+interface Battle {
+  id: string;
+  status: "WON" | "LOST";
+  playerWins: number;
+  dungeonWins: number;
+  createdAt: string;
+  dungeon: {
+    name: string;
+    type: string;
+  };
+  game: {
+    name: string;
+  };
+  clashes: Array<{
+    order: number;
+    winner: "PLAYER" | "DUNGEON";
+    winReason: "DAMAGE" | "TYPE_ADVANTAGE" | "DEFAULT";
+    playerDamage: number;
+    playerHealth: number;
+    playerCardName: string;
+    playerCardType: "EARTH" | "AIR" | "WATER" | "FIRE";
+    dungeonDamage: number;
+    dungeonHealth: number;
+    dungeonCardName: string;
+    dungeonCardType: "EARTH" | "AIR" | "WATER" | "FIRE";
+  }>;
+}
 
-export default async function StatsPage() {
-  const session = await getServerSession(authOptions);
+export default function StatsPage() {
+  const router = useRouter();
+  const [loading, setLoading] = useState(true);
+  const [battles, setBattles] = useState<Battle[]>([]);
+  const [selectedBattle, setSelectedBattle] = useState<Battle | null>(null);
+  const [showReplay, setShowReplay] = useState(false);
 
-  if (!session) {
-    redirect("/login");
-  }
+  // Statisztikák
+  const totalBattles = battles.length;
+  const wonBattles = battles.filter(b => b.status === "WON").length;
+  const lostBattles = battles.filter(b => b.status === "LOST").length;
+  const winRate = totalBattles > 0 ? Math.round((wonBattles / totalBattles) * 100) : 0;
 
-  // Statisztikák lekérése
-  const games = await prisma.game.findMany({
-    where: { userId: session.user.id },
-    include: {
-      environment: true,
-      battles: true,
-      playerCards: true,
-      _count: {
-        select: {
-          battles: true,
-          playerCards: true,
-          decks: true,
-        },
-      },
-    },
-  });
+  useEffect(() => {
+    loadBattles();
+  }, []);
 
-  const totalGames = games.length;
-  const activeGames = games.length; // Jelenleg nincs status mező
-  const completedGames = 0; // Jelenleg nincs status mező
-  const totalBattles = games.reduce((sum, g) => sum + g._count.battles, 0);
-  const totalCards = games.reduce((sum, g) => sum + g._count.playerCards, 0);
-  const totalDecks = games.reduce((sum, g) => sum + g._count.decks, 0);
+  const loadBattles = async () => {
+    try {
+      setLoading(true);
+      // Lekérjük az összes játékot
+      const gamesRes = await fetch("/api/game");
+      const games = await gamesRes.json();
 
-  // Környezetek szerinti játékok
-  const gamesByEnvironment = games.reduce((acc: Record<string, number>, game) => {
-    const envName = game.environment.name;
-    if (!acc[envName]) {
-      acc[envName] = 0;
+      // Minden játékhoz lekérjük a harcokat
+      const allBattles: Battle[] = [];
+      for (const game of games) {
+        const battlesRes = await fetch(`/api/game/${game.id}/battle`);
+        const gameBattles = await battlesRes.json();
+        allBattles.push(...gameBattles);
+      }
+
+      // Rendezzük időrendben (legújabb elől)
+      allBattles.sort((a, b) => 
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
+
+      setBattles(allBattles);
+    } catch (error) {
+      console.error("Failed to load battles:", error);
+    } finally {
+      setLoading(false);
     }
-    acc[envName]++;
-    return acc;
-  }, {});
+  };
+
+  const handleReplay = (battle: Battle) => {
+    setSelectedBattle(battle);
+    setShowReplay(true);
+  };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return new Intl.DateTimeFormat('hu-HU', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    }).format(date);
+  };
+
+  if (loading) {
+    return (
+      <DashboardLayout>
+        <div className="pt-24 px-4 md:px-8 pb-8">
+          <div className="max-w-7xl mx-auto flex items-center justify-center h-96">
+            <Loader2 className="w-12 h-12 animate-spin text-purple-500" />
+          </div>
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout>
@@ -68,237 +132,168 @@ export default async function StatsPage() {
           <div className="mb-8">
             <h1 className="text-4xl font-bold text-white mb-2 flex items-center gap-3">
               <BarChart3 className="w-10 h-10 text-purple-400" />
-              Statisztikák
+              Harc Statisztikák
             </h1>
-            <p className="text-zinc-400">Tekintsd meg játékos teljesítményedet és előrehaladásodat</p>
+            <p className="text-zinc-400">Tekintsd meg az összes harcod és játszd újra őket!</p>
           </div>
 
-          {/* Main Stats Grid */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          {/* Stats Grid */}
+          <div className="grid md:grid-cols-4 gap-4 mb-8">
             <Card className="border border-zinc-800 bg-gradient-to-br from-purple-900/20 to-zinc-900/50 backdrop-blur-sm">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <Trophy className="w-12 h-12 text-purple-400" />
+                  <Swords className="w-12 h-12 text-purple-400" />
                   <span className="text-purple-400 text-sm font-medium">Összes</span>
                 </div>
-                <p className="text-4xl font-bold text-white mb-1">{totalGames}</p>
-                <p className="text-zinc-400 text-sm">Játék Összesen</p>
+                <p className="text-4xl font-bold text-white mb-1">{totalBattles}</p>
+                <p className="text-zinc-400 text-sm">Harc Összesen</p>
               </CardContent>
             </Card>
 
             <Card className="border border-zinc-800 bg-gradient-to-br from-green-900/20 to-zinc-900/50 backdrop-blur-sm">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <Flame className="w-12 h-12 text-green-400" />
-                  <span className="text-green-400 text-sm font-medium">Aktív</span>
+                  <Trophy className="w-12 h-12 text-green-400" />
+                  <span className="text-green-400 text-sm font-medium">Győzelem</span>
                 </div>
-                <p className="text-4xl font-bold text-white mb-1">{activeGames}</p>
-                <p className="text-zinc-400 text-sm">Folyamatban</p>
+                <p className="text-4xl font-bold text-white mb-1">{wonBattles}</p>
+                <p className="text-zinc-400 text-sm">Megnyert Harc</p>
+              </CardContent>
+            </Card>
+
+            <Card className="border border-zinc-800 bg-gradient-to-br from-red-900/20 to-zinc-900/50 backdrop-blur-sm">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <XCircle className="w-12 h-12 text-red-400" />
+                  <span className="text-red-400 text-sm font-medium">Vereség</span>
+                </div>
+                <p className="text-4xl font-bold text-white mb-1">{lostBattles}</p>
+                <p className="text-zinc-400 text-sm">Elvesztett Harc</p>
               </CardContent>
             </Card>
 
             <Card className="border border-zinc-800 bg-gradient-to-br from-yellow-900/20 to-zinc-900/50 backdrop-blur-sm">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <Award className="w-12 h-12 text-yellow-400" />
-                  <span className="text-yellow-400 text-sm font-medium">Kész</span>
+                  <TrendingUp className="w-12 h-12 text-yellow-400" />
+                  <span className="text-yellow-400 text-sm font-medium">Arány</span>
                 </div>
-                <p className="text-4xl font-bold text-white mb-1">{completedGames}</p>
-                <p className="text-zinc-400 text-sm">Befejezett</p>
-              </CardContent>
-            </Card>
-
-            <Card className="border border-zinc-800 bg-gradient-to-br from-blue-900/20 to-zinc-900/50 backdrop-blur-sm">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <TrendingUp className="w-12 h-12 text-blue-400" />
-                  <span className="text-blue-400 text-sm font-medium">Arány</span>
-                </div>
-                <p className="text-4xl font-bold text-white mb-1">
-                  {totalGames > 0 ? Math.round((completedGames / totalGames) * 100) : 0}%
-                </p>
-                <p className="text-zinc-400 text-sm">Befejezési Arány</p>
+                <p className="text-4xl font-bold text-white mb-1">{winRate}%</p>
+                <p className="text-zinc-400 text-sm">Győzelmi Arány</p>
               </CardContent>
             </Card>
           </div>
 
-          <div className="grid lg:grid-cols-3 gap-8">
-            {/* Combat Stats */}
-            <div className="lg:col-span-2 space-y-6">
-              <Card className="border border-zinc-800 bg-zinc-900/50 backdrop-blur-sm">
-                <CardHeader>
-                  <CardTitle className="text-2xl text-white flex items-center gap-3">
-                    <Swords className="w-6 h-6 text-red-400" />
-                    Harci Statisztikák
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid md:grid-cols-3 gap-4">
-                    <div className="p-4 rounded-xl bg-zinc-950/50 border border-zinc-800">
-                      <div className="flex items-center gap-3 mb-2">
-                        <Swords className="w-8 h-8 text-red-400" />
-                        <div>
-                          <p className="text-2xl font-bold text-white">{totalBattles}</p>
-                          <p className="text-zinc-400 text-sm">Összes Csata</p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="p-4 rounded-xl bg-zinc-950/50 border border-zinc-800">
-                      <div className="flex items-center gap-3 mb-2">
-                        <Shield className="w-8 h-8 text-blue-400" />
-                        <div>
-                          <p className="text-2xl font-bold text-white">{totalCards}</p>
-                          <p className="text-zinc-400 text-sm">Összes Kártya</p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="p-4 rounded-xl bg-zinc-950/50 border border-zinc-800">
-                      <div className="flex items-center gap-3 mb-2">
-                        <Crown className="w-8 h-8 text-yellow-400" />
-                        <div>
-                          <p className="text-2xl font-bold text-white">{totalDecks}</p>
-                          <p className="text-zinc-400 text-sm">Összes Pakli</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="pt-4 border-t border-zinc-800">
-                    <h3 className="text-white font-medium mb-3">Átlagok</h3>
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <span className="text-zinc-400 text-sm">Csata / Játék</span>
-                        <span className="text-white font-medium">
-                          {totalGames > 0 ? (totalBattles / totalGames).toFixed(1) : 0}
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-zinc-400 text-sm">Kártya / Játék</span>
-                        <span className="text-white font-medium">
-                          {totalGames > 0 ? (totalCards / totalGames).toFixed(1) : 0}
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-zinc-400 text-sm">Pakli / Játék</span>
-                        <span className="text-white font-medium">
-                          {totalGames > 0 ? (totalDecks / totalGames).toFixed(1) : 0}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Environment Stats */}
-              <Card className="border border-zinc-800 bg-zinc-900/50 backdrop-blur-sm">
-                <CardHeader>
-                  <CardTitle className="text-2xl text-white flex items-center gap-3">
-                    <Target className="w-6 h-6 text-violet-400" />
-                    Környezetek Szerinti Játékok
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {Object.keys(gamesByEnvironment).length > 0 ? (
-                    <div className="space-y-3">
-                      {Object.entries(gamesByEnvironment).map(([envName, count]) => (
-                        <div key={envName} className="flex items-center justify-between p-3 rounded-lg bg-zinc-950/50 border border-zinc-800">
-                          <span className="text-white font-medium">{envName}</span>
-                          <div className="flex items-center gap-3">
-                            <div className="w-32 h-2 bg-zinc-800 rounded-full overflow-hidden">
-                              <div 
-                                className="h-full bg-gradient-to-r from-purple-500 to-violet-500"
-                                style={{ width: `${(count / totalGames) * 100}%` }}
-                              />
-                            </div>
-                            <span className="text-zinc-400 text-sm min-w-[3rem] text-right">
-                              {count} játék
-                            </span>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="text-center py-8">
-                      <Target className="w-16 h-16 text-zinc-700 mx-auto mb-4" />
-                      <p className="text-zinc-500">Még nincsenek statisztikák</p>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Achievements & Progress */}
-            <div className="space-y-6">
-              <Card className="border border-zinc-800 bg-zinc-900/50 backdrop-blur-sm">
-                <CardHeader>
-                  <CardTitle className="text-xl text-white flex items-center gap-2">
-                    <Zap className="w-5 h-5 text-yellow-400" />
-                    Teljesítmények
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
+          {/* Battles List */}
+          <Card className="border border-zinc-800 bg-zinc-900/50 backdrop-blur-sm">
+            <CardHeader>
+              <CardTitle className="text-2xl text-white flex items-center gap-3">
+                <Swords className="w-6 h-6 text-red-400" />
+                Összes Harc ({totalBattles})
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {battles.length === 0 ? (
+                <div className="text-center py-12">
+                  <Swords className="w-16 h-16 text-zinc-700 mx-auto mb-4" />
+                  <p className="text-zinc-500 text-lg mb-2">Még nincsenek harcaid</p>
+                  <p className="text-zinc-600 text-sm">Indíts egy harcot a &quot;Játékok&quot; menüpontban!</p>
+                </div>
+              ) : (
+                <ScrollArea className="h-[600px] pr-4">
                   <div className="space-y-3">
-                    <div className="p-3 rounded-lg bg-zinc-950/50 border border-zinc-800 opacity-50">
-                      <div className="flex items-center gap-3">
-                        <Trophy className="w-8 h-8 text-zinc-600" />
-                        <div>
-                          <p className="text-white font-medium text-sm">Első Győzelem</p>
-                          <p className="text-zinc-500 text-xs">Zárt le az első csatádat</p>
-                        </div>
-                      </div>
-                    </div>
+                    {battles.map((battle) => (
+                      <Card
+                        key={battle.id}
+                        className={`border-2 transition-all cursor-pointer hover:scale-[1.01] ${
+                          battle.status === "WON"
+                            ? "border-green-500/30 bg-green-500/5 hover:border-green-500/50"
+                            : "border-red-500/30 bg-red-500/5 hover:border-red-500/50"
+                        }`}
+                      >
+                        <CardContent className="p-4">
+                          <div className="flex items-center justify-between">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-3 mb-2">
+                                {battle.status === "WON" ? (
+                                  <CheckCircle2 className="w-6 h-6 text-green-400" />
+                                ) : (
+                                  <XCircle className="w-6 h-6 text-red-400" />
+                                )}
+                                <div>
+                                  <h3 className="font-bold text-white text-lg">
+                                    {battle.dungeon.name}
+                                  </h3>
+                                  <p className="text-zinc-400 text-sm">
+                                    {battle.game.name}
+                                  </p>
+                                </div>
+                              </div>
 
-                    <div className="p-3 rounded-lg bg-zinc-950/50 border border-zinc-800 opacity-50">
-                      <div className="flex items-center gap-3">
-                        <Award className="w-8 h-8 text-zinc-600" />
-                        <div>
-                          <p className="text-white font-medium text-sm">Kártyagyűjtő</p>
-                          <p className="text-zinc-500 text-xs">Szerezz 50 kártyát</p>
-                        </div>
-                      </div>
-                    </div>
+                              <div className="flex items-center gap-4 text-sm">
+                                <Badge
+                                  className={
+                                    battle.status === "WON"
+                                      ? "bg-green-500/20 text-green-400 border-green-500/50"
+                                      : "bg-red-500/20 text-red-400 border-red-500/50"
+                                  }
+                                >
+                                  {battle.status === "WON" ? "GYŐZELEM" : "VERESÉG"}
+                                </Badge>
+                                <span className="text-zinc-400">
+                                  <Trophy className="w-4 h-4 inline mr-1" />
+                                  {battle.playerWins} - {battle.dungeonWins}
+                                </span>
+                                <span className="text-zinc-400">
+                                  <Calendar className="w-4 h-4 inline mr-1" />
+                                  {formatDate(battle.createdAt)}
+                                </span>
+                              </div>
+                            </div>
 
-                    <div className="p-3 rounded-lg bg-zinc-950/50 border border-zinc-800 opacity-50">
-                      <div className="flex items-center gap-3">
-                        <Crown className="w-8 h-8 text-zinc-600" />
-                        <div>
-                          <p className="text-white font-medium text-sm">Mester</p>
-                          <p className="text-zinc-500 text-xs">Fejezz be 10 játékot</p>
-                        </div>
-                      </div>
-                    </div>
+                            <Button
+                              onClick={() => handleReplay(battle)}
+                              className="bg-gradient-to-r from-purple-500 to-violet-500"
+                            >
+                              <Play className="w-4 h-4 mr-2" />
+                              Replay
+                            </Button>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
                   </div>
-                </CardContent>
-              </Card>
-
-              <Card className="border border-zinc-800 bg-zinc-900/50 backdrop-blur-sm">
-                <CardHeader>
-                  <CardTitle className="text-xl text-white flex items-center gap-2">
-                    <TrendingUp className="w-5 h-5 text-green-400" />
-                    Előrehaladás
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-zinc-400 text-sm">Befejezett Játékok</span>
-                      <span className="text-white text-sm font-medium">{completedGames}/{totalGames}</span>
-                    </div>
-                    <div className="w-full h-2 bg-zinc-800 rounded-full overflow-hidden">
-                      <div 
-                        className="h-full bg-gradient-to-r from-green-500 to-emerald-500"
-                        style={{ width: `${totalGames > 0 ? (completedGames / totalGames) * 100 : 0}%` }}
-                      />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
+                </ScrollArea>
+              )}
+            </CardContent>
+          </Card>
         </div>
       </div>
+
+      {/* Replay Dialog */}
+      <Dialog open={showReplay} onOpenChange={setShowReplay}>
+        <DialogContent className="max-w-6xl max-h-[90vh] bg-zinc-900 border-zinc-800">
+          <DialogHeader>
+            <DialogTitle className="text-white text-center text-2xl">
+              <span className="bg-gradient-to-r from-purple-500 to-violet-500 bg-clip-text text-transparent">
+                Harc Replay - {selectedBattle?.dungeon.name}
+              </span>
+            </DialogTitle>
+          </DialogHeader>
+
+          {selectedBattle && selectedBattle.clashes && selectedBattle.clashes.length > 0 && (
+            <BattleArena
+              clashes={selectedBattle.clashes}
+              playerWins={selectedBattle.playerWins}
+              dungeonWins={selectedBattle.dungeonWins}
+              onComplete={() => {
+                setShowReplay(false);
+                setSelectedBattle(null);
+              }}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </DashboardLayout>
   );
 }

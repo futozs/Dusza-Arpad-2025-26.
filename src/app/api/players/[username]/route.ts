@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { PrismaClient, CardType } from "@/generated/prisma";
 
-const prisma = new PrismaClient();
+// Prisma client imported from singleton
 
 export async function GET(
   req: NextRequest,

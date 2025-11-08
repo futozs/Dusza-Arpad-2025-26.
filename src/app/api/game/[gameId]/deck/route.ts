@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { PrismaClient } from "@/generated/prisma";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/prisma";
 
 // GET /api/game/[gameId]/deck - Aktív pakli lekérése
 export async function GET(
@@ -73,6 +71,11 @@ export async function POST(
 
     if (!playerCardIds || !Array.isArray(playerCardIds) || playerCardIds.length === 0) {
       return NextResponse.json({ error: "Hiányzó vagy hibás playerCardIds" }, { status: 400 });
+    }
+
+    // Maximum 6 kártya egy pakliban (5+1)
+    if (playerCardIds.length > 6) {
+      return NextResponse.json({ error: "Egy pakliba maximum 6 kártya tehető" }, { status: 400 });
     }
 
     // Ellenőrizzük, hogy a játék a felhasználóé-e

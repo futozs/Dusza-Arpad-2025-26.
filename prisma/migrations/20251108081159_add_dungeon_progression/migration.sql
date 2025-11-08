@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE `dungeons` ADD COLUMN `order` INTEGER NOT NULL DEFAULT 0,
+    ADD COLUMN `requiredWins` INTEGER NOT NULL DEFAULT 0;

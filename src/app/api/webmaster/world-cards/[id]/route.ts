@@ -7,7 +7,11 @@ import { PrismaClient, CardType } from "@/generated/prisma";
 
 const VALID_CARD_TYPES: CardType[] = ["EARTH", "AIR", "WATER", "FIRE"];
 
-export async function GET(request: NextRequest) {
+// GET - Egyedi kártya lekérése
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
     const session = await getServerSession(authOptions);
 
@@ -15,28 +19,31 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Nincs jogosultság" }, { status: 403 });
     }
 
-    const { searchParams } = new URL(request.url);
-    const environmentId = searchParams.get("environmentId");
+    const { id } = await params;
 
-    const worldCards = await prisma.worldCard.findMany({
-      where: environmentId ? { environmentId } : undefined,
+    const worldCard = await prisma.worldCard.findUnique({
+      where: { id },
       include: {
         environment: true,
       },
-      orderBy: [
-        { environmentId: "asc" },
-        { order: "asc" },
-      ],
     });
 
-    return NextResponse.json(worldCards);
+    if (!worldCard) {
+      return NextResponse.json({ error: "Nem található a kártya" }, { status: 404 });
+    }
+
+    return NextResponse.json(worldCard);
   } catch (error) {
     console.error("WorldCard GET error:", error);
     return NextResponse.json({ error: "Hiba történt a lekérés során" }, { status: 500 });
   }
 }
 
-export async function POST(request: NextRequest) {
+// PUT - Kártya frissítése
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
     const session = await getServerSession(authOptions);
 
@@ -44,6 +51,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Nincs jogosultság" }, { status: 403 });
     }
 
+    const { id } = await params;
     const body = await request.json();
     const { name, damage, health, type, order, environmentId } = body;
 
@@ -85,17 +93,29 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "A kiválasztott környezet nem létezik" }, { status: 400 });
     }
 
-    // Ellenőrizzük, hogy létezik-e már ilyen nevű kártya
-    const existing = await prisma.worldCard.findUnique({
-      where: { name: name.trim() },
+    // Ellenőrizzük, hogy létezik-e a kártya
+    const existingCard = await prisma.worldCard.findUnique({
+      where: { id },
     });
 
-    if (existing) {
-      return NextResponse.json({ error: "Már létezik ilyen nevű kártya" }, { status: 400 });
+    if (!existingCard) {
+      return NextResponse.json({ error: "Nem található a kártya" }, { status: 404 });
     }
 
-    // Kártya létrehozása
-    const worldCard = await prisma.worldCard.create({
+    // Ha a név változott, ellenőrizzük hogy nem foglalt-e
+    if (name.trim() !== existingCard.name) {
+      const nameExists = await prisma.worldCard.findUnique({
+        where: { name: name.trim() },
+      });
+
+      if (nameExists) {
+        return NextResponse.json({ error: "Már létezik ilyen nevű kártya" }, { status: 400 });
+      }
+    }
+
+    // Kártya frissítése
+    const worldCard = await prisma.worldCard.update({
+      where: { id },
       data: {
         name: name.trim(),
         damage,
@@ -109,14 +129,18 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    return NextResponse.json(worldCard, { status: 201 });
+    return NextResponse.json(worldCard);
   } catch (error) {
-    console.error("WorldCard POST error:", error);
-    return NextResponse.json({ error: "Hiba történt a létrehozás során" }, { status: 500 });
+    console.error("WorldCard PUT error:", error);
+    return NextResponse.json({ error: "Hiba történt a frissítés során" }, { status: 500 });
   }
 }
 
-export async function DELETE(request: NextRequest) {
+// DELETE - Kártya törlése
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
     const session = await getServerSession(authOptions);
 
@@ -124,11 +148,14 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: "Nincs jogosultság" }, { status: 403 });
     }
 
-    const { searchParams } = new URL(request.url);
-    const id = searchParams.get("id");
+    const { id } = await params;
 
-    if (!id) {
-      return NextResponse.json({ error: "Hiányzó kártya ID" }, { status: 400 });
+    const existingCard = await prisma.worldCard.findUnique({
+      where: { id },
+    });
+
+    if (!existingCard) {
+      return NextResponse.json({ error: "Nem található a kártya" }, { status: 404 });
     }
 
     await prisma.worldCard.delete({

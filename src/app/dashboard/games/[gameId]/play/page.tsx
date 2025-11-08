@@ -18,6 +18,7 @@ import {
   Loader2,
   Plus,
   Check,
+  BarChart3,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -30,6 +31,8 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import BattleArena from "@/components/battle/BattleArena";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 type CardType = "EARTH" | "AIR" | "WATER" | "FIRE";
 
@@ -78,7 +81,10 @@ interface Dungeon {
   id: string;
   name: string;
   type: "SIMPLE_ENCOUNTER" | "SMALL_DUNGEON" | "LARGE_DUNGEON";
+  order: number;
+  requiredWins: number;
   dungeonCards: DungeonCard[];
+  isLocked?: boolean; // Clientside kiszámított érték
 }
 
 interface Environment {
@@ -184,12 +190,13 @@ export default function PlayGamePage() {
   
   const [selectedCards, setSelectedCards] = useState<string[]>([]);
   const [showDeckBuilder, setShowDeckBuilder] = useState(false);
-  const [showDungeonSelector, setShowDungeonSelector] = useState(false);
-  const [selectedDungeon, setSelectedDungeon] = useState<Dungeon | null>(null);
+  const [showBattleArena, setShowBattleArena] = useState(false);
   
   const [currentBattle, setCurrentBattle] = useState<Battle | null>(null);
   const [showBattleResult, setShowBattleResult] = useState(false);
   const [showRewardSelector, setShowRewardSelector] = useState(false);
+
+  const MAX_DECK_SIZE = 6; // 5+1 kártya
 
   const loadGameData = useCallback(async () => {
     setLoading(true);
@@ -257,12 +264,32 @@ export default function PlayGamePage() {
       console.log("Deck data:", deckData);
       setDeck(deckData || null);
 
-      // Kazamaták (környezetből)
+      // Kazamaták (környezetből) + győzelmek számolása
       if (currentGame.environment && currentGame.environment.id) {
         const envRes = await fetch(`/api/environments/${currentGame.environment.id}`);
         const envData = await envRes.json();
         console.log("Environment data:", envData);
-        setDungeons(envData.dungeons || []);
+        
+        // Harcok lekérése a játékhoz
+        const battlesRes = await fetch(`/api/game/${gameId}/battle`);
+        const battlesData = await battlesRes.json();
+        console.log("Battles:", battlesData);
+        
+        // Számoljuk meg a győzelmeket - ellenőrizzük, hogy tömb-e
+        const battles = Array.isArray(battlesData) ? battlesData : [];
+        const totalWins = battles.filter((b: Battle) => b.status === "WON").length;
+        console.log("Total wins:", totalWins);
+        
+        // Csak azokat a kazamatákat mutassuk, amelyekhez elég győzelem van
+        // Az első kazamata (order: 0 vagy 1) mindig legyen feloldva
+        const availableDungeons = (envData.dungeons || [])
+          .sort((a: Dungeon, b: Dungeon) => a.order - b.order)
+          .map((dungeon: Dungeon, index: number) => ({
+            ...dungeon,
+            isLocked: index === 0 ? false : totalWins < dungeon.requiredWins,
+          }));
+        
+        setDungeons(availableDungeons);
       } else {
         console.error("No environment found in game data!");
       }
@@ -295,6 +322,7 @@ export default function PlayGamePage() {
         setDeck(newDeck);
         setSelectedCards([]);
         setShowDeckBuilder(false);
+        await loadGameData(); // Újratöltjük az adatokat
       } else {
         const error = await res.json();
         alert(error.error || "Hiba történt");
@@ -302,6 +330,15 @@ export default function PlayGamePage() {
     } catch (error) {
       console.error("Failed to build deck:", error);
       alert("Hiba történt a pakli összeállítása során");
+    }
+  };
+
+  const handleEditDeck = () => {
+    if (deck && deck.deckCards) {
+      // Jelenlegi pakli kártyáinak kiválasztása
+      const currentCardIds = deck.deckCards.map(dc => dc.playerCard.id);
+      setSelectedCards(currentCardIds);
+      setShowDeckBuilder(true);
     }
   };
 
@@ -317,12 +354,10 @@ export default function PlayGamePage() {
       if (res.ok) {
         const data = await res.json();
         setCurrentBattle(data.battle);
-        setShowBattleResult(true);
-        setShowDungeonSelector(false);
+        setShowBattleArena(true); // Új battle aréna megjelenítése
         
-        if (data.needsReward) {
-          setShowRewardSelector(true);
-        }
+        // NE állítsuk be a jutalom választót itt!
+        // Azt a BattleArena onComplete-ben fogjuk megjeleníteni
       } else {
         const error = await res.json();
         alert(error.error || "Hiba történt");
@@ -350,8 +385,8 @@ export default function PlayGamePage() {
       if (res.ok) {
         await loadGameData(); // Újratöltjük az adatokat
         setShowRewardSelector(false);
-        setShowBattleResult(false);
         setCurrentBattle(null);
+        // Sikeres jutalom átvétel - nem kell eredmény összefoglaló
       } else {
         const error = await res.json();
         alert(error.error || "Hiba történt");
@@ -363,11 +398,14 @@ export default function PlayGamePage() {
   };
 
   const toggleCardSelection = (cardId: string) => {
-    setSelectedCards((prev) =>
-      prev.includes(cardId)
-        ? prev.filter((id) => id !== cardId)
-        : [...prev, cardId]
-    );
+    setSelectedCards((prev) => {
+      if (prev.includes(cardId)) {
+        return prev.filter((id) => id !== cardId);
+      } else if (prev.length < MAX_DECK_SIZE) {
+        return [...prev, cardId];
+      }
+      return prev;
+    });
   };
 
   if (loading) {
@@ -410,37 +448,39 @@ export default function PlayGamePage() {
               </div>
 
               <div className="flex gap-3">
-                <Button
-                  onClick={() => setShowDeckBuilder(true)}
-                  variant="outline"
-                  className="border-purple-500/50 text-purple-400 hover:bg-purple-500/10"
-                >
-                  <Shield className="w-4 h-4 mr-2" />
-                  Pakli összeállítása
-                </Button>
-                
-                <Button
-                  onClick={() => setShowDungeonSelector(true)}
-                  disabled={!deck || !deck.deckCards || deck.deckCards.length === 0}
-                  className="bg-gradient-to-r from-purple-500 to-violet-500 hover:from-purple-600 hover:to-violet-600"
-                >
-                  <Swords className="w-4 h-4 mr-2" />
-                  Harc indítása
-                </Button>
+                {deck && deck.deckCards && deck.deckCards.length > 0 ? (
+                  <Button
+                    onClick={handleEditDeck}
+                    variant="outline"
+                    className="border-purple-500/50 text-purple-400 hover:bg-purple-500/10"
+                  >
+                    <Shield className="w-4 h-4 mr-2" />
+                    Pakli szerkesztése
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={() => setShowDeckBuilder(true)}
+                    variant="outline"
+                    className="border-purple-500/50 text-purple-400 hover:bg-purple-500/10"
+                  >
+                    <Shield className="w-4 h-4 mr-2" />
+                    Pakli összeállítása
+                  </Button>
+                )}
               </div>
             </div>
           </div>
 
-          <Tabs defaultValue="collection" className="w-full">
+          <Tabs defaultValue="deck" className="w-full">
             <TabsList className="bg-zinc-900/50 border border-zinc-800">
-              <TabsTrigger value="collection">
-                Gyűjtemény ({collection.length})
-              </TabsTrigger>
               <TabsTrigger value="deck">
-                Pakli ({deck?.deckCards.length || 0})
+                Pakli ({deck?.deckCards?.length || 0})
               </TabsTrigger>
               <TabsTrigger value="dungeons">
                 Kazamaták ({dungeons.length})
+              </TabsTrigger>
+              <TabsTrigger value="collection">
+                Gyűjtemény ({collection.length})
               </TabsTrigger>
             </TabsList>
 
@@ -479,7 +519,19 @@ export default function PlayGamePage() {
                   </CardContent>
                 </Card>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <>
+                  <div className="mb-4 flex justify-end">
+                    <Button
+                      onClick={() => setShowDeckBuilder(true)}
+                      variant="outline"
+                      size="sm"
+                      className="border-purple-500/50 text-purple-400 hover:bg-purple-500/10"
+                    >
+                      <Shield className="w-4 h-4 mr-2" />
+                      Pakli összeállítása
+                    </Button>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {collection.map((card) => (
                     <Card
                       key={card.id}
@@ -529,7 +581,8 @@ export default function PlayGamePage() {
                       </CardContent>
                     </Card>
                   ))}
-                </div>
+                  </div>
+                </>
               )}
             </TabsContent>
 
@@ -551,6 +604,18 @@ export default function PlayGamePage() {
                   </CardContent>
                 </Card>
               ) : (
+                <>
+                  <div className="mb-4 flex justify-end">
+                    <Button
+                      onClick={handleEditDeck}
+                      variant="outline"
+                      size="sm"
+                      className="border-purple-500/50 text-purple-400 hover:bg-purple-500/10"
+                    >
+                      <Shield className="w-4 h-4 mr-2" />
+                      Pakli szerkesztése
+                    </Button>
+                  </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {deck.deckCards
                     .sort((a, b) => a.order - b.order)
@@ -602,67 +667,90 @@ export default function PlayGamePage() {
                       );
                     })}
                 </div>
+                </>
               )}
             </TabsContent>
 
             <TabsContent value="dungeons" className="mt-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {dungeons.map((dungeon) => (
-                  <Card
-                    key={dungeon.id}
-                    className="border-zinc-800 bg-zinc-900/50 hover:border-purple-500/50 transition-all"
-                  >
-                    <CardHeader>
-                      <CardTitle className="flex items-center justify-between">
-                        <span>{dungeon.name}</span>
-                        <Badge variant="outline" className="text-purple-400">
-                          {getDungeonTypeLabel(dungeon.type)}
-                        </Badge>
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-3">
-                        <div className="flex items-center justify-between text-sm">
-                          <span className="text-zinc-400">Kártyák száma:</span>
-                          <span className="text-white font-bold">
-                            {dungeon.dungeonCards.length}
-                          </span>
-                        </div>
-                        <div className="flex items-center justify-between text-sm">
-                          <span className="text-zinc-400">Jutalom:</span>
-                          <span className="text-green-400 font-bold">
-                            {getDungeonReward(dungeon.type)}
-                          </span>
-                        </div>
-                        <Button
-                          onClick={() => {
-                            setSelectedDungeon(dungeon);
-                            handleStartBattle(dungeon);
-                          }}
-                          disabled={
-                            !deck ||
-                            !deck.deckCards ||
-                            deck.deckCards.length !== dungeon.dungeonCards.length ||
-                            battleLoading
-                          }
-                          className="w-full bg-gradient-to-r from-purple-500 to-violet-500"
-                        >
-                          {battleLoading ? (
-                            <>
-                              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                              Harc...
-                            </>
-                          ) : (
-                            <>
-                              <Swords className="w-4 h-4 mr-2" />
-                              Harc indítása
-                            </>
+                {dungeons.map((dungeon) => {
+                  const isLocked = dungeon.isLocked || false;
+                  
+                  return (
+                    <Card
+                      key={dungeon.id}
+                      className={`border-zinc-800 transition-all ${
+                        isLocked 
+                          ? "bg-zinc-900/30 opacity-60" 
+                          : "bg-zinc-900/50 hover:border-purple-500/50"
+                      }`}
+                    >
+                      <CardHeader>
+                        <CardTitle className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <span>{dungeon.name}</span>
+                            {isLocked && (
+                              <Badge variant="destructive" className="text-xs">
+                                🔒 Zárolt
+                              </Badge>
+                            )}
+                          </div>
+                          <Badge variant="outline" className="text-purple-400">
+                            {getDungeonTypeLabel(dungeon.type)}
+                          </Badge>
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="space-y-3">
+                          {isLocked && (
+                            <div className="text-sm text-yellow-400 mb-2">
+                              ⚠️ {dungeon.requiredWins} győzelem szükséges
+                            </div>
                           )}
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="text-zinc-400">Kártyák száma:</span>
+                            <span className="text-white font-bold">
+                              {dungeon.dungeonCards.length}
+                            </span>
+                          </div>
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="text-zinc-400">Jutalom:</span>
+                            <span className="text-green-400 font-bold">
+                              {getDungeonReward(dungeon.type)}
+                            </span>
+                          </div>
+                          <Button
+                            onClick={() => handleStartBattle(dungeon)}
+                            disabled={
+                              isLocked ||
+                              !deck ||
+                              !deck.deckCards ||
+                              deck.deckCards.length !== dungeon.dungeonCards.length ||
+                              battleLoading
+                            }
+                            className="w-full bg-gradient-to-r from-purple-500 to-violet-500 disabled:opacity-30"
+                          >
+                            {battleLoading ? (
+                              <>
+                                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                Harc...
+                              </>
+                            ) : isLocked ? (
+                              <>
+                                🔒 Zárolt
+                              </>
+                            ) : (
+                              <>
+                                <Swords className="w-4 h-4 mr-2" />
+                                Harc indítása
+                              </>
+                            )}
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
               </div>
             </TabsContent>
           </Tabs>
@@ -670,13 +758,29 @@ export default function PlayGamePage() {
       </div>
 
       {/* Pakli építő dialog */}
-      <Dialog open={showDeckBuilder} onOpenChange={setShowDeckBuilder}>
+      <Dialog open={showDeckBuilder} onOpenChange={(open) => {
+        setShowDeckBuilder(open);
+        if (!open) {
+          setSelectedCards([]);
+        }
+      }}>
         <DialogContent className="max-w-4xl max-h-[80vh] bg-zinc-900 border-zinc-800">
           <DialogHeader>
-            <DialogTitle className="text-white">Pakli összeállítása</DialogTitle>
+            <DialogTitle className="text-white">
+              {deck && deck.deckCards && deck.deckCards.length > 0 
+                ? "Pakli szerkesztése" 
+                : "Pakli összeállítása"}
+            </DialogTitle>
             <DialogDescription className="text-zinc-400">
-              Válaszd ki a kártyákat a gyűjteményedből ({selectedCards.length} kiválasztva)
+              Válaszd ki a kártyákat a gyűjteményedből ({selectedCards.length}/{MAX_DECK_SIZE} kiválasztva)
             </DialogDescription>
+            {selectedCards.length === MAX_DECK_SIZE && (
+              <Alert className="bg-yellow-500/10 border-yellow-500/50 mt-2">
+                <AlertDescription className="text-yellow-400 text-sm">
+                  Elérted a maximum pakli méretet ({MAX_DECK_SIZE} kártya)!
+                </AlertDescription>
+              </Alert>
+            )}
           </DialogHeader>
           
           <ScrollArea className="h-[400px] pr-4">
@@ -746,7 +850,50 @@ export default function PlayGamePage() {
         </DialogContent>
       </Dialog>
 
-      {/* Harc eredmény dialog */}
+      {/* Battle Arena - Új animált harc */}
+      <Dialog open={showBattleArena} onOpenChange={(open) => {
+        setShowBattleArena(open);
+        if (!open) {
+          setShowBattleResult(false);
+          setCurrentBattle(null);
+          // Újratöltjük az adatokat a harc után
+          loadGameData();
+        }
+      }}>
+        <DialogContent className="max-w-6xl max-h-[90vh] bg-zinc-900 border-zinc-800">
+          <DialogHeader>
+            <DialogTitle className="text-white text-center text-2xl">
+              <span className="bg-gradient-to-r from-purple-500 to-violet-500 bg-clip-text text-transparent">
+                Harc Aréna
+              </span>
+            </DialogTitle>
+          </DialogHeader>
+
+          {currentBattle && currentBattle.clashes && currentBattle.clashes.length > 0 && (
+            <BattleArena
+              clashes={currentBattle.clashes}
+              playerWins={currentBattle.playerWins}
+              dungeonWins={currentBattle.dungeonWins}
+              onComplete={() => {
+                setShowBattleArena(false);
+                
+                // Ha győztünk, akkor mutassuk a jutalom választót
+                if (currentBattle.status === "WON") {
+                  setShowRewardSelector(true);
+                } else {
+                  // Ha vesztettünk, mutassuk az eredmény összefoglalót
+                  setShowBattleResult(true);
+                }
+                
+                // Újratöltjük az adatokat a harc után
+                loadGameData();
+              }}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Harc eredmény összefoglaló */}
       <Dialog open={showBattleResult} onOpenChange={setShowBattleResult}>
         <DialogContent className="max-w-4xl max-h-[80vh] bg-zinc-900 border-zinc-800">
           <DialogHeader>

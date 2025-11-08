@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { PrismaClient } from "@/generated/prisma";
+import { prisma } from "@/lib/prisma";
 import * as speakeasy from "speakeasy";
 import * as QRCode from "qrcode";
 import { TwoFactorSetupSchema } from "@/schemas/auth.schemas";
 import bcrypt from "bcryptjs";
 
-const prisma = new PrismaClient();
+// Prisma client imported from singleton
 
 /**
  * GET /api/auth/2fa/setup
