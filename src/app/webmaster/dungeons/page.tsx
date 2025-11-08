@@ -10,23 +10,26 @@ import { DeleteDungeonButton } from "@/components/DeleteDungeonButton";
 
 const prisma = new PrismaClient();
 
-const dungeonTypeInfo: Record<DungeonType, { label: string; iconComponent: typeof Swords; color: string; reward: string }> = {
+const dungeonTypeInfo: Record<DungeonType, { label: string; iconComponent: typeof Swords; color: string; textColor: string; reward: string }> = {
   SIMPLE_ENCOUNTER: { 
     label: "Egyszerű találkozás", 
     iconComponent: Swords, 
-    color: "text-green-500",
+    color: "bg-green-500/10 border-green-500/30",
+    textColor: "text-green-400",
     reward: "+1 sebzés"
   },
   SMALL_DUNGEON: { 
     label: "Kis kazamata", 
     iconComponent: Sparkles, 
-    color: "text-blue-500",
+    color: "bg-blue-500/10 border-blue-500/30",
+    textColor: "text-blue-400",
     reward: "+2 életerő"
   },
   LARGE_DUNGEON: { 
     label: "Nagy kazamata", 
     iconComponent: Crown, 
-    color: "text-purple-500",
+    color: "bg-purple-500/10 border-purple-500/30",
+    textColor: "text-purple-400",
     reward: "+3 sebzés"
   },
 };
@@ -108,10 +111,10 @@ export default async function DungeonsPage() {
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <CardTitle className="text-white flex items-center gap-2">
-                      <IconComponent className={`w-5 h-5 ${typeInfo.color}`} />
+                      <IconComponent className={`w-5 h-5 ${typeInfo.textColor}`} />
                       {dungeon.name}
                     </CardTitle>
-                    <span className={`text-sm ${typeInfo.color} font-semibold px-3 py-1 bg-zinc-800 rounded-full`}>
+                    <span className={`text-sm font-semibold px-3 py-1 rounded-full ${typeInfo.color} ${typeInfo.textColor}`}>
                       {typeInfo.label}
                     </span>
                   </div>
@@ -119,30 +122,39 @@ export default async function DungeonsPage() {
                 <CardContent className="space-y-4">
                   {/* Dungeon Info */}
                   <div className="grid grid-cols-2 gap-3 text-sm">
-                    <div className="bg-zinc-900/50 p-3 rounded-lg">
-                      <p className="text-zinc-400">Kártyák száma</p>
+                    <div className="bg-zinc-800 border border-zinc-700 p-3 rounded-lg">
+                      <p className="text-zinc-400 text-xs mb-1">Kártyák száma</p>
                       <p className="text-lg font-bold text-zinc-100">{dungeon.dungeonCards.length}</p>
                     </div>
-                    <div className="bg-amber-900/30 p-3 rounded-lg">
-                      <p className="text-zinc-400">Nyeremény</p>
-                      <p className="text-lg font-bold text-amber-200">{typeInfo.reward}</p>
+                    <div className="bg-amber-500/10 border border-amber-500/30 p-3 rounded-lg">
+                      <p className="text-zinc-400 text-xs mb-1">Nyeremény</p>
+                      <p className="text-lg font-bold text-amber-400">{typeInfo.reward}</p>
+                    </div>
+                    <div className="bg-zinc-800 border border-zinc-700 p-3 rounded-lg">
+                      <p className="text-zinc-400 text-xs mb-1">Sorrend</p>
+                      <p className="text-lg font-bold text-zinc-100">#{dungeon.order}</p>
+                    </div>
+                    <div className="bg-zinc-800 border border-zinc-700 p-3 rounded-lg">
+                      <p className="text-zinc-400 text-xs mb-1">Szükséges győzelmek</p>
+                      <p className="text-lg font-bold text-zinc-100">{dungeon.requiredWins}</p>
                     </div>
                   </div>
 
                   {/* Cards List */}
-                  <div className="bg-zinc-900/50 p-3 rounded-lg max-h-40 overflow-y-auto">
+                  <div className="bg-zinc-800/50 border border-zinc-700 p-3 rounded-lg max-h-40 overflow-y-auto">
                     <p className="text-xs text-zinc-400 mb-2">Kártyák sorrendje:</p>
                     <div className="space-y-1">
                       {dungeon.dungeonCards.map((dc) => (
                         <div key={dc.id} className="flex items-center gap-2 text-sm">
-                          <span className="text-zinc-500">#{dc.order}</span>
+                          <span className="text-zinc-500 font-mono">#{dc.order}</span>
                           {dc.leaderCard ? (
-                            <span className="text-orange-300">
-                              👑 {dc.leaderCard.name}
+                            <span className="text-amber-400 flex items-center gap-1">
+                              <Crown className="w-3 h-3" />
+                              {dc.leaderCard.name}
                             </span>
                           ) : (
                             <span className="text-zinc-300">
-                              🎴 {dc.worldCard?.name}
+                              {dc.worldCard?.name}
                             </span>
                           )}
                         </div>
@@ -152,8 +164,8 @@ export default async function DungeonsPage() {
 
                   {/* Environment & Stats */}
                   {dungeon.environment && (
-                    <p className="text-xs text-zinc-500">
-                      🌍 {dungeon.environment.name} • {dungeon._count.battles} harc
+                    <p className="text-xs text-zinc-500 text-center">
+                      {dungeon.environment.name} • {dungeon._count.battles} harc
                     </p>
                   )}
 
@@ -163,9 +175,9 @@ export default async function DungeonsPage() {
                       <Button 
                         variant="outline" 
                         size="sm"
-                        className="w-full border-purple-400/40 text-purple-200 hover:bg-purple-900/30"
+                        className="w-full border-zinc-700 text-zinc-300 hover:bg-zinc-800"
                       >
-                        Részletek
+                        Szerkesztés
                       </Button>
                     </Link>
                     <DeleteDungeonButton dungeonId={dungeon.id} dungeonName={dungeon.name} />
@@ -177,11 +189,14 @@ export default async function DungeonsPage() {
 
           {dungeons.length === 0 && (
             <div className="col-span-full">
-              <Card className="border-2 border-dashed border-red-400/20 bg-zinc-900/50">
+              <Card className="border border-dashed border-zinc-800 bg-zinc-900">
                 <CardContent className="flex flex-col items-center justify-center py-16">
+                  <div className="p-4 bg-zinc-800 rounded-full mb-4">
+                    <Castle className="w-8 h-8 text-zinc-600" />
+                  </div>
                   <p className="text-zinc-400 text-lg mb-4">Még nincsenek kazamaták</p>
                   <Link href="/webmaster/dungeons/create">
-                    <Button className="bg-red-500 hover:bg-red-600 text-white">
+                    <Button className="bg-red-600 hover:bg-red-700 text-white">
                       <Plus className="w-4 h-4 mr-2" />
                       Első kazamata létrehozása
                     </Button>
@@ -191,27 +206,6 @@ export default async function DungeonsPage() {
             </div>
           )}
         </div>
-
-        {/* Info Card */}
-        <Card className="mt-6 border-2 border-blue-400/20 bg-blue-950/20">
-          <CardContent className="pt-6">
-            <h3 className="text-blue-200 font-semibold mb-3">ℹ️ Kazamata típusok</h3>
-            <div className="grid md:grid-cols-3 gap-4 text-sm">
-              <div>
-                <p className="text-green-300 font-semibold">⚔️ Egyszerű találkozás</p>
-                <p className="text-zinc-400">1 sima kártya • +1 sebzés nyeremény</p>
-              </div>
-              <div>
-                <p className="text-blue-300 font-semibold">🏛️ Kis kazamata</p>
-                <p className="text-zinc-400">3 sima + 1 vezér • +2 életerő nyeremény</p>
-              </div>
-              <div>
-                <p className="text-purple-300 font-semibold">🏰 Nagy kazamata</p>
-                <p className="text-zinc-400">5 sima + 1 vezér • +3 sebzés nyeremény</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
       </div>
     </div>
   );

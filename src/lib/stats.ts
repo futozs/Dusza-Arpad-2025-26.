@@ -64,12 +64,17 @@ export async function updateStatsOnClash(
   
   const isPlayerWin = clashData.winner === "PLAYER";
   
+  // Biztonságos számok - NaN helyett 0
+  const playerDamage = isNaN(clashData.playerDamage) ? 0 : clashData.playerDamage;
+  const playerHealth = isNaN(clashData.playerHealth) ? 0 : clashData.playerHealth;
+  const dungeonDamage = isNaN(clashData.dungeonDamage) ? 0 : clashData.dungeonDamage;
+  
   // Alapvető statisztikák
   const updateData: Record<string, unknown> = {
     totalClashes: { increment: 1 },
-    totalDamageDealt: { increment: clashData.playerDamage },
-    totalDamageTaken: { increment: clashData.dungeonDamage },
-    totalHealthUsed: { increment: clashData.playerHealth },
+    totalDamageDealt: { increment: playerDamage },
+    totalDamageTaken: { increment: dungeonDamage },
+    totalHealthUsed: { increment: playerHealth },
   };
 
   // Győzelem/vereség számláló
@@ -127,8 +132,8 @@ export async function updateStatsOnClash(
     where: { userId },
   });
   
-  if (currentStats && clashData.playerDamage > currentStats.highestDamageInClash) {
-    updateData.highestDamageInClash = clashData.playerDamage;
+  if (currentStats && playerDamage > currentStats.highestDamageInClash) {
+    updateData.highestDamageInClash = playerDamage;
   }
 
   return await prisma.playerStats.update({

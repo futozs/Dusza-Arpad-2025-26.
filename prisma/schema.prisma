@@ -108,9 +108,8 @@ model WorldCard {
   environmentId String?
 
   // Kapcsolatok
-  leaderCardsAsBase LeaderCard[]            // Ebből származó vezérkártyák
+  leaderCardsAsBase LeaderCard[] @relation("LeaderCardBaseCard") // Ebből származó vezérkártyák
   dungeonCards      DungeonCard[]           // Kazamatákban való előfordulás
-  playerCards       PlayerCard[]            // Játékos gyűjteményében
   baseLeaderDungeonCards DungeonCard[] @relation("BaseLeaderCard")
 
   @@map("world_cards")
@@ -128,7 +127,7 @@ model LeaderCard {
   boostType       LeaderBoostType
   createdAt       DateTime        @default(now())
   
-  baseCard        WorldCard       @relation(fields: [baseCardId], references: [id], onDelete: Cascade)
+  baseCard        WorldCard       @relation("LeaderCardBaseCard", fields: [baseCardId], references: [id], onDelete: Cascade)
   baseCardId      String
   
   environment     Environment?    @relation(fields: [environmentId], references: [id], onDelete: Cascade)
@@ -136,6 +135,7 @@ model LeaderCard {
 
   // Kapcsolatok
   dungeonCards    DungeonCard[]   // Kazamatákban való előfordulás
+  playerCards     PlayerCard[]    // Játékos gyűjteményében
 
   @@map("leader_cards")
 }
@@ -217,7 +217,7 @@ model Environment {
 // JÁTÉKOS GYŰJTEMÉNY ÉS PAKLI
 // ============================================
 
-// Játékos gyűjteménye (fejleszthető kártyák)
+// Játékos gyűjteménye (fejleszthető vezérkártyák)
 model PlayerCard {
   id              String   @id @default(cuid())
   damageBoost     Int      @default(0) // Hány sebzést kapott pluszban
@@ -228,13 +228,14 @@ model PlayerCard {
   game            Game       @relation(fields: [gameId], references: [id], onDelete: Cascade)
   gameId          String
 
-  baseCard        WorldCard  @relation(fields: [baseCardId], references: [id])
+  // Vezérkártyára hivatkozik (nem WorldCard-ra!)
+  baseCard        LeaderCard @relation(fields: [baseCardId], references: [id])
   baseCardId      String
 
   // Kapcsolatok
   deckCards       DeckCard[]
 
-  @@unique([gameId, baseCardId]) // Egy kártya csak egyszer szerepelhet a gyűjteményben
+  @@unique([gameId, baseCardId]) // Egy vezérkártya csak egyszer szerepelhet a gyűjteményben
   @@map("player_cards")
 }
 

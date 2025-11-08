@@ -43,11 +43,18 @@ interface WorldCard {
   type: CardType;
 }
 
+interface LeaderCard {
+  id: string;
+  name: string;
+  boostType: "DAMAGE_DOUBLE" | "HEALTH_DOUBLE";
+  baseCard: WorldCard;
+}
+
 interface PlayerCard {
   id: string;
   damageBoost: number;
   healthBoost: number;
-  baseCard: WorldCard;
+  baseCard: LeaderCard;
 }
 
 interface DeckCard {
@@ -195,13 +202,13 @@ export default function PlayGamePage() {
   const [showBattleResult, setShowBattleResult] = useState(false);
   const [showRewardSelector, setShowRewardSelector] = useState(false);
 
-  const MAX_DECK_SIZE = 6; // 5+1 kártya
+  // Dinamikus pakli méret - nincs hard limit, a kazamata mérete határozza meg
 
   const loadGameData = useCallback(async () => {
     setLoading(true);
     try {
       // Játék adatok
-      const gameRes = await fetch(`/api/game`);
+      const gameRes = await fetch(`/api/game`, { cache: 'no-store' });
       const games = await gameRes.json();
       console.log("All games:", games);
       const currentGame = games.find((g: Game) => g.id === gameId);
@@ -215,62 +222,83 @@ export default function PlayGamePage() {
       setGame(currentGame);
 
       // Gyűjtemény
-      const collectionRes = await fetch(`/api/game/${gameId}/collection`);
+      const collectionRes = await fetch(`/api/game/${gameId}/collection`, { cache: 'no-store' });
       const collectionData = await collectionRes.json();
       console.log("Collection data:", collectionData);
       
-      // Ha a gyűjtemény üres, töltsük fel az összes világkártyával
-      if (collectionData.collection && collectionData.collection.length === 0) {
-        if (currentGame.environment && currentGame.environment.id) {
-          console.log("Gyűjtemény üres, világkártyák betöltése...");
-          const envRes = await fetch(`/api/environments/${currentGame.environment.id}`);
-          const envData = await envRes.json();
+      // Mindig szinkronizáljuk a gyűjteményt a környezet vezérkártyáival
+      if (currentGame.environment && currentGame.environment.id) {
+        const envRes = await fetch(`/api/environments/${currentGame.environment.id}`, { cache: 'no-store' });
+        const envData = await envRes.json();
+        
+        console.log("🔍 Environment leaderCards:", envData.leaderCards);
+        console.log("🔍 Environment leaderCards count:", envData.leaderCards?.length);
+        
+        if (envData.leaderCards && envData.leaderCards.length > 0) {
+          // Meglévő kártyák ID-i a gyűjteményben
+          const existingCardIds = new Set(
+            (collectionData.collection || []).map((card: PlayerCard) => card.baseCard.id)
+          );
           
-          if (envData.worldCards && envData.worldCards.length > 0) {
-            console.log(`${envData.worldCards.length} világkártya hozzáadása...`);
-            // Összes világkártya hozzáadása a gyűjteményhez
-            for (const worldCard of envData.worldCards) {
+          console.log("🔍 Meglévő kártyák ID-i a gyűjteményben:", Array.from(existingCardIds));
+          console.log("🔍 Meglévő kártyák száma:", existingCardIds.size);
+          
+          // Új vezérkártyák hozzáadása (amelyek még nincsenek a gyűjteményben)
+          let addedNewCards = false;
+          for (const leaderCard of envData.leaderCards) {
+            console.log(`🔍 Ellenőrzés: ${leaderCard.name} (${leaderCard.id}) - Benne van? ${existingCardIds.has(leaderCard.id)}`);
+            
+            if (!existingCardIds.has(leaderCard.id)) {
+              console.log(`✅ Új vezérkártya hozzáadása: ${leaderCard.name}`);
+              addedNewCards = true;
+              
               try {
                 const addRes = await fetch(`/api/game/${gameId}/collection`, {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ worldCardId: worldCard.id }),
+                  body: JSON.stringify({ leaderCardId: leaderCard.id }),
                 });
                 
                 // Ha már létezik (400), az rendben van, folytatjuk
                 if (!addRes.ok && addRes.status !== 400) {
-                  console.error(`Hiba a ${worldCard.name} kártya hozzáadásakor:`, addRes.status);
+                  console.error(`Hiba a ${leaderCard.name} vezérkártya hozzáadásakor:`, addRes.status);
                 }
               } catch (err) {
-                console.error(`Hiba a ${worldCard.name} kártya hozzáadásakor:`, err);
+                console.error(`Hiba a ${leaderCard.name} vezérkártya hozzáadásakor:`, err);
               }
             }
-            
-            // Újratöltjük a gyűjteményt
-            const newCollectionRes = await fetch(`/api/game/${gameId}/collection`);
-            const newCollectionData = await newCollectionRes.json();
-            console.log("Új gyűjtemény:", newCollectionData);
-            setCollection(newCollectionData.collection || []);
           }
+          
+          // Ha hozzáadtunk új kártyákat, újratöltjük a gyűjteményt
+          if (addedNewCards) {
+            const newCollectionRes = await fetch(`/api/game/${gameId}/collection`, { cache: 'no-store' });
+            const newCollectionData = await newCollectionRes.json();
+            console.log("Frissített gyűjtemény:", newCollectionData);
+            setCollection(newCollectionData.collection || []);
+          } else {
+            setCollection(collectionData.collection || []);
+          }
+        } else {
+          setCollection(collectionData.collection || []);
         }
       } else {
         setCollection(collectionData.collection || []);
       }
 
       // Pakli
-      const deckRes = await fetch(`/api/game/${gameId}/deck`);
+      const deckRes = await fetch(`/api/game/${gameId}/deck`, { cache: 'no-store' });
       const deckData = await deckRes.json();
       console.log("Deck data:", deckData);
       setDeck(deckData || null);
 
       // Kazamaták (környezetből) + győzelmek számolása
       if (currentGame.environment && currentGame.environment.id) {
-        const envRes = await fetch(`/api/environments/${currentGame.environment.id}`);
+        const envRes = await fetch(`/api/environments/${currentGame.environment.id}`, { cache: 'no-store' });
         const envData = await envRes.json();
         console.log("Environment data:", envData);
         
         // Harcok lekérése a játékhoz
-        const battlesRes = await fetch(`/api/game/${gameId}/battle`);
+        const battlesRes = await fetch(`/api/game/${gameId}/battle`, { cache: 'no-store' });
         const battlesData = await battlesRes.json();
         console.log("Battles:", battlesData);
         
@@ -401,10 +429,10 @@ export default function PlayGamePage() {
     setSelectedCards((prev) => {
       if (prev.includes(cardId)) {
         return prev.filter((id) => id !== cardId);
-      } else if (prev.length < MAX_DECK_SIZE) {
+      } else {
+        // Nincs hard limit - játékos szabadon építhet paklit
         return [...prev, cardId];
       }
-      return prev;
     });
   };
 
@@ -493,17 +521,17 @@ export default function PlayGamePage() {
                     </p>
                     <Button
                       onClick={async () => {
-                        // Első világkártya hozzáadása a gyűjteményhez
+                        // Kezdő vezérkártyák hozzáadása a gyűjteményhez
                         if (game?.environment?.id) {
-                          const envRes = await fetch(`/api/environments/${game.environment.id}`);
+                          const envRes = await fetch(`/api/environments/${game.environment.id}`, { cache: 'no-store' });
                           const envData = await envRes.json();
-                          if (envData.worldCards && envData.worldCards.length > 0) {
-                            // Első 3 kártya hozzáadása
-                            for (let i = 0; i < Math.min(3, envData.worldCards.length); i++) {
+                          if (envData.leaderCards && envData.leaderCards.length > 0) {
+                            // Első 3 vezérkártya hozzáadása
+                            for (let i = 0; i < Math.min(3, envData.leaderCards.length); i++) {
                               await fetch(`/api/game/${gameId}/collection`, {
                                 method: "POST",
                                 headers: { "Content-Type": "application/json" },
-                                body: JSON.stringify({ worldCardId: envData.worldCards[i].id }),
+                                body: JSON.stringify({ leaderCardId: envData.leaderCards[i].id }),
                               });
                             }
                             await loadGameData();
@@ -514,7 +542,7 @@ export default function PlayGamePage() {
                       className="border-purple-500/50 text-purple-400"
                     >
                       <Plus className="w-4 h-4 mr-2" />
-                      Kezdő kártyák hozzáadása
+                      Kezdő vezérkártyák hozzáadása
                     </Button>
                   </CardContent>
                 </Card>
@@ -532,7 +560,20 @@ export default function PlayGamePage() {
                     </Button>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {collection.map((card) => (
+                  {collection.map((card) => {
+                    // Vezérkártya alap értékei (baseCard.baseCard = WorldCard)
+                    const baseDamage = card.baseCard.baseCard.damage;
+                    const baseHealth = card.baseCard.baseCard.health;
+                    
+                    // Vezérkártya boost alkalmazása
+                    const leaderDamage = card.baseCard.boostType === "DAMAGE_DOUBLE" ? baseDamage * 2 : baseDamage;
+                    const leaderHealth = card.baseCard.boostType === "HEALTH_DOUBLE" ? baseHealth * 2 : baseHealth;
+                    
+                    // Játékos boostok hozzáadása
+                    const totalDamage = leaderDamage + card.damageBoost;
+                    const totalHealth = leaderHealth + card.healthBoost;
+                    
+                    return (
                     <Card
                       key={card.id}
                       className="border-zinc-800 bg-zinc-900/50 hover:border-purple-500/50 transition-all"
@@ -542,10 +583,10 @@ export default function PlayGamePage() {
                           <span className="text-lg">{card.baseCard.name}</span>
                           <Badge
                             className={`${getCardTypeColor(
-                              card.baseCard.type
+                              card.baseCard.baseCard.type
                             )} border`}
                           >
-                            {getCardTypeIcon(card.baseCard.type)}
+                            {getCardTypeIcon(card.baseCard.baseCard.type)}
                           </Badge>
                         </CardTitle>
                       </CardHeader>
@@ -556,7 +597,7 @@ export default function PlayGamePage() {
                               <Swords className="w-4 h-4" /> Sebzés
                             </span>
                             <span className="text-white font-bold">
-                              {card.baseCard.damage + card.damageBoost}
+                              {totalDamage}
                               {card.damageBoost > 0 && (
                                 <span className="text-green-400 text-sm ml-1">
                                   (+{card.damageBoost})
@@ -569,7 +610,7 @@ export default function PlayGamePage() {
                               <Heart className="w-4 h-4" /> Életerő
                             </span>
                             <span className="text-white font-bold">
-                              {card.baseCard.health + card.healthBoost}
+                              {totalHealth}
                               {card.healthBoost > 0 && (
                                 <span className="text-green-400 text-sm ml-1">
                                   (+{card.healthBoost})
@@ -580,7 +621,8 @@ export default function PlayGamePage() {
                         </div>
                       </CardContent>
                     </Card>
-                  ))}
+                  );
+                  })}
                   </div>
                 </>
               )}
@@ -621,6 +663,19 @@ export default function PlayGamePage() {
                     .sort((a, b) => a.order - b.order)
                     .map((deckCard, index) => {
                       const card = deckCard.playerCard;
+                      
+                      // Vezérkártya alap értékei
+                      const baseDamage = card.baseCard.baseCard.damage;
+                      const baseHealth = card.baseCard.baseCard.health;
+                      
+                      // Vezérkártya boost alkalmazása
+                      const leaderDamage = card.baseCard.boostType === "DAMAGE_DOUBLE" ? baseDamage * 2 : baseDamage;
+                      const leaderHealth = card.baseCard.boostType === "HEALTH_DOUBLE" ? baseHealth * 2 : baseHealth;
+                      
+                      // Játékos boostok hozzáadása
+                      const totalDamage = leaderDamage + card.damageBoost;
+                      const totalHealth = leaderHealth + card.healthBoost;
+                      
                       return (
                         <Card
                           key={deckCard.id}
@@ -636,10 +691,10 @@ export default function PlayGamePage() {
                               </span>
                               <Badge
                                 className={`${getCardTypeColor(
-                                  card.baseCard.type
+                                  card.baseCard.baseCard.type
                                 )} border`}
                               >
-                                {getCardTypeIcon(card.baseCard.type)}
+                                {getCardTypeIcon(card.baseCard.baseCard.type)}
                               </Badge>
                             </CardTitle>
                           </CardHeader>
@@ -650,7 +705,7 @@ export default function PlayGamePage() {
                                   <Swords className="w-4 h-4" /> Sebzés
                                 </span>
                                 <span className="text-white font-bold">
-                                  {card.baseCard.damage + card.damageBoost}
+                                  {totalDamage}
                                   {card.damageBoost > 0 && (
                                     <span className="text-green-400 text-sm ml-1">
                                       (+{card.damageBoost})
@@ -663,7 +718,7 @@ export default function PlayGamePage() {
                                   <Heart className="w-4 h-4" /> Életerő
                                 </span>
                                 <span className="text-white font-bold">
-                                  {card.baseCard.health + card.healthBoost}
+                                  {totalHealth}
                                   {card.healthBoost > 0 && (
                                     <span className="text-green-400 text-sm ml-1">
                                       (+{card.healthBoost})
@@ -720,7 +775,7 @@ export default function PlayGamePage() {
                           <div className="flex items-center justify-between text-sm">
                             <span className="text-zinc-400">Kártyák száma:</span>
                             <span className="text-white font-bold">
-                              {dungeon.dungeonCards.length}
+                              {dungeon.dungeonCards.length} kártya
                             </span>
                           </div>
                           <div className="flex items-center justify-between text-sm">
@@ -729,6 +784,17 @@ export default function PlayGamePage() {
                               {getDungeonReward(dungeon.type)}
                             </span>
                           </div>
+                          
+                          {/* Pakli méret figyelmeztetés */}
+                          {!isLocked && deck && deck.deckCards && deck.deckCards.length > 0 && 
+                           deck.deckCards.length !== dungeon.dungeonCards.length && (
+                            <Alert className="bg-yellow-500/10 border-yellow-500/50 py-2">
+                              <AlertDescription className="text-yellow-400 text-xs">
+                                ⚠️ A paklidban {deck.deckCards.length} kártya van, de ehhez a kazamatához {dungeon.dungeonCards.length} kártya szükséges!
+                              </AlertDescription>
+                            </Alert>
+                          )}
+                          
                           <Button
                             onClick={() => handleStartBattle(dungeon)}
                             disabled={
@@ -736,6 +802,7 @@ export default function PlayGamePage() {
                               !deck ||
                               !deck.deckCards ||
                               deck.deckCards.length === 0 ||
+                              deck.deckCards.length !== dungeon.dungeonCards.length ||
                               battleLoading
                             }
                             className="w-full bg-gradient-to-r from-purple-500 to-violet-500 disabled:opacity-30"
@@ -753,6 +820,10 @@ export default function PlayGamePage() {
                               <>
                                 <Shield className="w-4 h-4 mr-2" />
                                 Nincs pakli
+                              </>
+                            ) : deck.deckCards.length !== dungeon.dungeonCards.length ? (
+                              <>
+                                ⚠️ Rossz pakli méret
                               </>
                             ) : (
                               <>
@@ -787,21 +858,36 @@ export default function PlayGamePage() {
                 : "Pakli összeállítása"}
             </DialogTitle>
             <DialogDescription className="text-zinc-400">
-              Válaszd ki a kártyákat a gyűjteményedből ({selectedCards.length}/{MAX_DECK_SIZE} kiválasztva)
+              Válaszd ki a kártyákat a gyűjteményedből ({selectedCards.length} kiválasztva)
             </DialogDescription>
-            {selectedCards.length === MAX_DECK_SIZE && (
-              <Alert className="bg-yellow-500/10 border-yellow-500/50 mt-2">
-                <AlertDescription className="text-yellow-400 text-sm">
-                  Elérted a maximum pakli méretet ({MAX_DECK_SIZE} kártya)!
-                </AlertDescription>
-              </Alert>
-            )}
+            <Alert className="bg-blue-500/10 border-blue-500/50 mt-2">
+              <AlertDescription className="text-blue-400 text-sm">
+                💡 <strong>Fontos:</strong> A pakli kártyaszámának pontosan meg kell egyeznie a kiválasztott kazamata kártyaszámával!
+                <br />
+                • <strong>Egyszerű találkozás:</strong> 1 kártya
+                <br />
+                • <strong>Kis kazamata:</strong> 4 kártya (3 sima + 1 vezér)
+                <br />
+                • <strong>Nagy kazamata:</strong> 6 kártya (5 sima + 1 vezér)
+                <br /><br />
+                🎯 <strong>Tipp:</strong> Építs külön paklit minden kazamata típushoz!
+              </AlertDescription>
+            </Alert>
           </DialogHeader>
           
           <ScrollArea className="h-[400px] pr-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {collection.map((card) => {
                 const isSelected = selectedCards.includes(card.id);
+                
+                // Vezérkártya értékek számítása
+                const baseDamage = card.baseCard.baseCard.damage;
+                const baseHealth = card.baseCard.baseCard.health;
+                const leaderDamage = card.baseCard.boostType === "DAMAGE_DOUBLE" ? baseDamage * 2 : baseDamage;
+                const leaderHealth = card.baseCard.boostType === "HEALTH_DOUBLE" ? baseHealth * 2 : baseHealth;
+                const totalDamage = leaderDamage + card.damageBoost;
+                const totalHealth = leaderHealth + card.healthBoost;
+                
                 return (
                   <Card
                     key={card.id}
@@ -823,17 +909,17 @@ export default function PlayGamePage() {
                       </div>
                       <div className="flex items-center gap-4 text-sm">
                         <Badge
-                          className={`${getCardTypeColor(card.baseCard.type)} border`}
+                          className={`${getCardTypeColor(card.baseCard.baseCard.type)} border`}
                         >
-                          {getCardTypeIcon(card.baseCard.type)}
+                          {getCardTypeIcon(card.baseCard.baseCard.type)}
                         </Badge>
                         <span className="text-zinc-400">
                           <Swords className="w-3 h-3 inline mr-1" />
-                          {card.baseCard.damage + card.damageBoost}
+                          {totalDamage}
                         </span>
                         <span className="text-zinc-400">
                           <Heart className="w-3 h-3 inline mr-1" />
-                          {card.baseCard.health + card.healthBoost}
+                          {totalHealth}
                         </span>
                       </div>
                     </CardContent>
@@ -1072,7 +1158,16 @@ export default function PlayGamePage() {
 
           <ScrollArea className="h-[300px] pr-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {collection.map((card) => (
+              {collection.map((card) => {
+                // Vezérkártya értékek számítása
+                const baseDamage = card.baseCard.baseCard.damage;
+                const baseHealth = card.baseCard.baseCard.health;
+                const leaderDamage = card.baseCard.boostType === "DAMAGE_DOUBLE" ? baseDamage * 2 : baseDamage;
+                const leaderHealth = card.baseCard.boostType === "HEALTH_DOUBLE" ? baseHealth * 2 : baseHealth;
+                const totalDamage = leaderDamage + card.damageBoost;
+                const totalHealth = leaderHealth + card.healthBoost;
+                
+                return (
                 <Card
                   key={card.id}
                   onClick={() => handleClaimReward(card.id)}
@@ -1086,22 +1181,23 @@ export default function PlayGamePage() {
                     </div>
                     <div className="flex items-center gap-4 text-sm">
                       <Badge
-                        className={`${getCardTypeColor(card.baseCard.type)} border`}
+                        className={`${getCardTypeColor(card.baseCard.baseCard.type)} border`}
                       >
-                        {getCardTypeIcon(card.baseCard.type)}
+                        {getCardTypeIcon(card.baseCard.baseCard.type)}
                       </Badge>
                       <span className="text-zinc-400">
                         <Swords className="w-3 h-3 inline mr-1" />
-                        {card.baseCard.damage + card.damageBoost}
+                        {totalDamage}
                       </span>
                       <span className="text-zinc-400">
                         <Heart className="w-3 h-3 inline mr-1" />
-                        {card.baseCard.health + card.healthBoost}
+                        {totalHealth}
                       </span>
                     </div>
                   </CardContent>
                 </Card>
-              ))}
+              );
+              })}
             </div>
           </ScrollArea>
         </DialogContent>
