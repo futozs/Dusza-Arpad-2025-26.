@@ -1,5 +1,3 @@
-import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
 import LiquidEther from "@/components/LiquidEther";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";

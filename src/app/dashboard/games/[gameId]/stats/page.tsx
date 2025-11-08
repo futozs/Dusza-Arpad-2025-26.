@@ -179,7 +179,6 @@ export default function StatsPage() {
           <Card className="border-zinc-800 bg-zinc-900/50">
             <CardHeader>
               <CardTitle className="text-white">Harcok története</CardTitle>
-            </CardTitle>
             </CardHeader>
             <CardContent>
               {battles.length === 0 ? (

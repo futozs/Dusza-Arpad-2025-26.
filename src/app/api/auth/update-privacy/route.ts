@@ -3,9 +3,6 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
-
-// Prisma client imported from singleton
-
 const UpdatePrivacySchema = z.object({
   profileVisibility: z.boolean(),
 });

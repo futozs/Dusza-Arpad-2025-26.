@@ -1,10 +1,9 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { PrismaClient } from "@/generated/prisma/client";
+import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 
-// Prisma client imported from singleton
 
 const UpdateProfileSchema = z.object({
   username: z.string().min(3),

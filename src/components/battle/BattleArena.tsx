@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -210,8 +210,6 @@ export default function BattleArena({
   dungeonWins: finalDungeonWins,
 }: BattleArenaProps) {
   const [currentClashIndex, setCurrentClashIndex] = useState(0);
-  const [playerCard, setPlayerCard] = useState<BattleCard | null>(null);
-  const [dungeonCard, setDungeonCard] = useState<BattleCard | null>(null);
   const [showPlayerDamage, setShowPlayerDamage] = useState(0);
   const [showDungeonDamage, setShowDungeonDamage] = useState(0);
   const [clashComplete, setClashComplete] = useState(false);
@@ -220,32 +218,48 @@ export default function BattleArena({
   // Valós idejű pontszám - csak befejezett clash-ek számítanak!
   const [playerWins, setPlayerWins] = useState(0);
   const [dungeonWins, setDungeonWins] = useState(0);
+  
+  // Kártyák aktuális életereje
+  const [playerCurrentHealth, setPlayerCurrentHealth] = useState(0);
+  const [dungeonCurrentHealth, setDungeonCurrentHealth] = useState(0);
 
   const currentClash = clashes[currentClashIndex];
   const isLastClash = currentClashIndex === clashes.length - 1;
 
-  // Új clash kezdése
+  // Initialize cards based on current clash
+  const playerCard = useMemo(() => {
+    if (!currentClash) return null;
+    return {
+      name: currentClash.playerCardName,
+      damage: currentClash.playerDamage,
+      health: currentClash.playerHealth,
+      type: currentClash.playerCardType,
+      currentHealth: playerCurrentHealth || currentClash.playerHealth,
+    };
+  }, [currentClash, playerCurrentHealth]);
+
+  const dungeonCard = useMemo(() => {
+    if (!currentClash) return null;
+    return {
+      name: currentClash.dungeonCardName,
+      damage: currentClash.dungeonDamage,
+      health: currentClash.dungeonHealth,
+      type: currentClash.dungeonCardType,
+      currentHealth: dungeonCurrentHealth || currentClash.dungeonHealth,
+    };
+  }, [currentClash, dungeonCurrentHealth]);
+
+  // Reset health when clash index changes
   useEffect(() => {
     if (currentClash) {
-      setPlayerCard({
-        name: currentClash.playerCardName,
-        damage: currentClash.playerDamage,
-        health: currentClash.playerHealth,
-        type: currentClash.playerCardType,
-        currentHealth: currentClash.playerHealth,
-      });
-      setDungeonCard({
-        name: currentClash.dungeonCardName,
-        damage: currentClash.dungeonDamage,
-        health: currentClash.dungeonHealth,
-        type: currentClash.dungeonCardType,
-        currentHealth: currentClash.dungeonHealth,
-      });
+      setPlayerCurrentHealth(currentClash.playerHealth);
+      setDungeonCurrentHealth(currentClash.dungeonHealth);
       setClashComplete(false);
       setShowPlayerDamage(0);
       setShowDungeonDamage(0);
     }
-  }, [currentClash]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentClashIndex]);
 
   // Automatikus harc - A backend által meghatározott eredmény alapján
   const playClash = async () => {
@@ -266,7 +280,7 @@ export default function BattleArena({
     
     // Kazamata életerő csökkentése a játékos sebzése alapján
     const dungeonHealthAfterPlayerAttack = Math.max(0, dungeonCard.currentHealth - playerCard.damage);
-    setDungeonCard((prev) => (prev ? { ...prev, currentHealth: dungeonHealthAfterPlayerAttack } : null));
+    setDungeonCurrentHealth(dungeonHealthAfterPlayerAttack);
     
     await new Promise((r) => setTimeout(r, 1200));
     setShowDungeonDamage(0);
@@ -278,7 +292,7 @@ export default function BattleArena({
       
       // Játékos életerő csökkentése a kazamata sebzése alapján
       const playerHealthAfterDungeonAttack = Math.max(0, playerCard.currentHealth - dungeonCard.damage);
-      setPlayerCard((prev) => (prev ? { ...prev, currentHealth: playerHealthAfterDungeonAttack } : null));
+      setPlayerCurrentHealth(playerHealthAfterDungeonAttack);
       
       await new Promise((r) => setTimeout(r, 1200));
       setShowPlayerDamage(0);

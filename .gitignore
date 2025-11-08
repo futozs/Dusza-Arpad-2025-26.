@@ -10,14 +10,10 @@
 !.yarn/releases
 !.yarn/versions
 *.vscode
-# testing
+
 /coverage
 
 *.md
-
-README.md
-
-package-lock.json
 
 # next.js
 /.next/

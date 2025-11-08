@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { PrismaClient, LeaderBoostType } from "@/generated/prisma";
-
-// Prisma client imported from singleton
+import { LeaderBoostType } from "@/generated/prisma";
+import { prisma } from "@/lib/prisma";
 
 const VALID_BOOST_TYPES: LeaderBoostType[] = ["DAMAGE_DOUBLE", "HEALTH_DOUBLE"];
 

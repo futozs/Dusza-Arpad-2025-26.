@@ -10,9 +10,6 @@ import {
   Mail, 
   Lock, 
   Shield, 
-  Bell,
-  Palette,
-  Globe,
   Eye,
   EyeOff,
   CheckCircle2,
@@ -26,9 +23,6 @@ import EditProfileModal from "@/components/settings/EditProfileModal";
 import ChangePasswordModal from "@/components/settings/ChangePasswordModal";
 import VerifyEmailModal from "@/components/settings/VerifyEmailModal";
 import ChangeEmailModal from "@/components/settings/ChangeEmailModal";
-import NotificationSettingsModal from "@/components/settings/NotificationSettingsModal";
-import ThemeSettingsModal from "@/components/settings/ThemeSettingsModal";
-import LanguageSettingsModal from "@/components/settings/LanguageSettingsModal";
 import SessionManagementModal from "@/components/settings/SessionManagementModal";
 import DeleteAccountModal from "@/components/settings/DeleteAccountModal";
 import PrivacySettingsModal from "@/components/settings/PrivacySettingsModal";
@@ -41,9 +35,6 @@ export default function SettingsPage() {
   const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
   const [isVerifyEmailOpen, setIsVerifyEmailOpen] = useState(false);
   const [isChangeEmailOpen, setIsChangeEmailOpen] = useState(false);
-  const [isNotificationSettingsOpen, setIsNotificationSettingsOpen] = useState(false);
-  const [isThemeSettingsOpen, setIsThemeSettingsOpen] = useState(false);
-  const [isLanguageSettingsOpen, setIsLanguageSettingsOpen] = useState(false);
   const [isSessionManagementOpen, setIsSessionManagementOpen] = useState(false);
   const [isDeleteAccountOpen, setIsDeleteAccountOpen] = useState(false);
   const [isPrivacySettingsOpen, setIsPrivacySettingsOpen] = useState(false);
@@ -90,18 +81,6 @@ export default function SettingsPage() {
         onClose={() => setIsChangeEmailOpen(false)}
         currentEmail={session.user.email}
       />
-      <NotificationSettingsModal
-        isOpen={isNotificationSettingsOpen}
-        onClose={() => setIsNotificationSettingsOpen(false)}
-      />
-      <ThemeSettingsModal
-        isOpen={isThemeSettingsOpen}
-        onClose={() => setIsThemeSettingsOpen(false)}
-      />
-      <LanguageSettingsModal
-        isOpen={isLanguageSettingsOpen}
-        onClose={() => setIsLanguageSettingsOpen(false)}
-      />
       <SessionManagementModal
         isOpen={isSessionManagementOpen}
         onClose={() => setIsSessionManagementOpen(false)}
@@ -145,14 +124,6 @@ export default function SettingsPage() {
                   <a href="#2fa" className="flex items-center gap-3 p-3 rounded-lg text-zinc-300 hover:text-white hover:bg-zinc-800/50 transition-all">
                     <Shield className="w-5 h-5" />
                     <span className="font-medium">2FA</span>
-                  </a>
-                  <a href="#notifications" className="flex items-center gap-3 p-3 rounded-lg text-zinc-300 hover:text-white hover:bg-zinc-800/50 transition-all">
-                    <Bell className="w-5 h-5" />
-                    <span className="font-medium">Értesítések</span>
-                  </a>
-                  <a href="#appearance" className="flex items-center gap-3 p-3 rounded-lg text-zinc-300 hover:text-white hover:bg-zinc-800/50 transition-all">
-                    <Palette className="w-5 h-5" />
-                    <span className="font-medium">Megjelenés</span>
                   </a>
                   <a href="#privacy" className="flex items-center gap-3 p-3 rounded-lg text-zinc-300 hover:text-white hover:bg-zinc-800/50 transition-all">
                     <ShieldCheck className="w-5 h-5" />
@@ -375,93 +346,6 @@ export default function SettingsPage() {
                         A 2FA védi a fiókodat azzal, hogy belépéskor egy második azonosítási lépést igényel.
                       </p>
                     )}
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Értesítések */}
-              <Card id="notifications" className="border border-zinc-800 bg-zinc-900/50 backdrop-blur-sm">
-                <CardHeader>
-                  <CardTitle className="text-2xl text-white flex items-center gap-3">
-                    <Bell className="w-6 h-6 text-yellow-400" />
-                    Értesítési Beállítások
-                  </CardTitle>
-                  <CardDescription className="text-zinc-400">
-                    Értesítések testreszabása
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex items-center justify-between p-4 rounded-lg bg-zinc-950/50 border border-zinc-800">
-                    <div>
-                      <h3 className="text-white font-medium">Email Értesítések</h3>
-                      <p className="text-zinc-500 text-sm">Játék frissítések és eredmények</p>
-                    </div>
-                    <Button 
-                      variant="outline" 
-                      onClick={() => setIsNotificationSettingsOpen(true)}
-                      className="border-zinc-700 text-zinc-300 hover:bg-zinc-800"
-                    >
-                      Beállítás
-                    </Button>
-                  </div>
-
-                  <div className="flex items-center justify-between p-4 rounded-lg bg-zinc-950/50 border border-zinc-800">
-                    <div>
-                      <h3 className="text-white font-medium">Push Értesítések</h3>
-                      <p className="text-zinc-500 text-sm">Azonnali értesítések a böngészőben</p>
-                    </div>
-                    <Button 
-                      variant="outline" 
-                      onClick={() => setIsNotificationSettingsOpen(true)}
-                      className="border-zinc-700 text-zinc-300 hover:bg-zinc-800"
-                    >
-                      Beállítás
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Megjelenés */}
-              <Card id="appearance" className="border border-zinc-800 bg-zinc-900/50 backdrop-blur-sm">
-                <CardHeader>
-                  <CardTitle className="text-2xl text-white flex items-center gap-3">
-                    <Palette className="w-6 h-6 text-pink-400" />
-                    Megjelenés
-                  </CardTitle>
-                  <CardDescription className="text-zinc-400">
-                    Testreszabható megjelenési beállítások
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex items-center justify-between p-4 rounded-lg bg-zinc-950/50 border border-zinc-800">
-                    <div>
-                      <h3 className="text-white font-medium">Téma</h3>
-                      <p className="text-zinc-500 text-sm">Jelenleg: Sötét mód</p>
-                    </div>
-                    <Button 
-                      variant="outline" 
-                      onClick={() => setIsThemeSettingsOpen(true)}
-                      className="border-zinc-700 text-zinc-300 hover:bg-zinc-800"
-                    >
-                      Módosítás
-                    </Button>
-                  </div>
-
-                  <div className="flex items-center justify-between p-4 rounded-lg bg-zinc-950/50 border border-zinc-800">
-                    <div className="flex items-center gap-3">
-                      <Globe className="w-5 h-5 text-blue-400" />
-                      <div>
-                        <h3 className="text-white font-medium">Nyelv</h3>
-                        <p className="text-zinc-500 text-sm">Magyar</p>
-                      </div>
-                    </div>
-                    <Button 
-                      variant="outline" 
-                      onClick={() => setIsLanguageSettingsOpen(true)}
-                      className="border-zinc-700 text-zinc-300 hover:bg-zinc-800"
-                    >
-                      Módosítás
-                    </Button>
                   </div>
                 </CardContent>
               </Card>

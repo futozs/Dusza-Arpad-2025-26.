@@ -1,8 +1,5 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-
-// Prisma client imported from singleton
-
 export async function POST(request: Request) {
   try {
     const { token } = await request.json();
