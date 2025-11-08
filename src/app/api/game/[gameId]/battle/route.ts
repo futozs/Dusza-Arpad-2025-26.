@@ -163,17 +163,17 @@ export async function POST(
       );
     }
 
-    // Ellenőrizzük, hogy a pakli és a kazamata kártyáinak száma megegyezik
-    if (deck.deckCards.length !== dungeon.dungeonCards.length) {
+    // Ellenőrizzük, hogy a pakli legalább annyi kártyát tartalmaz, mint a kazamata
+    if (deck.deckCards.length < dungeon.dungeonCards.length) {
       return NextResponse.json(
         {
-          error: `A pakli kártyáinak száma (${deck.deckCards.length}) nem egyezik a kazamata kártyáival (${dungeon.dungeonCards.length})`,
+          error: `A pakli legalább ${dungeon.dungeonCards.length} kártyát kell tartalmazzon (jelenleg: ${deck.deckCards.length})`,
         },
         { status: 400 }
       );
     }
 
-    // Harc szimulálása
+    // Harc szimulálása - csak az első N kártyát használjuk, ahol N = kazamata kártyáinak száma
     const clashes: Array<{
       order: number;
       winner: ClashWinner;
@@ -191,7 +191,10 @@ export async function POST(
     let playerWins = 0;
     let dungeonWins = 0;
 
-    for (let i = 0; i < deck.deckCards.length; i++) {
+    // Csak az első N kártyát használjuk a pakliból, ahol N = kazamata kártyáinak száma
+    const cardsToUse = Math.min(deck.deckCards.length, dungeon.dungeonCards.length);
+    
+    for (let i = 0; i < cardsToUse; i++) {
       const playerDeckCard = deck.deckCards[i];
       const dungeonCard = dungeon.dungeonCards[i];
 
@@ -343,6 +346,11 @@ export async function GET(
       where: { gameId },
       include: {
         dungeon: true,
+        game: {
+          select: {
+            name: true,
+          },
+        },
         clashes: {
           orderBy: { order: "asc" },
         },

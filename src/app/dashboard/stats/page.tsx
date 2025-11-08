@@ -117,7 +117,7 @@ export default function StatsPage() {
       <DashboardLayout>
         <div className="pt-24 px-4 md:px-8 pb-8">
           <div className="max-w-7xl mx-auto flex items-center justify-center h-96">
-            <Loader2 className="w-12 h-12 animate-spin text-purple-500" />
+            <Loader2 className="w-12 h-12 animate-spin text-white" />
           </div>
         </div>
       </DashboardLayout>
@@ -131,64 +131,64 @@ export default function StatsPage() {
           {/* Header */}
           <div className="mb-8">
             <h1 className="text-4xl font-bold text-white mb-2 flex items-center gap-3">
-              <BarChart3 className="w-10 h-10 text-purple-400" />
+              <BarChart3 className="w-10 h-10 text-white" />
               Harc Statisztikák
             </h1>
-            <p className="text-zinc-400">Tekintsd meg az összes harcod és játszd újra őket!</p>
+            <p className="text-zinc-500">Tekintsd meg az összes harcod és játszd újra őket!</p>
           </div>
 
           {/* Stats Grid */}
           <div className="grid md:grid-cols-4 gap-4 mb-8">
-            <Card className="border border-zinc-800 bg-gradient-to-br from-purple-900/20 to-zinc-900/50 backdrop-blur-sm">
+            <Card className="border border-zinc-800 bg-zinc-900/50">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <Swords className="w-12 h-12 text-purple-400" />
-                  <span className="text-purple-400 text-sm font-medium">Összes</span>
+                  <Swords className="w-8 h-8 text-zinc-400" />
+                  <span className="text-zinc-500 text-sm font-medium">Összes</span>
                 </div>
-                <p className="text-4xl font-bold text-white mb-1">{totalBattles}</p>
-                <p className="text-zinc-400 text-sm">Harc Összesen</p>
+                <p className="text-3xl font-bold text-white mb-1">{totalBattles}</p>
+                <p className="text-zinc-500 text-sm">Harc Összesen</p>
               </CardContent>
             </Card>
 
-            <Card className="border border-zinc-800 bg-gradient-to-br from-green-900/20 to-zinc-900/50 backdrop-blur-sm">
+            <Card className="border border-zinc-800 bg-zinc-900/50">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <Trophy className="w-12 h-12 text-green-400" />
-                  <span className="text-green-400 text-sm font-medium">Győzelem</span>
+                  <Trophy className="w-8 h-8 text-zinc-400" />
+                  <span className="text-zinc-500 text-sm font-medium">Győzelem</span>
                 </div>
-                <p className="text-4xl font-bold text-white mb-1">{wonBattles}</p>
-                <p className="text-zinc-400 text-sm">Megnyert Harc</p>
+                <p className="text-3xl font-bold text-white mb-1">{wonBattles}</p>
+                <p className="text-zinc-500 text-sm">Megnyert Harc</p>
               </CardContent>
             </Card>
 
-            <Card className="border border-zinc-800 bg-gradient-to-br from-red-900/20 to-zinc-900/50 backdrop-blur-sm">
+            <Card className="border border-zinc-800 bg-zinc-900/50">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <XCircle className="w-12 h-12 text-red-400" />
-                  <span className="text-red-400 text-sm font-medium">Vereség</span>
+                  <XCircle className="w-8 h-8 text-zinc-400" />
+                  <span className="text-zinc-500 text-sm font-medium">Vereség</span>
                 </div>
-                <p className="text-4xl font-bold text-white mb-1">{lostBattles}</p>
-                <p className="text-zinc-400 text-sm">Elvesztett Harc</p>
+                <p className="text-3xl font-bold text-white mb-1">{lostBattles}</p>
+                <p className="text-zinc-500 text-sm">Elvesztett Harc</p>
               </CardContent>
             </Card>
 
-            <Card className="border border-zinc-800 bg-gradient-to-br from-yellow-900/20 to-zinc-900/50 backdrop-blur-sm">
+            <Card className="border border-zinc-800 bg-zinc-900/50">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <TrendingUp className="w-12 h-12 text-yellow-400" />
-                  <span className="text-yellow-400 text-sm font-medium">Arány</span>
+                  <TrendingUp className="w-8 h-8 text-zinc-400" />
+                  <span className="text-zinc-500 text-sm font-medium">Arány</span>
                 </div>
-                <p className="text-4xl font-bold text-white mb-1">{winRate}%</p>
-                <p className="text-zinc-400 text-sm">Győzelmi Arány</p>
+                <p className="text-3xl font-bold text-white mb-1">{winRate}%</p>
+                <p className="text-zinc-500 text-sm">Győzelmi Arány</p>
               </CardContent>
             </Card>
           </div>
 
           {/* Battles List */}
-          <Card className="border border-zinc-800 bg-zinc-900/50 backdrop-blur-sm">
+          <Card className="border border-zinc-800 bg-zinc-900/50">
             <CardHeader>
               <CardTitle className="text-2xl text-white flex items-center gap-3">
-                <Swords className="w-6 h-6 text-red-400" />
+                <Swords className="w-6 h-6 text-white" />
                 Összes Harc ({totalBattles})
               </CardTitle>
             </CardHeader>
@@ -205,26 +205,22 @@ export default function StatsPage() {
                     {battles.map((battle) => (
                       <Card
                         key={battle.id}
-                        className={`border-2 transition-all cursor-pointer hover:scale-[1.01] ${
-                          battle.status === "WON"
-                            ? "border-green-500/30 bg-green-500/5 hover:border-green-500/50"
-                            : "border-red-500/30 bg-red-500/5 hover:border-red-500/50"
-                        }`}
+                        className="border border-zinc-800 bg-zinc-900/50 hover:bg-zinc-800/50 transition-colors"
                       >
                         <CardContent className="p-4">
                           <div className="flex items-center justify-between">
                             <div className="flex-1">
                               <div className="flex items-center gap-3 mb-2">
                                 {battle.status === "WON" ? (
-                                  <CheckCircle2 className="w-6 h-6 text-green-400" />
+                                  <CheckCircle2 className="w-5 h-5 text-white" />
                                 ) : (
-                                  <XCircle className="w-6 h-6 text-red-400" />
+                                  <XCircle className="w-5 h-5 text-white" />
                                 )}
                                 <div>
                                   <h3 className="font-bold text-white text-lg">
                                     {battle.dungeon.name}
                                   </h3>
-                                  <p className="text-zinc-400 text-sm">
+                                  <p className="text-zinc-500 text-sm">
                                     {battle.game.name}
                                   </p>
                                 </div>
@@ -232,19 +228,16 @@ export default function StatsPage() {
 
                               <div className="flex items-center gap-4 text-sm">
                                 <Badge
-                                  className={
-                                    battle.status === "WON"
-                                      ? "bg-green-500/20 text-green-400 border-green-500/50"
-                                      : "bg-red-500/20 text-red-400 border-red-500/50"
-                                  }
+                                  variant="outline"
+                                  className="bg-zinc-800 text-white border-zinc-700"
                                 >
                                   {battle.status === "WON" ? "GYŐZELEM" : "VERESÉG"}
                                 </Badge>
-                                <span className="text-zinc-400">
+                                <span className="text-zinc-500">
                                   <Trophy className="w-4 h-4 inline mr-1" />
                                   {battle.playerWins} - {battle.dungeonWins}
                                 </span>
-                                <span className="text-zinc-400">
+                                <span className="text-zinc-500">
                                   <Calendar className="w-4 h-4 inline mr-1" />
                                   {formatDate(battle.createdAt)}
                                 </span>
@@ -253,7 +246,8 @@ export default function StatsPage() {
 
                             <Button
                               onClick={() => handleReplay(battle)}
-                              className="bg-gradient-to-r from-purple-500 to-violet-500"
+                              variant="outline"
+                              className="border-zinc-700 hover:bg-zinc-800"
                             >
                               <Play className="w-4 h-4 mr-2" />
                               Replay
@@ -275,9 +269,7 @@ export default function StatsPage() {
         <DialogContent className="max-w-6xl max-h-[90vh] bg-zinc-900 border-zinc-800">
           <DialogHeader>
             <DialogTitle className="text-white text-center text-2xl">
-              <span className="bg-gradient-to-r from-purple-500 to-violet-500 bg-clip-text text-transparent">
-                Harc Replay - {selectedBattle?.dungeon.name}
-              </span>
+              Harc Replay - {selectedBattle?.dungeon.name}
             </DialogTitle>
           </DialogHeader>
 
