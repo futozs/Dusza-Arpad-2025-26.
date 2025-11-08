@@ -33,7 +33,16 @@ export default async function DashboardPage() {
   const games = await prisma.game.findMany({
     where: { userId: session.user.id },
     include: {
-      environment: true,
+      environment: {
+        include: {
+          dungeons: true,
+        },
+      },
+      battles: {
+        include: {
+          dungeon: true,
+        },
+      },
       _count: {
         select: {
           battles: true,
@@ -45,9 +54,33 @@ export default async function DashboardPage() {
     orderBy: { updatedAt: 'desc' },
   });
 
-  const activeGames = games.length; // Jelenleg nincs status mező
-  const completedGames = 0; // Jelenleg nincs status mező
+  // Számoljuk ki a befejezett játékokat (ahol minden kazamata le van győzve)
+  const gamesWithCompletion = games.map(game => {
+    const totalDungeons = game.environment.dungeons.length;
+    const wonDungeons = game.battles.filter(b => b.status === 'WON').map(b => b.dungeonId);
+    const uniqueWonDungeons = new Set(wonDungeons).size;
+    const isCompleted = totalDungeons > 0 && uniqueWonDungeons === totalDungeons;
+    return { ...game, isCompleted };
+  });
+
+  const activeGames = gamesWithCompletion.filter(g => !g.isCompleted).length;
+  const completedGames = gamesWithCompletion.filter(g => g.isCompleted).length;
   const totalBattles = games.reduce((sum, g) => sum + g._count.battles, 0);
+
+  // Legutóbbi csaták lekérése
+  const recentBattles = await prisma.battle.findMany({
+    where: {
+      gameId: { in: games.map(g => g.id) },
+      status: { in: ['WON', 'LOST'] },
+    },
+    include: {
+      game: true,
+      dungeon: true,
+      deck: true,
+    },
+    orderBy: { updatedAt: 'desc' },
+    take: 5,
+  });
 
   return (
     <DashboardLayout>
@@ -133,69 +166,87 @@ export default async function DashboardPage() {
                     <Play className="w-6 h-6 text-purple-400" />
                     Aktív Játékok
                   </CardTitle>
-                  <Link href="/dashboard/games">
-                    <Button className="bg-gradient-to-r from-purple-500 to-violet-500 hover:from-purple-600 hover:to-violet-600 text-white">
-                      Összes megtekintése
-                    </Button>
-                  </Link>
+                  <div className="flex gap-3">
+                    <Link href="/dashboard/games/new">
+                      <Button className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white">
+                        Új játék
+                      </Button>
+                    </Link>
+                    <Link href="/dashboard/games">
+                      <Button className="bg-gradient-to-r from-purple-500 to-violet-500 hover:from-purple-600 hover:to-violet-600 text-white">
+                        Összes megtekintése
+                      </Button>
+                    </Link>
+                  </div>
                 </div>
               </CardHeader>
-              <CardContent className="space-y-4">
-                {games.slice(0, 3).map((game) => (
-                  <Link key={game.id} href={`/dashboard/games/${game.id}`}>
-                      <div className="group p-4 rounded-xl border border-zinc-800 hover:border-purple-500/30 bg-zinc-950/50 hover:bg-zinc-950/80 transition-all cursor-pointer">
-                        <div className="flex items-center justify-between mb-3">
-                          <div className="flex items-center gap-3">
-                            <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-500 to-violet-500 flex items-center justify-center">
-                              <Gamepad2 className="w-6 h-6 text-white" />
+              <CardContent>
+                <div className="space-y-4">
+                  {gamesWithCompletion.slice(0, 3).map((game) => (
+                    <Link key={game.id} href={`/dashboard/games/${game.id}`}>
+                        <div className="group p-4 rounded-xl border border-zinc-800 hover:border-purple-500/30 bg-zinc-950/50 hover:bg-zinc-950/80 transition-all cursor-pointer">
+                          <div className="flex items-center justify-between mb-3">
+                            <div className="flex items-center gap-3">
+                              <div className={`w-12 h-12 rounded-lg ${game.isCompleted ? 'bg-gradient-to-br from-green-500 to-emerald-500' : 'bg-gradient-to-br from-purple-500 to-violet-500'} flex items-center justify-center`}>
+                                {game.isCompleted ? (
+                                  <Trophy className="w-6 h-6 text-white" />
+                                ) : (
+                                  <Gamepad2 className="w-6 h-6 text-white" />
+                                )}
+                              </div>
+                              <div>
+                                <h3 className="text-white font-semibold group-hover:text-purple-300 transition-colors flex items-center gap-2">
+                                  {game.name}
+                                  {game.isCompleted && (
+                                    <span className="text-xs bg-green-500/20 text-green-400 px-2 py-0.5 rounded-full">
+                                      Befejezett
+                                    </span>
+                                  )}
+                                </h3>
+                                <p className="text-zinc-500 text-sm flex items-center gap-1">
+                                  <Target className="w-3 h-3" />
+                                  {game.environment.name}
+                                </p>
+                              </div>
                             </div>
-                            <div>
-                              <h3 className="text-white font-semibold group-hover:text-purple-300 transition-colors">
-                                {game.name}
-                              </h3>
-                              <p className="text-zinc-500 text-sm flex items-center gap-1">
-                                <Target className="w-3 h-3" />
-                                {game.environment.name}
+                            <div className="text-right">
+                              <p className="text-zinc-400 text-xs flex items-center gap-1">
+                                <Clock className="w-3 h-3" />
+                                {new Date(game.updatedAt).toLocaleDateString('hu-HU')}
                               </p>
                             </div>
                           </div>
-                          <div className="text-right">
-                            <p className="text-zinc-400 text-xs flex items-center gap-1">
-                              <Clock className="w-3 h-3" />
-                              {new Date(game.updatedAt).toLocaleDateString('hu-HU')}
-                            </p>
+                          
+                          <div className="flex gap-4 text-sm">
+                            <div className="flex items-center gap-1 text-zinc-400">
+                              <Swords className="w-4 h-4" />
+                              <span>{game._count.battles} csata</span>
+                            </div>
+                            <div className="flex items-center gap-1 text-zinc-400">
+                              <Shield className="w-4 h-4" />
+                              <span>{game._count.playerCards} kártya</span>
+                            </div>
+                            <div className="flex items-center gap-1 text-zinc-400">
+                              <Users className="w-4 h-4" />
+                              <span>{game._count.decks} pakli</span>
+                            </div>
                           </div>
                         </div>
-                        
-                        <div className="flex gap-4 text-sm">
-                          <div className="flex items-center gap-1 text-zinc-400">
-                            <Swords className="w-4 h-4" />
-                            <span>{game._count.battles} csata</span>
-                          </div>
-                          <div className="flex items-center gap-1 text-zinc-400">
-                            <Shield className="w-4 h-4" />
-                            <span>{game._count.playerCards} kártya</span>
-                          </div>
-                          <div className="flex items-center gap-1 text-zinc-400">
-                            <Users className="w-4 h-4" />
-                            <span>{game._count.decks} pakli</span>
-                          </div>
-                        </div>
-                      </div>
-                    </Link>
-                  ))}
-
-                  {games.length === 0 && (
-                    <div className="text-center py-12">
-                      <Gamepad2 className="w-16 h-16 text-zinc-700 mx-auto mb-4" />
-                      <p className="text-zinc-500 mb-4">Még nincs aktív játékod</p>
-                      <Link href="/dashboard/games/new">
-                        <Button className="bg-gradient-to-r from-purple-500 to-violet-500 hover:from-purple-600 hover:to-violet-600 text-white">
-                          Új játék indítása
-                        </Button>
                       </Link>
-                    </div>
-                  )}
+                    ))}
+
+                    {games.length === 0 && (
+                      <div className="text-center py-12">
+                        <Gamepad2 className="w-16 h-16 text-zinc-700 mx-auto mb-4" />
+                        <p className="text-zinc-500 mb-4">Még nincs aktív játékod</p>
+                        <Link href="/dashboard/games/new">
+                          <Button className="bg-gradient-to-r from-purple-500 to-violet-500 hover:from-purple-600 hover:to-violet-600 text-white">
+                            Új játék indítása
+                          </Button>
+                        </Link>
+                      </div>
+                    )}
+                  </div>
                 </CardContent>
               </Card>
 
@@ -204,14 +255,60 @@ export default async function DashboardPage() {
                 <CardHeader>
                   <CardTitle className="text-2xl text-white flex items-center gap-3">
                     <TrendingUp className="w-6 h-6 text-violet-400" />
-                    Legutóbbi Eredmények
+                    Legutóbbi Kazamata Harcok
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-center py-8">
-                    <Trophy className="w-16 h-16 text-zinc-700 mx-auto mb-4" />
-                    <p className="text-zinc-500">Itt jelennek meg a legutóbbi csatáid eredményei</p>
-                  </div>
+                  {recentBattles.length > 0 ? (
+                    <div className="space-y-3">
+                      {recentBattles.map((battle) => (
+                        <Link key={battle.id} href={`/dashboard/games/${battle.gameId}`}>
+                          <div className="group p-4 rounded-xl border border-zinc-800 hover:border-violet-500/30 bg-zinc-950/50 hover:bg-zinc-950/80 transition-all cursor-pointer">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-3">
+                                <div className={`w-10 h-10 rounded-lg ${battle.status === 'WON' ? 'bg-gradient-to-br from-green-500 to-emerald-500' : 'bg-gradient-to-br from-red-500 to-rose-500'} flex items-center justify-center`}>
+                                  {battle.status === 'WON' ? (
+                                    <Trophy className="w-5 h-5 text-white" />
+                                  ) : (
+                                    <Swords className="w-5 h-5 text-white" />
+                                  )}
+                                </div>
+                                <div>
+                                  <h4 className="text-white font-medium group-hover:text-violet-300 transition-colors">
+                                    {battle.dungeon.name}
+                                  </h4>
+                                  <p className="text-zinc-500 text-sm">
+                                    {battle.game.name} • {battle.status === 'WON' ? 'Győzelem' : 'Vereség'}
+                                  </p>
+                                </div>
+                              </div>
+                              <div className="text-right">
+                                <div className="flex items-center gap-2 mb-1">
+                                  <span className={`text-sm font-semibold ${battle.status === 'WON' ? 'text-green-400' : 'text-red-400'}`}>
+                                    {battle.playerWins} - {battle.dungeonWins}
+                                  </span>
+                                </div>
+                                <p className="text-zinc-500 text-xs">
+                                  {new Date(battle.updatedAt).toLocaleDateString('hu-HU', { 
+                                    month: 'short', 
+                                    day: 'numeric',
+                                    hour: '2-digit',
+                                    minute: '2-digit'
+                                  })}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-8">
+                      <Trophy className="w-16 h-16 text-zinc-700 mx-auto mb-4" />
+                      <p className="text-zinc-500">Még nem játszottál egyetlen kazamata harcot sem</p>
+                      <p className="text-zinc-600 text-sm mt-2">Indíts egy játékot és vívd meg az első csatádat!</p>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
           </div>

@@ -99,6 +99,8 @@ interface PlayerStats {
   clashWinRate: number;
   averageDamagePerClash: number;
   favoriteCardType: "FIRE" | "WATER" | "EARTH" | "AIR" | null;
+  completedGames: number;
+  activeGames: number;
   
   user?: {
     username: string;
@@ -605,6 +607,14 @@ export default function StatsPage() {
                     <div className="flex justify-between items-center">
                       <span className="text-zinc-400">Összes Játék:</span>
                       <span className="text-white font-bold">{stats?.totalGamesPlayed || 0}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-zinc-400">Aktív Játék:</span>
+                      <span className="text-white font-bold">{stats?.activeGames || 0}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-zinc-400">Befejezett Játék:</span>
+                      <span className="text-white font-bold">{stats?.completedGames || 0}</span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-zinc-400">Paklik Létrehozva:</span>

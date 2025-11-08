@@ -384,12 +384,41 @@ export async function getCalculatedStats(userId: string) {
     
   const favoriteCardType = getFavoriteCardType(stats);
   
+  // Számoljuk ki a befejezett játékokat
+  const games = await prisma.game.findMany({
+    where: { userId },
+    include: {
+      environment: {
+        include: {
+          dungeons: true,
+        },
+      },
+      battles: {
+        where: { status: 'WON' },
+        select: { dungeonId: true },
+      },
+    },
+  });
+
+  let completedGames = 0;
+  games.forEach(game => {
+    const totalDungeons = game.environment.dungeons.length;
+    const wonDungeonIds = new Set(game.battles.map(b => b.dungeonId));
+    if (totalDungeons > 0 && wonDungeonIds.size === totalDungeons) {
+      completedGames++;
+    }
+  });
+
+  const activeGames = stats.totalGamesPlayed - completedGames;
+  
   return {
     ...stats,
     winRate: parseFloat(winRate),
     clashWinRate: parseFloat(clashWinRate),
     averageDamagePerClash,
     favoriteCardType,
+    completedGames,
+    activeGames,
   };
 }
 
