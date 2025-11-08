@@ -21,6 +21,7 @@ import { Wind } from 'lucide-react';
 import { TrendingUp } from 'lucide-react';
 import { Infinity } from 'lucide-react';
 import { Cpu } from 'lucide-react';
+import { Trophy } from 'lucide-react';
 
 
 export default function Home() {
@@ -53,21 +54,23 @@ export default function Home() {
         </div>
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-zinc-950/30 to-zinc-950 z-[1]" />
 
-        <div className="container relative z-10 mx-auto px-4 py-20 text-center md:py-20">
+        <div className="container relative z-10 mx-auto px-4 py-25 text-center md:py-25">
          
-            <div className="mb-6 inline-block rounded-full border border-purple-400/30 bg-purple-950/40 px-6 py-2.5 text-sm font-medium text-purple-200 backdrop-blur-md shadow-lg shadow-purple-900/30">
-              🎮 Fantasy Kártyajáték Verseny
+          
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-purple-400/30 bg-purple-950/40 px-6 py-2.5 text-sm font-medium text-purple-200 backdrop-blur-md shadow-lg shadow-purple-900/30">
+              <Trophy className="w-4 h-4 text-purple-300" />
+              Dusza Árpád Programozói Emlékverseny 2025/2026
             </div>
           
 
           <div
           >
             <h1 className="mb-8 text-6xl font-bold leading-tight md:text-8xl drop-shadow-2xl">
-              <span className="bg-gradient-to-r from-purple-300 via-violet-300 to-fuchsia-300 bg-clip-text text-transparent animate-pulse">
+              <span className="text-white drop-shadow-lg">
                 Damareen
               </span>
               <br />
-              <span className="text-zinc-100 drop-shadow-lg">
+              <span className="text-purple-400 drop-shadow-lg">
                 A Kazamaták Harcosa
               </span>
             </h1>
@@ -75,8 +78,8 @@ export default function Home() {
 
         
             <p className="mx-auto mb-10 max-w-3xl text-xl text-zinc-200 md:text-2xl leading-relaxed drop-shadow-md font-medium">
-              Merülj el egy fantasy világban, ahol stratégia, szerencse és képzelet fonódik össze. 
-              Építsd fel paklidat, hódítsd meg a kazamatákat, és válj legendává!
+              A gyűjtögetős fantasy kártyajáték, amelyben stratégia, szerencse és képzelet 
+              fonódik össze. Hősöket teremts, kazamatákon küzdj végig, és szörnyek vezéreivel mérkőzz meg!
             </p>
       
 
@@ -85,7 +88,7 @@ export default function Home() {
               <Link href="/register">
                 <Button
                   size="lg"
-                  className="group relative overflow-hidden bg-gradient-to-r from-purple-500 via-violet-500 to-fuchsia-500 px-10 py-7 text-xl font-bold shadow-2xl shadow-purple-600/60 transition-all hover:scale-110 hover:shadow-purple-600/80 border-2 border-white/20"
+                  className="group relative overflow-hidden bg-purple-600 px-10 py-7 text-xl font-bold text-white shadow-2xl shadow-purple-600/60 transition-all hover:scale-105 hover:bg-purple-700 hover:shadow-purple-600/80"
                 >
                   <span className="relative z-10 flex items-center gap-2">
                     Kezdd el most! 
@@ -93,39 +96,36 @@ export default function Home() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                     </svg>
                   </span>
-                  <div className="absolute inset-0 -z-0 bg-gradient-to-r from-purple-600 via-violet-600 to-fuchsia-600 opacity-0 transition-opacity group-hover:opacity-100" />
                 </Button>
               </Link>
               <Link href="#gameplay">
                 <Button
                   size="lg"
                   variant="outline"
-                  className="border-2 border-purple-400/50 bg-zinc-950/60 backdrop-blur-md px-10 py-7 text-xl font-bold text-purple-100 hover:border-purple-400 hover:bg-purple-500/20 shadow-xl"
+                  className="border-2 border-zinc-700 bg-zinc-900/60 backdrop-blur-md px-10 py-7 text-xl font-bold text-white hover:border-purple-400 hover:bg-zinc-800 shadow-xl"
                 >
                   Tudj meg többet
                 </Button>
               </Link>
             </div>
-          
-
           {/* Card Types */}
           
             <div className="flex flex-wrap items-center justify-center gap-4">
-              <div className="flex items-center gap-3 rounded-2xl border-2 border-red-400/30 bg-gradient-to-br from-red-900/40 to-red-950/40 px-8 py-4 backdrop-blur-md shadow-xl shadow-red-900/30 transition-all hover:scale-110 hover:border-red-400/60 hover:shadow-2xl hover:shadow-red-500/50 cursor-pointer">
-                <Flame className="from-red-400 to-red-600 text-red-600" />
-                <span className="text-base font-bold text-red-200">Tűz</span>
+              <div className="flex items-center gap-3 rounded-xl border border-red-500/20 bg-red-950/30 px-6 py-3 backdrop-blur-sm transition-all hover:scale-105 hover:border-red-500/40 hover:bg-red-950/50 cursor-pointer">
+                <Flame className="text-red-500 w-5 h-5" />
+                <span className="text-sm font-semibold text-red-400">Tűz</span>
               </div>
-              <div className="flex items-center gap-3 rounded-2xl border-2 border-blue-400/30 bg-gradient-to-br from-blue-900/40 to-blue-950/40 px-8 py-4 backdrop-blur-md shadow-xl shadow-blue-900/30 transition-all hover:scale-110 hover:border-blue-400/60 hover:shadow-2xl hover:shadow-blue-500/50 cursor-pointer">
-                <Droplet className="from-blue-400 to-blue-600 text-blue-600" />
-                <span className="text-base font-bold text-blue-200">Víz</span>
+              <div className="flex items-center gap-3 rounded-xl border border-blue-500/20 bg-blue-950/30 px-6 py-3 backdrop-blur-sm transition-all hover:scale-105 hover:border-blue-500/40 hover:bg-blue-950/50 cursor-pointer">
+                <Droplet className="text-blue-500 w-5 h-5" />
+                <span className="text-sm font-semibold text-blue-400">Víz</span>
               </div>
-              <div className="flex items-center gap-3 rounded-2xl border-2 border-amber-400/30 bg-gradient-to-br from-amber-900/40 to-amber-950/40 px-8 py-4 backdrop-blur-md shadow-xl shadow-amber-900/30 transition-all hover:scale-110 hover:border-amber-400/60 hover:shadow-2xl hover:shadow-amber-500/50 cursor-pointer">
-                <Mountain className="from-amber-300 to-amber-500 text-amber-500" />
-                <span className="text-base font-bold text-amber-200">Föld</span>
+              <div className="flex items-center gap-3 rounded-xl border border-amber-500/20 bg-amber-950/30 px-6 py-3 backdrop-blur-sm transition-all hover:scale-105 hover:border-amber-500/40 hover:bg-amber-950/50 cursor-pointer">
+                <Mountain className="text-amber-500 w-5 h-5" />
+                <span className="text-sm font-semibold text-amber-400">Föld</span>
               </div>
-              <div className="flex items-center gap-3 rounded-2xl border-2 border-cyan-400/30 bg-gradient-to-br from-cyan-900/40 to-cyan-950/40 px-8 py-4 backdrop-blur-md shadow-xl shadow-cyan-900/30 transition-all hover:scale-110 hover:border-cyan-400/60 hover:shadow-2xl hover:shadow-cyan-500/50 cursor-pointer">
-                <Wind className="from-cyan-300 to-cyan-500 text-cyan-500"/>
-                <span className="text-base font-bold text-cyan-200">Levegő</span>
+              <div className="flex items-center gap-3 rounded-xl border border-cyan-500/20 bg-cyan-950/30 px-6 py-3 backdrop-blur-sm transition-all hover:scale-105 hover:border-cyan-500/40 hover:bg-cyan-950/50 cursor-pointer">
+                <Wind className="text-cyan-500 w-5 h-5"/>
+                <span className="text-sm font-semibold text-cyan-400">Levegő</span>
               </div>
             </div>
           </div>
@@ -140,13 +140,12 @@ export default function Home() {
       {/* Features Section */}
       <section id="features" className="relative py-24">
         <div className="container mx-auto px-4">
-          <div
-          >
+          <div>
             <div className="mb-16 text-center">
-              <h2 className="mb-4 text-4xl font-bold text-zinc-100 md:text-5xl">
-                Miért a <span className="bg-gradient-to-r from-purple-400 to-violet-400 bg-clip-text text-transparent">Damareen</span>?
+              <h2 className="mb-4 text-4xl font-bold text-white md:text-5xl">
+                Miért a <span className="text-purple-400">Damareen</span>?
               </h2>
-              <p className="mx-auto max-w-2xl text-lg text-zinc-400">
+              <p className="mx-auto max-w-2xl text-lg text-zinc-300">
                 Fedezd fel, mi teszi egyedivé ezt a kártyajátékot
               </p>
             </div>
@@ -218,15 +217,9 @@ export default function Home() {
 
         <div className="container relative z-10 mx-auto px-4">
           <div className="mb-16 text-center">
-            <TrueFocus
-              sentence="Játékmenet Röviden"
-              manualMode={false}
-              blurAmount={8}
-              borderColor="rgb(168, 85, 247)"
-              glowColor="rgba(168, 85, 247, 0.6)"
-              animationDuration={1}
-              pauseBetweenAnimations={0.5}
-            />
+            <h2 className="mb-4 text-4xl font-bold text-white md:text-5xl">
+              Játékmenet Röviden
+            </h2>
           </div>
 
           <div className="grid gap-12 md:grid-cols-2 md:gap-16">
@@ -235,22 +228,26 @@ export default function Home() {
                 <h3 className="text-3xl font-bold text-zinc-100">
                   Hogyan működik?
                 </h3>
-                <p className="text-lg leading-relaxed text-zinc-400">
-                  A Damareen egy gyűjtögetős fantasy kártyajáték, ahol stratégia,
-                  szerencse és képzelet fonódik össze. Építsd fel saját paklidat a
-                  gyűjteményedből, és indulj harcba a kazamaták ellen!
+                <p className="text-lg leading-relaxed text-zinc-300">
+                  Építsd fel saját kártya gyűjteményedet, és fejleszd azt kazamaták ellen 
+                  vívott harcok során. Minél erősebbek a kártyáid, annál komolyabb 
+                  ellenfeleket tudsz legyőzni!
                 </p>
-                <p className="text-lg leading-relaxed text-zinc-400">
-                  Minden kártyának egyedi tulajdonságai vannak: sebzés, életerő és
-                  elem típus. A <span className="text-red-400">tűz</span> legyőzi a{" "}
-                  <span className="text-amber-400">földet</span>, a föld a{" "}
-                  <span className="text-blue-400">vizet</span>, a víz a{" "}
-                  <span className="text-cyan-400">levegőt</span>, a levegő pedig a
+                <p className="text-lg leading-relaxed text-zinc-300">
+                  Minden kártyának egyedi tulajdonságai vannak: <strong>sebzés</strong>, <strong>életerő</strong> és 
+                  <strong> elem típus</strong>. A <span className="text-red-400 font-semibold">tűz</span> legyőzi a{" "}
+                  <span className="text-amber-400 font-semibold">földet</span>, a föld a{" "}
+                  <span className="text-blue-400 font-semibold">vizet</span>, a víz a{" "}
+                  <span className="text-cyan-400 font-semibold">levegőt</span>, a levegő pedig a
                   tüzet!
+                </p>
+                <p className="text-lg leading-relaxed text-zinc-300">
+                  <strong className="text-purple-400">A játéknak soha nincs vége</strong> – a kártyák 
+                  a végtelenségig fejleszthetőek!
                 </p>
                 <div className="flex gap-4">
                   <Link href="/register">
-                    <Button className="bg-gradient-to-r from-purple-600 to-violet-600 shadow-lg shadow-purple-900/50">
+                    <Button className="bg-purple-600 hover:bg-purple-700 text-white shadow-lg shadow-purple-900/50">
                       Próbáld ki!
                     </Button>
                   </Link>
@@ -260,7 +257,7 @@ export default function Home() {
 
             <div>
               <div className="space-y-4">
-                <Card className="border-zinc-800 bg-zinc-900/50 backdrop-blur-sm">
+                <Card className="border-zinc-800 bg-zinc-900/50 backdrop-blur-sm hover:bg-zinc-900/70 transition-all">
                   <CardContent className="p-6">
                     <div className="flex items-start gap-4">
                       <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-purple-600/20 text-xl font-bold text-purple-400">
@@ -271,15 +268,15 @@ export default function Home() {
                           Gyűjts kártyákat
                         </h4>
                         <p className="text-sm text-zinc-400">
-                          Kezdd a játékot alapkártyákkal, és bővítsd
-                          gyűjteményedet győzelmek során.
+                          Állítsd össze saját gyűjteményedet a világkártyákból – ezek lesznek 
+                          saját kártyáid, amiket a harcok során fejleszthetsz.
                         </p>
                       </div>
                     </div>
                   </CardContent>
                 </Card>
 
-                <Card className="border-zinc-800 bg-zinc-900/50 backdrop-blur-sm">
+                <Card className="border-zinc-800 bg-zinc-900/50 backdrop-blur-sm hover:bg-zinc-900/70 transition-all">
                   <CardContent className="p-6">
                     <div className="flex items-start gap-4">
                       <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-purple-600/20 text-xl font-bold text-purple-400">
@@ -290,15 +287,15 @@ export default function Home() {
                           Építsd fel a paklidat
                         </h4>
                         <p className="text-sm text-zinc-400">
-                          Válaszd ki stratégiailag a kártyáidat, és állítsd össze a
-                          tökéletes paklit.
+                          Válaszd ki stratégiailag a kártyáidat gyűjteményedből, és állítsd 
+                          össze a paklidat a következő harchoz.
                         </p>
                       </div>
                     </div>
                   </CardContent>
                 </Card>
 
-                <Card className="border-zinc-800 bg-zinc-900/50 backdrop-blur-sm">
+                <Card className="border-zinc-800 bg-zinc-900/50 backdrop-blur-sm hover:bg-zinc-900/70 transition-all">
                   <CardContent className="p-6">
                     <div className="flex items-start gap-4">
                       <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-purple-600/20 text-xl font-bold text-purple-400">
@@ -306,18 +303,18 @@ export default function Home() {
                       </div>
                       <div>
                         <h4 className="mb-2 font-bold text-zinc-100">
-                          Hódítsd meg a kazamatákat
+                          Küzdj meg a kazamatákkal
                         </h4>
                         <p className="text-sm text-zinc-400">
-                          Indulj harcba kazamaták ellen, legyőzd a vezéreket, és
-                          fejleszd kártyáidat!
+                          Válassz kazamatát (egyszerű találkozás, kis vagy nagy kazamata), 
+                          és lépj harcba vezérkártyák és sima kártyák ellen!
                         </p>
                       </div>
                     </div>
                   </CardContent>
                 </Card>
 
-                <Card className="border-zinc-800 bg-zinc-900/50 backdrop-blur-sm">
+                <Card className="border-zinc-800 bg-zinc-900/50 backdrop-blur-sm hover:bg-zinc-900/70 transition-all">
                   <CardContent className="p-6">
                     <div className="flex items-start gap-4">
                       <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-purple-600/20 text-xl font-bold text-purple-400">
@@ -325,11 +322,11 @@ export default function Home() {
                       </div>
                       <div>
                         <h4 className="mb-2 font-bold text-zinc-100">
-                          Válj legendává
+                          Fejlessz és nyerj
                         </h4>
                         <p className="text-sm text-zinc-400">
-                          Fejleszd kártyáidat a végtelenségig, és írd be nevedet a
-                          történelembe!
+                          Ha nyersz, kártyáid sebzése vagy életereje növekszik! 
+                          Fejleszd őket a végtelenségig.
                         </p>
                       </div>
                     </div>
@@ -351,10 +348,10 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <div>
             <div className="mb-16 text-center">
-              <h2 className="mb-4 text-4xl font-bold text-zinc-100 md:text-5xl">
-                Kártya <span className="bg-gradient-to-r from-purple-400 to-violet-400 bg-clip-text text-transparent">Típusok</span>
+              <h2 className="mb-4 text-4xl font-bold text-white md:text-5xl">
+                Kártya <span className="text-purple-400">Típusok</span>
               </h2>
-              <p className="mx-auto max-w-2xl text-lg text-zinc-400">
+              <p className="mx-auto max-w-2xl text-lg text-zinc-300">
                 Négy elem, végtelen lehetőség
               </p>
             </div>
@@ -436,20 +433,20 @@ export default function Home() {
 
         <div className="container relative z-10 mx-auto px-4">
           <div>
-            <Card className="border-purple-500/30 bg-gradient-to-br from-purple-950/60 via-zinc-900/70 to-violet-950/60 backdrop-blur-md shadow-2xl shadow-purple-900/40">
+            <Card className="border-zinc-800 bg-zinc-900/70 backdrop-blur-md shadow-2xl">
               <CardContent className="p-12 text-center md:p-16">
-                <h2 className="mb-4 text-4xl font-bold text-zinc-100 md:text-5xl">
-                  Készen állsz a <span className="bg-gradient-to-r from-purple-400 to-violet-400 bg-clip-text text-transparent">kalandra</span>?
+                <h2 className="mb-4 text-4xl font-bold text-white md:text-5xl">
+                  Készen állsz a <span className="text-purple-400">kalandra</span>?
                 </h2>
                 <p className="mx-auto mb-8 max-w-2xl text-lg text-zinc-300">
-                  Csatlakozz több ezer játékoshoz, akik már felfedezték Damareen
-                  világát. Teljesen ingyen, regisztráció nélkül is kipróbálhatod!
+                  Készítsd elő a paklidat, mert a kártyák sorsot hordoznak! 
+                  Vajon a gondosan kidolgozott stratégiád diadalt arat, vagy a kazamaták mélye örökre elnyel?
                 </p>
                 <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
                   <Link href="/register">
                     <Button
                       size="lg"
-                      className="group relative overflow-hidden bg-gradient-to-r from-purple-600 to-violet-600 px-8 py-6 text-lg shadow-2xl shadow-purple-900/50 transition-all hover:scale-105 hover:shadow-purple-600/60"
+                      className="bg-purple-600 hover:bg-purple-700 px-8 py-6 text-lg text-white shadow-2xl shadow-purple-900/50 transition-all hover:scale-105"
                     >
                       Kezdd el most! →
                     </Button>
@@ -458,7 +455,7 @@ export default function Home() {
                     <Button
                       size="lg"
                       variant="outline"
-                      className="border-2 border-purple-400/40 bg-zinc-950/50 backdrop-blur-sm px-8 py-6 text-lg text-zinc-200 hover:border-purple-400/70 hover:bg-purple-950/40 shadow-lg"
+                      className="border-2 border-zinc-700 bg-zinc-900/50 backdrop-blur-sm px-8 py-6 text-lg text-white hover:border-purple-400 hover:bg-zinc-800 shadow-lg"
                     >
                       Van már fiókom
                     </Button>
@@ -479,20 +476,71 @@ export default function Home() {
       <section id="about" className="relative py-24">
         <div className="container mx-auto px-4">
           <div>
-            <div className="mx-auto max-w-3xl text-center">
-              <h2 className="mb-6 text-4xl font-bold text-zinc-100 md:text-5xl">
-                <span className="bg-gradient-to-r from-purple-400 via-violet-400 to-fuchsia-400 bg-clip-text text-transparent">
-                  Egy játék, végtelen lehetőség
-                </span>
+            <div className="mx-auto max-w-4xl">
+              <h2 className="mb-8 text-4xl font-bold text-white md:text-5xl text-center">
+                <span className="text-purple-400">
+                  Kazamaták
+                </span> és Harcok
               </h2>
-              <p className="mb-6 text-lg leading-relaxed text-zinc-300">
-                Most rajtad a sor, hogy saját paklid lapjaira írd a történelmet:
-                <strong className="text-purple-300"> hősöket teremts</strong>, kazamatákon küzdj végig, és 
-                <strong className="text-violet-300"> szörnyek vezéreivel mérkőzz meg</strong>. 
-              </p>
-              <div className="text-xl leading-relaxed text-zinc-400 italic">
-                Vajon a gondosan kidolgozott stratégiád diadalt arat, vagy a kazamaták mélye örökre elnyel? 
-                <strong className="text-purple-400"> Készítsd elő a paklidat, mert a kártyák sorsot hordoznak!</strong>
+              
+              <div className="grid gap-6 md:grid-cols-3 mb-12">
+                <Card className="border-zinc-800 bg-zinc-900/50 backdrop-blur-sm">
+                  <CardContent className="p-6">
+                    <h3 className="text-xl font-bold text-purple-400 mb-3">Egyszerű találkozás</h3>
+                    <p className="text-zinc-400 text-sm mb-3">1 sima kártya ellen</p>
+                    <p className="text-zinc-300 text-sm">
+                      <strong className="text-green-400">Nyeremény:</strong> Választott kártyád +1 sebzést kap
+                    </p>
+                  </CardContent>
+                </Card>
+
+                <Card className="border-zinc-800 bg-zinc-900/50 backdrop-blur-sm">
+                  <CardContent className="p-6">
+                    <h3 className="text-xl font-bold text-purple-400 mb-3">Kis kazamata</h3>
+                    <p className="text-zinc-400 text-sm mb-3">3 sima + 1 vezér ellen</p>
+                    <p className="text-zinc-300 text-sm">
+                      <strong className="text-green-400">Nyeremény:</strong> Választott kártyád +2 életerőt kap
+                    </p>
+                  </CardContent>
+                </Card>
+
+                <Card className="border-zinc-800 bg-zinc-900/50 backdrop-blur-sm">
+                  <CardContent className="p-6">
+                    <h3 className="text-xl font-bold text-purple-400 mb-3">Nagy kazamata</h3>
+                    <p className="text-zinc-400 text-sm mb-3">5 sima + 1 vezér ellen</p>
+                    <p className="text-zinc-300 text-sm">
+                      <strong className="text-green-400">Nyeremény:</strong> Választott kártyád +3 sebzést kap
+                    </p>
+                  </CardContent>
+                </Card>
+              </div>
+
+              <Card className="border-purple-500/20 bg-purple-950/20 backdrop-blur-sm mb-8">
+                <CardContent className="p-6">
+                  <h3 className="text-2xl font-bold text-white mb-4">⚔️ Hogyan dől el egy ütközet?</h3>
+                  <div className="space-y-3 text-zinc-300">
+                    <p>
+                      <strong className="text-purple-400">1.</strong> Ha egy kártya sebzése nagyobb, mint az ellenfél életereje → nyer
+                    </p>
+                    <p>
+                      <strong className="text-purple-400">2.</strong> Ha nem egyértelmű, a <strong>típus</strong> dönt: 
+                      Tűz → Föld → Víz → Levegő → Tűz
+                    </p>
+                    <p>
+                      <strong className="text-purple-400">3.</strong> Ha még mindig döntetlen → a kazamata kártyája nyer
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <div className="text-center">
+                <p className="text-xl text-zinc-300 leading-relaxed mb-4">
+                  Nyersz, ha <strong className="text-purple-400">legalább annyi kártyád nyer</strong>, 
+                  mint amennyi kártya a kazamatában van!
+                </p>
+                <p className="text-lg text-zinc-400 italic">
+                  A selyemutak játszóasztalaitól a modern digitális arénákig – ez a műfaj mindig is a hősök és történetek kovácsa volt.
+                </p>
               </div>
             </div>
           </div>
