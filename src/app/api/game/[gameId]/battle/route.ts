@@ -3,6 +3,11 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { CardType, ClashWinner, ClashWinReason, BattleStatus } from "@/generated/prisma";
 import { prisma } from "@/lib/prisma";
+import { 
+  updateStatsOnBattleStart, 
+  updateStatsOnClash, 
+  updateStatsOnBattleEnd 
+} from "@/lib/stats";
 
 // Típus előnyök meghatározása
 function getTypeAdvantage(attackerType: CardType, defenderType: CardType): boolean {
@@ -163,17 +168,17 @@ export async function POST(
       );
     }
 
-    // Ellenőrizzük, hogy a pakli és a kazamata kártyáinak száma megegyezik
-    if (deck.deckCards.length !== dungeon.dungeonCards.length) {
+    // Ellenőrizzük, hogy a pakli legalább annyi kártyát tartalmaz, mint a kazamata
+    if (deck.deckCards.length < dungeon.dungeonCards.length) {
       return NextResponse.json(
         {
-          error: `A pakli kártyáinak száma (${deck.deckCards.length}) nem egyezik a kazamata kártyáival (${dungeon.dungeonCards.length})`,
+          error: `A pakli legalább ${dungeon.dungeonCards.length} kártyát kell tartalmazzon (jelenleg: ${deck.deckCards.length})`,
         },
         { status: 400 }
       );
     }
 
-    // Harc szimulálása
+    // Harc szimulálása - csak az első N kártyát használjuk, ahol N = kazamata kártyáinak száma
     const clashes: Array<{
       order: number;
       winner: ClashWinner;
@@ -191,7 +196,15 @@ export async function POST(
     let playerWins = 0;
     let dungeonWins = 0;
 
-    for (let i = 0; i < deck.deckCards.length; i++) {
+    // Csak az első N kártyát használjuk a pakliból, ahol N = kazamata kártyáinak száma
+    const cardsToUse = Math.min(deck.deckCards.length, dungeon.dungeonCards.length);
+    
+    // Statisztika: harc kezdés
+    await updateStatsOnBattleStart(session.user.id);
+    
+    const battleStartTime = Date.now();
+    
+    for (let i = 0; i < cardsToUse; i++) {
       const playerDeckCard = deck.deckCards[i];
       const dungeonCard = dungeon.dungeonCards[i];
 
@@ -267,11 +280,32 @@ export async function POST(
       } else {
         dungeonWins++;
       }
+      
+      // Statisztika: ütközet után
+      await updateStatsOnClash(session.user.id, {
+        winner: result.winner,
+        winReason: result.reason,
+        playerDamage,
+        playerHealth,
+        dungeonDamage,
+        dungeonHealth,
+        playerCardType: playerType,
+      });
     }
 
     // Harc eredménye - DOKUMENTÁCIÓ SZERINT
     // "A játékos akkor nyer a harc végén, ha összességében legalább annyi kártyája nyert mint amennyi a kazamatának"
     const status: BattleStatus = playerWins >= dungeonWins ? "WON" : "LOST";
+    
+    // Harc ideje (másodpercben -> percre konvertálva)
+    const battleDuration = Math.ceil((Date.now() - battleStartTime) / 1000 / 60);
+
+    // Statisztika: harc vége
+    await updateStatsOnBattleEnd(session.user.id, {
+      status,
+      dungeonType: dungeon.type,
+      battleDuration,
+    });
 
     // Harc mentése az adatbázisba
     const battle = await prisma.battle.create({
@@ -343,6 +377,11 @@ export async function GET(
       where: { gameId },
       include: {
         dungeon: true,
+        game: {
+          select: {
+            name: true,
+          },
+        },
         clashes: {
           orderBy: { order: "asc" },
         },

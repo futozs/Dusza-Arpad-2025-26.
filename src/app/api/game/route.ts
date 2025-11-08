@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { updateStatsOnGameStart } from "@/lib/stats";
 
 // GET /api/game - Játékos játékainak lekérése
 export async function GET() {
@@ -70,6 +71,9 @@ export async function POST(request: NextRequest) {
         environment: true,
       },
     });
+    
+    // Statisztika: új játék
+    await updateStatsOnGameStart(session.user.id);
 
     return NextResponse.json(game, { status: 201 });
   } catch (error) {

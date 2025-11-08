@@ -725,7 +725,7 @@ export default function PlayGamePage() {
                               isLocked ||
                               !deck ||
                               !deck.deckCards ||
-                              deck.deckCards.length !== dungeon.dungeonCards.length ||
+                              deck.deckCards.length === 0 ||
                               battleLoading
                             }
                             className="w-full bg-gradient-to-r from-purple-500 to-violet-500 disabled:opacity-30"
@@ -738,6 +738,11 @@ export default function PlayGamePage() {
                             ) : isLocked ? (
                               <>
                                 🔒 Zárolt
+                              </>
+                            ) : !deck || !deck.deckCards || deck.deckCards.length === 0 ? (
+                              <>
+                                <Shield className="w-4 h-4 mr-2" />
+                                Nincs pakli
                               </>
                             ) : (
                               <>
