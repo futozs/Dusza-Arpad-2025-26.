@@ -474,7 +474,7 @@ export default function PlayGamePage() {
           <Tabs defaultValue="deck" className="w-full">
             <TabsList className="bg-zinc-900/50 border border-zinc-800">
               <TabsTrigger value="deck">
-                Pakli ({deck?.deckCards.length || 0})
+                Pakli ({deck?.deckCards?.length || 0})
               </TabsTrigger>
               <TabsTrigger value="dungeons">
                 Kazamaták ({dungeons.length})

@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { PrismaClient, CardType, ClashWinner, ClashWinReason, BattleStatus } from "@/generated/prisma";
-
-const prisma = new PrismaClient();
+import { CardType, ClashWinner, ClashWinReason, BattleStatus } from "@/generated/prisma";
+import { prisma } from "@/lib/prisma";
 
 // Típus előnyök meghatározása
 function getTypeAdvantage(attackerType: CardType, defenderType: CardType): boolean {

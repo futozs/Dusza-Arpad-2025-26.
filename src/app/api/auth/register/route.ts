@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@/generated/prisma";
+import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { SignUpSchema } from "@/schemas/auth.schemas";
 import { z } from "zod";
 import { sendVerificationEmail } from "@/mail/send-verification";
 
-const prisma = new PrismaClient();
+// Prisma client imported from singleton
 
 /**
  * POST /api/auth/register

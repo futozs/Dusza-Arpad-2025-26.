@@ -5,7 +5,7 @@ import { PrismaClient } from "@/generated/prisma/client";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
 
-const prisma = new PrismaClient();
+// Prisma client imported from singleton
 
 const DeleteAccountSchema = z.object({
   password: z.string(),

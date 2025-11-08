@@ -5,7 +5,7 @@ import { PrismaClient } from "@/generated/prisma/client";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
 
-const prisma = new PrismaClient();
+// Prisma client imported from singleton
 
 const ChangeEmailSchema = z.object({
   newEmail: z.string().email(),

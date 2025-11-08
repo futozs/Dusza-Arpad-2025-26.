@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { PrismaClient, LeaderBoostType } from "@/generated/prisma";
 
-const prisma = new PrismaClient();
+// Prisma client imported from singleton
 
 const VALID_BOOST_TYPES: LeaderBoostType[] = ["DAMAGE_DOUBLE", "HEALTH_DOUBLE"];
 

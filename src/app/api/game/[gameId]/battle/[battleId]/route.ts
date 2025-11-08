@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { PrismaClient } from "@/generated/prisma";
+import { prisma } from "@/lib/prisma";
 
-const prisma = new PrismaClient();
+// Prisma client imported from singleton
 
 // GET /api/game/[gameId]/battle/[battleId] - Konkrét harc részleteinek lekérése
 export async function GET(

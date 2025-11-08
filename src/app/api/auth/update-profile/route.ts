@@ -4,7 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { PrismaClient } from "@/generated/prisma/client";
 import { z } from "zod";
 
-const prisma = new PrismaClient();
+// Prisma client imported from singleton
 
 const UpdateProfileSchema = z.object({
   username: z.string().min(3),

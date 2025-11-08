@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { PrismaClient } from "@/generated/prisma";
+import { prisma } from "@/lib/prisma";
 import { sendVerificationEmail } from "@/mail/send-verification";
 import crypto from "crypto";
 
-const prisma = new PrismaClient();
+// Prisma client imported from singleton
 
 export async function POST() {
   try {
