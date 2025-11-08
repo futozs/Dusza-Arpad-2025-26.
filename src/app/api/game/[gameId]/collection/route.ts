@@ -27,11 +27,15 @@ export async function GET(
       return NextResponse.json({ error: "Játék nem található" }, { status: 404 });
     }
 
-    // Gyűjtemény lekérése
+    // Gyűjtemény lekérése (vezérkártyákkal)
     const collection = await prisma.playerCard.findMany({
       where: { gameId },
       include: {
-        baseCard: true,
+        baseCard: {
+          include: {
+            baseCard: true, // LeaderCard -> WorldCard kapcsolat
+          },
+        },
       },
       orderBy: { createdAt: "asc" },
     });
@@ -43,7 +47,7 @@ export async function GET(
   }
 }
 
-// POST /api/game/[gameId]/collection - Kártya hozzáadása a gyűjteményhez
+// POST /api/game/[gameId]/collection - Vezérkártya hozzáadása a gyűjteményhez
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ gameId: string }> }
@@ -57,10 +61,10 @@ export async function POST(
 
     const { gameId } = await params;
     const body = await request.json();
-    const { worldCardId } = body;
+    const { leaderCardId } = body;
 
-    if (!worldCardId) {
-      return NextResponse.json({ error: "Hiányzó worldCardId" }, { status: 400 });
+    if (!leaderCardId) {
+      return NextResponse.json({ error: "Hiányzó leaderCardId" }, { status: 400 });
     }
 
     // Ellenőrizzük, hogy a játék a felhasználóé-e
@@ -72,17 +76,17 @@ export async function POST(
       return NextResponse.json({ error: "Játék nem található" }, { status: 404 });
     }
 
-    // Ellenőrizzük, hogy a kártya létezik-e és a játék környezetéhez tartozik
-    const worldCard = await prisma.worldCard.findFirst({
+    // Ellenőrizzük, hogy a vezérkártya létezik-e és a játék környezetéhez tartozik
+    const leaderCard = await prisma.leaderCard.findFirst({
       where: {
-        id: worldCardId,
+        id: leaderCardId,
         environmentId: game.environmentId,
       },
     });
 
-    if (!worldCard) {
+    if (!leaderCard) {
       return NextResponse.json(
-        { error: "Kártya nem található vagy nem tartozik a környezethez" },
+        { error: "Vezérkártya nem található vagy nem tartozik a környezethez" },
         { status: 400 }
       );
     }
@@ -92,30 +96,72 @@ export async function POST(
       where: {
         gameId_baseCardId: {
           gameId,
-          baseCardId: worldCardId,
+          baseCardId: leaderCardId,
+        },
+      },
+      include: {
+        baseCard: {
+          include: {
+            baseCard: true,
+          },
         },
       },
     });
 
     if (existing) {
+      // Ha már létezik, adjuk vissza a meglévő kártyát 400-as státusszal
       return NextResponse.json(
-        { error: "Ez a kártya már a gyűjteményben van" },
+        { error: "Ez a vezérkártya már a gyűjteményben van", card: existing },
         { status: 400 }
       );
     }
 
-    // Kártya hozzáadása a gyűjteményhez
-    const playerCard = await prisma.playerCard.create({
-      data: {
-        gameId,
-        baseCardId: worldCardId,
-      },
-      include: {
-        baseCard: true,
-      },
-    });
+    // Vezérkártya hozzáadása a gyűjteményhez
+    try {
+      const playerCard = await prisma.playerCard.create({
+        data: {
+          gameId,
+          baseCardId: leaderCardId,
+        },
+        include: {
+          baseCard: {
+            include: {
+              baseCard: true, // Vezérkártya alapkártyája (WorldCard)
+            },
+          },
+        },
+      });
 
-    return NextResponse.json(playerCard, { status: 201 });
+      return NextResponse.json(playerCard, { status: 201 });
+    } catch (createError: unknown) {
+      // Ha mégis unique constraint error történik (race condition),
+      // próbáljuk meg újra lekérdezni a kártyát
+      if (createError && typeof createError === 'object' && 'code' in createError && createError.code === 'P2002') {
+        const existingCard = await prisma.playerCard.findUnique({
+          where: {
+            gameId_baseCardId: {
+              gameId,
+              baseCardId: leaderCardId,
+            },
+          },
+          include: {
+            baseCard: {
+              include: {
+                baseCard: true,
+              },
+            },
+          },
+        });
+
+        return NextResponse.json(
+          { error: "Ez a vezérkártya már a gyűjteményben van", card: existingCard },
+          { status: 400 }
+        );
+      }
+      
+      // Ha más hiba történt, dobjuk tovább
+      throw createError;
+    }
   } catch (error) {
     console.error("Collection POST error:", error);
     return NextResponse.json({ error: "Hiba történt" }, { status: 500 });

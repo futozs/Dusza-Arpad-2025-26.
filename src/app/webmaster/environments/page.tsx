@@ -5,7 +5,7 @@ import { PrismaClient } from "@/generated/prisma";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import Link from "next/link";
-import { ArrowLeft, Plus, Globe, Layers, Crown, Castle, GamepadIcon, Pencil } from "lucide-react";
+import { ArrowLeft, Plus, Globe, Layers, Crown, Castle, GamepadIcon } from "lucide-react";
 import { DeleteEnvironmentButton } from "@/components/DeleteEnvironmentButton";
 
 const prisma = new PrismaClient();
@@ -118,8 +118,7 @@ export default async function EnvironmentsPage() {
                 {/* Actions */}
                 <div className="flex gap-2">
                   <Link href={`/webmaster/environments/${env.id}`} className="flex-1">
-                    <Button variant="outline" className="w-full border-zinc-700 text-zinc-300 hover:bg-zinc-800">
-                      <Pencil className="w-4 h-4 mr-2" />
+                    <Button variant="outline" size="sm" className="w-full border-zinc-700 text-zinc-300 hover:bg-zinc-800">
                       Szerkesztés
                     </Button>
                   </Link>

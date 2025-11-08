@@ -33,7 +33,16 @@ export default async function GamesPage() {
   const games = await prisma.game.findMany({
     where: { userId: session.user.id },
     include: {
-      environment: true,
+      environment: {
+        include: {
+          dungeons: true,
+        },
+      },
+      battles: {
+        include: {
+          dungeon: true,
+        },
+      },
       _count: {
         select: {
           battles: true,
@@ -45,8 +54,17 @@ export default async function GamesPage() {
     orderBy: { updatedAt: 'desc' },
   });
 
-  const activeGames = games; // Jelenleg nincs status mező
-  const completedGames: typeof games = []; // Jelenleg nincs status mező
+  // Számoljuk ki a befejezett játékokat
+  const gamesWithCompletion = games.map(game => {
+    const totalDungeons = game.environment.dungeons.length;
+    const wonDungeons = game.battles.filter(b => b.status === 'WON').map(b => b.dungeonId);
+    const uniqueWonDungeons = new Set(wonDungeons).size;
+    const isCompleted = totalDungeons > 0 && uniqueWonDungeons === totalDungeons;
+    return { ...game, isCompleted };
+  });
+
+  const activeGames = gamesWithCompletion.filter(g => !g.isCompleted);
+  const completedGames = gamesWithCompletion.filter(g => g.isCompleted);
 
   return (
     <DashboardLayout>

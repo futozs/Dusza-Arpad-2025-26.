@@ -3,11 +3,11 @@
 import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Field, FieldLabel } from "@/components/ui/field";
 import Link from "next/link";
-import { ArrowLeft, Save, Loader2 } from "lucide-react";
+import { ArrowLeft, Save, Loader2, Sword, Heart, Globe } from "lucide-react";
 
 type Environment = {
   id: string;
@@ -97,9 +97,9 @@ export default function EditWorldCardPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-zinc-950 via-purple-950/20 to-zinc-950 p-8 flex items-center justify-center">
+      <div className="min-h-screen bg-zinc-950 p-8 flex items-center justify-center">
         <div className="text-center">
-          <Loader2 className="w-12 h-12 text-purple-500 animate-spin mx-auto mb-4" />
+          <Loader2 className="w-12 h-12 text-zinc-400 animate-spin mx-auto mb-4" />
           <p className="text-zinc-400">Betöltés...</p>
         </div>
       </div>
@@ -108,13 +108,13 @@ export default function EditWorldCardPage() {
 
   if (error && !formData) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-zinc-950 via-purple-950/20 to-zinc-950 p-8">
+      <div className="min-h-screen bg-zinc-950 p-8">
         <div className="max-w-2xl mx-auto">
-          <Card className="border-2 border-red-400/20 bg-zinc-900/70">
+          <Card className="border border-red-500/30 bg-zinc-900">
             <CardContent className="p-8 text-center">
               <p className="text-red-400 text-lg mb-4">{error}</p>
               <Link href="/webmaster/world-cards">
-                <Button className="bg-purple-600 hover:bg-purple-700">
+                <Button className="bg-zinc-700 hover:bg-zinc-600">
                   Vissza a kártyákhoz
                 </Button>
               </Link>
@@ -128,33 +128,40 @@ export default function EditWorldCardPage() {
   if (!formData) return null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-zinc-950 via-purple-950/20 to-zinc-950 p-8">
-      <div className="max-w-2xl mx-auto">
+    <div className="min-h-screen bg-zinc-950 p-8">
+      <div className="max-w-3xl mx-auto">
         <div className="flex items-center gap-4 mb-8">
           <Link href="/webmaster/world-cards">
-            <Button variant="outline" size="icon" className="border-purple-400/40 text-purple-200">
+            <Button variant="outline" size="icon" className="border-zinc-800 text-zinc-300 hover:bg-zinc-900">
               <ArrowLeft className="w-4 h-4" />
             </Button>
           </Link>
-          <div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-200 via-pink-200 to-purple-200 bg-clip-text text-transparent">
-              Világkártya szerkesztése
-            </h1>
-            <p className="text-zinc-400 mt-2">Módosítsd a kártya tulajdonságait</p>
+          <div className="flex items-center gap-3">
+            <div className="p-3 bg-zinc-900 rounded-xl border border-zinc-800">
+              <Globe className="w-6 h-6 text-purple-500" />
+            </div>
+            <div>
+              <h1 className="text-4xl font-bold text-white">
+                Világkártya szerkesztése
+              </h1>
+              <p className="text-zinc-400 mt-1">
+                {formData.name} módosítása
+              </p>
+            </div>
           </div>
         </div>
 
-        <Card className="border-2 border-purple-400/20 bg-zinc-900/70">
+        <Card className="border border-zinc-800 bg-zinc-900">
           <CardHeader>
-            <CardTitle className="text-purple-200">Kártya adatai</CardTitle>
-            <CardDescription className="text-zinc-400">
-              Frissítsd a kártya tulajdonságait
-            </CardDescription>
+            <CardTitle className="text-white flex items-center gap-2">
+              <Globe className="w-5 h-5 text-purple-500" />
+              Kártya adatai
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
               {error && (
-                <div className="bg-red-500/10 border border-red-500/50 text-red-200 px-4 py-3 rounded-lg">
+                <div className="bg-red-500/10 border border-red-500/30 text-red-400 px-4 py-3 rounded-lg">
                   {error}
                 </div>
               )}
@@ -168,7 +175,7 @@ export default function EditWorldCardPage() {
                   value={formData.environmentId}
                   onChange={(e) => setFormData({ ...formData, environmentId: e.target.value })}
                   required
-                  className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-zinc-100 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-2.5 text-zinc-100 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
                 >
                   {environments.map((env) => (
                     <option key={env.id} value={env.id}>
@@ -189,14 +196,15 @@ export default function EditWorldCardPage() {
                   placeholder="pl. Aragorn"
                   required
                   maxLength={16}
-                  className="bg-zinc-800 border-zinc-700 text-zinc-100"
+                  className="bg-zinc-800 border-zinc-700 text-zinc-100 focus:ring-purple-500 focus:border-transparent"
                 />
                 <p className="text-xs text-zinc-500 mt-1">Maximum 16 karakter</p>
               </Field>
 
               <div className="grid grid-cols-2 gap-4">
                 <Field>
-                  <FieldLabel htmlFor="damage" className="text-zinc-200">
+                  <FieldLabel htmlFor="damage" className="text-zinc-200 flex items-center gap-2">
+                    <Sword className="w-4 h-4 text-red-400" />
                     Sebzés érték *
                   </FieldLabel>
                   <Input
@@ -207,13 +215,14 @@ export default function EditWorldCardPage() {
                     value={formData.damage}
                     onChange={(e) => setFormData({ ...formData, damage: parseInt(e.target.value) })}
                     required
-                    className="bg-zinc-800 border-zinc-700 text-zinc-100"
+                    className="bg-zinc-800 border-zinc-700 text-zinc-100 focus:ring-purple-500 focus:border-transparent"
                   />
-                  <p className="text-xs text-zinc-500 mt-1">⚔️ Min: 2, Max: 100</p>
+                  <p className="text-xs text-zinc-500 mt-1">Min: 2, Max: 100</p>
                 </Field>
 
                 <Field>
-                  <FieldLabel htmlFor="health" className="text-zinc-200">
+                  <FieldLabel htmlFor="health" className="text-zinc-200 flex items-center gap-2">
+                    <Heart className="w-4 h-4 text-green-400" />
                     Életerő *
                   </FieldLabel>
                   <Input
@@ -224,9 +233,9 @@ export default function EditWorldCardPage() {
                     value={formData.health}
                     onChange={(e) => setFormData({ ...formData, health: parseInt(e.target.value) })}
                     required
-                    className="bg-zinc-800 border-zinc-700 text-zinc-100"
+                    className="bg-zinc-800 border-zinc-700 text-zinc-100 focus:ring-purple-500 focus:border-transparent"
                   />
-                  <p className="text-xs text-zinc-500 mt-1">❤️ Min: 1, Max: 100</p>
+                  <p className="text-xs text-zinc-500 mt-1">Min: 1, Max: 100</p>
                 </Field>
               </div>
 
@@ -240,12 +249,14 @@ export default function EditWorldCardPage() {
                       onClick={() => setFormData({ ...formData, type: type.value })}
                       className={`p-4 rounded-lg border-2 transition-all ${
                         formData.type === type.value
-                          ? "border-purple-400 bg-purple-900/30"
+                          ? "border-purple-500 bg-purple-500/10"
                           : "border-zinc-700 bg-zinc-800 hover:border-zinc-600"
                       }`}
                     >
                       <span className="text-2xl mb-2 block">{type.icon}</span>
-                      <span className="text-zinc-100 font-semibold">{type.label}</span>
+                      <span className={`font-semibold ${formData.type === type.value ? "text-purple-400" : "text-zinc-400"}`}>
+                        {type.label}
+                      </span>
                     </button>
                   ))}
                 </div>
@@ -262,14 +273,14 @@ export default function EditWorldCardPage() {
                   value={formData.order}
                   onChange={(e) => setFormData({ ...formData, order: parseInt(e.target.value) })}
                   required
-                  className="bg-zinc-800 border-zinc-700 text-zinc-100"
+                  className="bg-zinc-800 border-zinc-700 text-zinc-100 focus:ring-purple-500 focus:border-transparent"
                 />
                 <p className="text-xs text-zinc-500 mt-1">
                   A kártyák sorrendje a világkártyák között
                 </p>
               </Field>
 
-              <div className="flex gap-3">
+              <div className="flex gap-3 pt-4">
                 <Button
                   type="submit"
                   disabled={saving}
@@ -283,7 +294,7 @@ export default function EditWorldCardPage() {
                   ) : (
                     <>
                       <Save className="w-4 h-4 mr-2" />
-                      Változtatások mentése
+                      Változások mentése
                     </>
                   )}
                 </Button>
@@ -291,7 +302,7 @@ export default function EditWorldCardPage() {
                   <Button
                     type="button"
                     variant="outline"
-                    className="w-full border-zinc-600 text-zinc-300"
+                    className="w-full border-zinc-700 text-zinc-300 hover:bg-zinc-800"
                   >
                     Mégse
                   </Button>

@@ -23,13 +23,26 @@ type Environment = {
   name: string;
 };
 
-export default function CreateLeaderCardPage() {
+type LeaderCard = {
+  id: string;
+  name: string;
+  boostType: "DAMAGE_DOUBLE" | "HEALTH_DOUBLE";
+  baseCardId: string;
+  environmentId: string;
+  baseCard: WorldCard;
+  environment: Environment;
+};
+
+export default function EditLeaderCardPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [environments, setEnvironments] = useState<Environment[]>([]);
   const [worldCards, setWorldCards] = useState<WorldCard[]>([]);
   const [filteredCards, setFilteredCards] = useState<WorldCard[]>([]);
+  const [leaderCard, setLeaderCard] = useState<LeaderCard | null>(null);
+  const [cardId, setCardId] = useState<string>("");
   
   const [formData, setFormData] = useState({
     name: "",
@@ -39,36 +52,47 @@ export default function CreateLeaderCardPage() {
   });
 
   useEffect(() => {
-    Promise.all([
-      fetch("/api/webmaster/environments").then((res) => res.json()),
-      fetch("/api/webmaster/world-cards").then((res) => res.json()),
-    ]).then(([envs, cards]) => {
-      setEnvironments(envs);
-      setWorldCards(cards);
-      if (envs.length > 0) {
-        setFormData((prev) => ({ ...prev, environmentId: envs[0].id }));
-      }
-    }).catch(console.error);
-  }, []);
+    params.then(({ id }) => {
+      setCardId(id);
+      Promise.all([
+        fetch("/api/webmaster/environments").then((res) => res.json()),
+        fetch("/api/webmaster/world-cards").then((res) => res.json()),
+        fetch(`/api/webmaster/leader-cards/${id}`).then((res) => res.json()),
+      ]).then(([envs, cards, leader]) => {
+        setEnvironments(envs);
+        setWorldCards(cards);
+        setLeaderCard(leader);
+        
+        setFormData({
+          name: leader.name,
+          baseCardId: leader.baseCardId,
+          boostType: leader.boostType,
+          environmentId: leader.environmentId,
+        });
+        
+        setLoading(false);
+      }).catch(() => {
+        setError("Hiba történt az adatok betöltése során");
+        setLoading(false);
+      });
+    });
+  }, [params]);
 
   useEffect(() => {
     if (formData.environmentId) {
       const filtered = worldCards.filter((card) => card.environmentId === formData.environmentId);
       setFilteredCards(filtered);
-      if (filtered.length > 0 && !formData.baseCardId) {
-        setFormData((prev) => ({ ...prev, baseCardId: filtered[0].id }));
-      }
     }
-  }, [formData.environmentId, worldCards, formData.baseCardId]);
+  }, [formData.environmentId, worldCards]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
+    setSaving(true);
     setError("");
 
     try {
-      const response = await fetch("/api/webmaster/leader-cards", {
-        method: "POST",
+      const response = await fetch(`/api/webmaster/leader-cards/${cardId}`, {
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
@@ -83,13 +107,29 @@ export default function CreateLeaderCardPage() {
     } catch (err) {
       setError(err instanceof Error ? err.message : "Ismeretlen hiba történt");
     } finally {
-      setLoading(false);
+      setSaving(false);
     }
   };
 
   const selectedCard = worldCards.find((c) => c.id === formData.baseCardId);
   const previewDamage = selectedCard ? (formData.boostType === "DAMAGE_DOUBLE" ? selectedCard.damage * 2 : selectedCard.damage) : 0;
   const previewHealth = selectedCard ? (formData.boostType === "HEALTH_DOUBLE" ? selectedCard.health * 2 : selectedCard.health) : 0;
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-zinc-950 flex items-center justify-center">
+        <div className="text-zinc-400">Betöltés...</div>
+      </div>
+    );
+  }
+
+  if (!leaderCard) {
+    return (
+      <div className="min-h-screen bg-zinc-950 flex items-center justify-center">
+        <div className="text-red-400">Vezérkártya nem található</div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-zinc-950 p-8">
@@ -106,10 +146,10 @@ export default function CreateLeaderCardPage() {
             </div>
             <div>
               <h1 className="text-4xl font-bold text-white">
-                Új vezérkártya
+                Vezérkártya szerkesztése
               </h1>
               <p className="text-zinc-400 mt-1">
-                Származtass vezérkártyát egy világkártyából
+                {leaderCard.name} módosítása
               </p>
             </div>
           </div>
@@ -125,7 +165,7 @@ export default function CreateLeaderCardPage() {
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
               {error && (
-                <div className="bg-red-500/10 border border-red-500/50 text-red-200 px-4 py-3 rounded-lg">
+                <div className="bg-red-500/10 border border-red-500/30 text-red-400 px-4 py-3 rounded-lg">
                   {error}
                 </div>
               )}
@@ -272,11 +312,11 @@ export default function CreateLeaderCardPage() {
               <div className="flex gap-3 pt-4">
                 <Button
                   type="submit"
-                  disabled={loading || filteredCards.length === 0}
+                  disabled={saving || filteredCards.length === 0}
                   className="flex-1 bg-amber-600 hover:bg-amber-700 text-white"
                 >
                   <Save className="w-4 h-4 mr-2" />
-                  {loading ? "Létrehozás..." : "Vezérkártya létrehozása"}
+                  {saving ? "Mentés..." : "Módosítások mentése"}
                 </Button>
                 <Link href="/webmaster/leader-cards" className="flex-1">
                   <Button

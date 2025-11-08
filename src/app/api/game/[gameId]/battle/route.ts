@@ -122,7 +122,11 @@ export async function POST(
           include: {
             playerCard: {
               include: {
-                baseCard: true,
+                baseCard: {
+                  include: {
+                    baseCard: true, // LeaderCard -> WorldCard
+                  },
+                },
               },
             },
           },
@@ -168,17 +172,19 @@ export async function POST(
       );
     }
 
-    // Ellenőrizzük, hogy a pakli legalább annyi kártyát tartalmaz, mint a kazamata
-    if (deck.deckCards.length < dungeon.dungeonCards.length) {
+    // DOKUMENTÁCIÓ SZERINT: "Csak akkor indul el a harc, ha a játékos által korábban 
+    // összeállított pakli kártyáinak száma megegyezik a kiválasztott kazamata kártyáinak számával"
+    // Tehát PONTOS egyenlőség kell, nem csak >=
+    if (deck.deckCards.length !== dungeon.dungeonCards.length) {
       return NextResponse.json(
         {
-          error: `A pakli legalább ${dungeon.dungeonCards.length} kártyát kell tartalmazzon (jelenleg: ${deck.deckCards.length})`,
+          error: `A pakli kártyaszámának meg kell egyeznie a kazamata kártyaszámával! (Pakli: ${deck.deckCards.length}, Kazamata: ${dungeon.dungeonCards.length})`,
         },
         { status: 400 }
       );
     }
 
-    // Harc szimulálása - csak az első N kártyát használjuk, ahol N = kazamata kártyáinak száma
+    // Harc szimulálása
     const clashes: Array<{
       order: number;
       winner: ClashWinner;
@@ -196,8 +202,8 @@ export async function POST(
     let playerWins = 0;
     let dungeonWins = 0;
 
-    // Csak az első N kártyát használjuk a pakliból, ahol N = kazamata kártyáinak száma
-    const cardsToUse = Math.min(deck.deckCards.length, dungeon.dungeonCards.length);
+    // Pontosan annyi kártya van a pakliból mint a kazamatából (ezt már ellenőriztük)
+    const cardsToUse = dungeon.dungeonCards.length;
     
     // Statisztika: harc kezdés
     await updateStatsOnBattleStart(session.user.id);
@@ -208,12 +214,16 @@ export async function POST(
       const playerDeckCard = deck.deckCards[i];
       const dungeonCard = dungeon.dungeonCards[i];
 
-      // Játékos kártya adatai (alap + boost)
-      const playerBase = playerDeckCard.playerCard.baseCard;
-      const playerDamage = playerBase.damage + playerDeckCard.playerCard.damageBoost;
-      const playerHealth = playerBase.health + playerDeckCard.playerCard.healthBoost;
-      const playerType = playerBase.type;
-      const playerName = playerBase.name;
+      // Játékos kártya adatai (PlayerCard -> LeaderCard -> WorldCard)
+      const playerCard = playerDeckCard.playerCard;
+      const playerLeaderCard = playerCard.baseCard; // LeaderCard
+      const playerWorldCard = playerLeaderCard.baseCard; // WorldCard
+      
+      // Alap értékek a WorldCard-ból + boostok a PlayerCard-ból
+      const playerDamage = playerWorldCard.damage + (playerCard.damageBoost || 0);
+      const playerHealth = playerWorldCard.health + (playerCard.healthBoost || 0);
+      const playerType = playerWorldCard.type;
+      const playerName = playerLeaderCard.name;
 
       // Kazamata kártya adatai
       let dungeonDamage: number;

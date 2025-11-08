@@ -37,7 +37,11 @@ export async function GET(
           include: {
             playerCard: {
               include: {
-                baseCard: true,
+                baseCard: {
+                  include: {
+                    baseCard: true, // WorldCard nested in LeaderCard
+                  },
+                },
               },
             },
           },
@@ -142,7 +146,11 @@ export async function POST(
             include: {
               playerCard: {
                 include: {
-                  baseCard: true,
+                  baseCard: {
+                    include: {
+                      baseCard: true, // WorldCard nested in LeaderCard
+                    },
+                  },
                 },
               },
             },

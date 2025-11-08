@@ -118,7 +118,7 @@ export default async function LeaderCardsPage() {
                       size="sm"
                       className="w-full border-zinc-700 text-zinc-300 hover:bg-zinc-800"
                     >
-                      Részletek
+                      Szerkesztés
                     </Button>
                   </Link>
                   <DeleteLeaderCardButton cardId={card.id} cardName={card.name} />

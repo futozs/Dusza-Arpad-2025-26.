@@ -74,7 +74,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { name, type, environmentId, cards } = body;
+    const { name, type, environmentId, cards, order, requiredWins } = body;
 
     // Típus definíció a kártyák számára
     interface DungeonCardInput {
@@ -87,6 +87,24 @@ export async function POST(request: NextRequest) {
     if (!name || !type || !environmentId || !cards || !Array.isArray(cards)) {
       return NextResponse.json(
         { error: "Hiányzó vagy érvénytelen mezők" },
+        { status: 400 }
+      );
+    }
+
+    // Order és requiredWins validálás
+    const dungeonOrder = order !== undefined ? Number(order) : 0;
+    const dungeonRequiredWins = requiredWins !== undefined ? Number(requiredWins) : 0;
+
+    if (isNaN(dungeonOrder) || dungeonOrder < 0) {
+      return NextResponse.json(
+        { error: "Érvénytelen sorrend érték (0 vagy pozitív szám kell)" },
+        { status: 400 }
+      );
+    }
+
+    if (isNaN(dungeonRequiredWins) || dungeonRequiredWins < 0) {
+      return NextResponse.json(
+        { error: "Érvénytelen szükséges győzelmek érték (0 vagy pozitív szám kell)" },
         { status: 400 }
       );
     }
@@ -157,6 +175,8 @@ export async function POST(request: NextRequest) {
         name,
         type,
         environmentId,
+        order: dungeonOrder,
+        requiredWins: dungeonRequiredWins,
         dungeonCards: {
           create: dungeonCards.map((card, index: number) => ({
             order: index,

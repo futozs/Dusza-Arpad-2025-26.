@@ -64,12 +64,17 @@ export async function updateStatsOnClash(
   
   const isPlayerWin = clashData.winner === "PLAYER";
   
+  // Biztonságos számok - NaN helyett 0
+  const playerDamage = isNaN(clashData.playerDamage) ? 0 : clashData.playerDamage;
+  const playerHealth = isNaN(clashData.playerHealth) ? 0 : clashData.playerHealth;
+  const dungeonDamage = isNaN(clashData.dungeonDamage) ? 0 : clashData.dungeonDamage;
+  
   // Alapvető statisztikák
   const updateData: Record<string, unknown> = {
     totalClashes: { increment: 1 },
-    totalDamageDealt: { increment: clashData.playerDamage },
-    totalDamageTaken: { increment: clashData.dungeonDamage },
-    totalHealthUsed: { increment: clashData.playerHealth },
+    totalDamageDealt: { increment: playerDamage },
+    totalDamageTaken: { increment: dungeonDamage },
+    totalHealthUsed: { increment: playerHealth },
   };
 
   // Győzelem/vereség számláló
@@ -127,8 +132,8 @@ export async function updateStatsOnClash(
     where: { userId },
   });
   
-  if (currentStats && clashData.playerDamage > currentStats.highestDamageInClash) {
-    updateData.highestDamageInClash = clashData.playerDamage;
+  if (currentStats && playerDamage > currentStats.highestDamageInClash) {
+    updateData.highestDamageInClash = playerDamage;
   }
 
   return await prisma.playerStats.update({
@@ -379,12 +384,41 @@ export async function getCalculatedStats(userId: string) {
     
   const favoriteCardType = getFavoriteCardType(stats);
   
+  // Számoljuk ki a befejezett játékokat
+  const games = await prisma.game.findMany({
+    where: { userId },
+    include: {
+      environment: {
+        include: {
+          dungeons: true,
+        },
+      },
+      battles: {
+        where: { status: 'WON' },
+        select: { dungeonId: true },
+      },
+    },
+  });
+
+  let completedGames = 0;
+  games.forEach(game => {
+    const totalDungeons = game.environment.dungeons.length;
+    const wonDungeonIds = new Set(game.battles.map(b => b.dungeonId));
+    if (totalDungeons > 0 && wonDungeonIds.size === totalDungeons) {
+      completedGames++;
+    }
+  });
+
+  const activeGames = stats.totalGamesPlayed - completedGames;
+  
   return {
     ...stats,
     winRate: parseFloat(winRate),
     clashWinRate: parseFloat(clashWinRate),
     averageDamagePerClash,
     favoriteCardType,
+    completedGames,
+    activeGames,
   };
 }
 
