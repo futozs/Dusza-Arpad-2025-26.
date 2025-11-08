@@ -1,29 +1,17 @@
 "use client";
 
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  Field,
-  FieldDescription,
-  FieldGroup,
-  FieldLabel,
-} from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
-import ClientOnly from "@/components/ClientOnly";
-import LiquidEther from "@/components/LiquidEther";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { SignUpSchema, SignUpInput } from "@/schemas/auth.schemas";
-import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
+
+import AuthLayout from "@/components/auth/AuthLayout";
+import AuthCard from "@/components/auth/AuthCard";
+import { Button } from "@/components/ui/button";
+import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { SignUpSchema, SignUpInput } from "@/schemas/auth.schemas";
 import { registerUser } from "../actions";
 
 export default function RegisterPage() {
@@ -66,68 +54,17 @@ export default function RegisterPage() {
   };
 
   return (
-    <ClientOnly>
-      <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-zinc-950 via-zinc-900 to-zinc-950 px-4 py-12">
-        {/* Fixed LiquidEther Background */}
-        <div className="fixed inset-0 z-0">
-          <LiquidEther
-            colors={["#5227FF", "#FF9FFC", "#B19EEF"]}
-            mouseForce={20}
-            cursorSize={100}
-            isViscous={false}
-            viscous={30}
-            iterationsViscous={32}
-            iterationsPoisson={32}
-            resolution={0.5}
-            isBounce={false}
-            autoDemo={true}
-            autoSpeed={0.5}
-            autoIntensity={2.2}
-            takeoverDuration={0.25}
-            autoResumeDelay={3000}
-            autoRampDuration={0.6}
-          />
-        </div>
-
-        {/* Dark overlay for better readability */}
-        <div className="pointer-events-none fixed inset-0 bg-gradient-to-b from-zinc-950/40 via-zinc-950/60 to-zinc-950/80 z-[1]" />
-
-        {/* Back Button */}
-        <div className="absolute left-4 top-4 md:left-8 md:top-8 z-20">
-          <Link href="/">
-            <Button
-              variant="ghost"
-              className="border border-purple-400/30 bg-zinc-950/60 backdrop-blur-md text-purple-200 hover:bg-purple-500/20 hover:text-purple-100 hover:border-purple-400/50 transition-all shadow-lg shadow-purple-900/30"
-            >
-              ← Vissza a főoldalra
-            </Button>
-          </Link>
-        </div>
-
-        {/* Register Section */}
-        <div className="relative z-10 w-full max-w-md">
-          <div className="mb-8 text-center">
-            <h1 className="text-4xl font-bold drop-shadow-2xl">
-              <span className="bg-gradient-to-r from-purple-300 via-violet-300 to-fuchsia-300 bg-clip-text text-transparent">
-                Kezdd el a kalandot!
-              </span>
-            </h1>
-            <p className="mt-3 text-lg text-zinc-200 drop-shadow-lg font-medium">
-              Hozd létre fiókodat és lépj be Damareen világába
-            </p>
-          </div>
-
-          {/* Signup Form */}
-          <Card className="border-2 border-purple-400/30 bg-zinc-900/90 backdrop-blur-xl shadow-2xl shadow-purple-900/40 gap-4">
-            <CardHeader className="space-y-2">
-              <CardTitle className="text-3xl font-bold bg-gradient-to-r from-purple-200 via-violet-200 to-fuchsia-200 bg-clip-text text-transparent">
-                Csatlakozz hozzánk
-              </CardTitle>
-              <CardDescription className="text-zinc-300 text-base">
-                Hozd létre a karakteredet és indulj a kazamaták felé
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
+    <AuthLayout
+      title="Kezdd el a kalandot!"
+      subtitle="Hozd létre fiókodat és lépj be Damareen világába"
+    >
+      <AuthCard
+        title="Csatlakozz hozzánk"
+        description="Hozd létre a karakteredet és indulj a kazamaták felé"
+        footerText="Már van fiókod?"
+        footerLink="/auth/login"
+        footerLinkText="Jelentkezz be!"
+      >
               <form onSubmit={handleSubmit(onSubmit)}>
                 <FieldGroup className="gap-5">
                   {error && (
@@ -263,30 +200,15 @@ export default function RegisterPage() {
                       <Button
                         type="submit"
                         disabled={loading || success}
-                        className="w-full bg-gradient-to-r from-purple-500 via-violet-500 to-fuchsia-500 hover:from-purple-600 hover:via-violet-600 hover:to-fuchsia-600 text-white font-bold text-lg py-6 shadow-2xl shadow-purple-900/60 border-2 border-white/20 transition-all hover:scale-[1.02] hover:shadow-purple-600/80 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full bg-linear-to-r from-purple-500 via-violet-500 to-fuchsia-500 hover:from-purple-600 hover:via-violet-600 hover:to-fuchsia-600 text-white font-bold text-lg py-6 shadow-2xl shadow-purple-900/60 border-2 border-white/20 transition-all hover:scale-[1.02] hover:shadow-purple-600/80 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
-                        {loading ? "Fiók létrehozása..." : "Fiók létrehozása"}
-                      </Button>
-                    </Field>
-                  </FieldGroup>
+                      {loading ? "Fiók létrehozása..." : "Fiók létrehozása"}
+                    </Button>
+                  </Field>
                 </FieldGroup>
-              </form>
-            </CardContent>
-          </Card>
-
-          <div className="mt-6 text-center">
-            <p className="text-sm text-zinc-300 drop-shadow-md">
-              Már van fiókod?{" "}
-              <Link
-                href="/auth/login"
-                className="text-purple-300 hover:text-purple-200 hover:underline font-semibold transition-colors"
-              >
-                Jelentkezz be!
-              </Link>
-            </p>
-          </div>
-        </div>
-      </div>
-    </ClientOnly>
-  );
-}
+              </FieldGroup>
+            </form>
+          </AuthCard>
+        </AuthLayout>
+      );
+    }

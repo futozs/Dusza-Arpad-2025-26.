@@ -1,32 +1,19 @@
 "use client";
 
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  Field,
-  FieldGroup,
-  FieldLabel,
-} from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { SignInSchema, SignInInput } from "@/schemas/auth.schemas";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { LockKeyhole, ShieldCheck } from "lucide-react";
 
-export function WebmasterLoginForm({
-  className,
-  ...props
-}: React.ComponentProps<"div">) {
+import AuthCard from "@/components/auth/AuthCard";
+import { Button } from "@/components/ui/button";
+import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { SignInSchema, SignInInput } from "@/schemas/auth.schemas";
+
+export function WebmasterLoginForm() {
   const router = useRouter();
   const [error, setError] = useState<string>("");
   const [loading, setLoading] = useState(false);
@@ -74,21 +61,17 @@ export function WebmasterLoginForm({
   };
 
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card className="border-2 border-red-500/40 bg-zinc-900/95 backdrop-blur-xl shadow-2xl shadow-red-900/50">
-        <CardHeader className="space-y-2">
-          <div className="flex items-center justify-center gap-3 mb-2">
-            <ShieldCheck className="w-10 h-10 text-red-400" />
-            <LockKeyhole className="w-8 h-8 text-red-300" />
-          </div>
-          <CardTitle className="text-3xl font-bold text-center bg-gradient-to-r from-red-200 via-orange-200 to-red-200 bg-clip-text text-transparent">
-            Webmester Belépés
-          </CardTitle>
-          <CardDescription className="text-zinc-300 text-base text-center">
-            Csak adminisztrátorok számára
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
+    <AuthCard
+      title="Webmester Belépés"
+      description="Csak adminisztrátorok számára"
+      variant="webmaster"
+      icon={
+        <div className="flex items-center justify-center gap-3">
+          <ShieldCheck className="w-10 h-10 text-red-400" />
+          <LockKeyhole className="w-8 h-8 text-red-300" />
+        </div>
+      }
+    >
           <form onSubmit={handleSubmit(onSubmit)}>
             <FieldGroup>
               {error && (
@@ -153,15 +136,13 @@ export function WebmasterLoginForm({
                 <Button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-gradient-to-r from-red-600 via-orange-600 to-red-600 hover:from-red-700 hover:via-orange-700 hover:to-red-700 text-white font-bold text-lg py-6 shadow-2xl shadow-red-900/60 border-2 border-white/20 transition-all hover:scale-[1.02] hover:shadow-red-600/80 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-linear-to-r from-red-600 via-orange-600 to-red-600 hover:from-red-700 hover:via-orange-700 hover:to-red-700 text-white font-bold text-lg py-6 shadow-2xl shadow-red-900/60 border-2 border-white/20 transition-all hover:scale-[1.02] hover:shadow-red-600/80 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading ? "Belépés..." : "🔐 Admin Belépés"}
                 </Button>
               </Field>
             </FieldGroup>
           </form>
-        </CardContent>
-      </Card>
-    </div>
-  );
-}
+        </AuthCard>
+      );
+    }
