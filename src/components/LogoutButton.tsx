@@ -10,8 +10,9 @@ export function LogoutButton() {
   const handleLogout = async () => {
     try {
       setIsLoading(true);
+      const callbackUrl = `${window.location.origin}/dashboard`;
       await signOut({
-        callbackUrl: "/",
+        callbackUrl,
         redirect: true,
       });
     } catch (error) {

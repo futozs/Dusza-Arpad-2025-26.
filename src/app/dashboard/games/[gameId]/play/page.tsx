@@ -624,9 +624,9 @@ export default function PlayGamePage() {
                       return (
                         <Card
                           key={deckCard.id}
-                          className="border-zinc-800 bg-zinc-900/50 relative"
+                          className="border-zinc-800 bg-zinc-900/50 hover:border-purple-500/50 transition-all relative"
                         >
-                          <div className="absolute top-2 left-2 w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center font-bold text-white">
+                          <div className="absolute top-2 left-2 w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center font-bold text-white shadow-lg">
                             {index + 1}
                           </div>
                           <CardHeader className="pt-12">
@@ -651,6 +651,11 @@ export default function PlayGamePage() {
                                 </span>
                                 <span className="text-white font-bold">
                                   {card.baseCard.damage + card.damageBoost}
+                                  {card.damageBoost > 0 && (
+                                    <span className="text-green-400 text-sm ml-1">
+                                      (+{card.damageBoost})
+                                    </span>
+                                  )}
                                 </span>
                               </div>
                               <div className="flex items-center justify-between">
@@ -659,6 +664,11 @@ export default function PlayGamePage() {
                                 </span>
                                 <span className="text-white font-bold">
                                   {card.baseCard.health + card.healthBoost}
+                                  {card.healthBoost > 0 && (
+                                    <span className="text-green-400 text-sm ml-1">
+                                      (+{card.healthBoost})
+                                    </span>
+                                  )}
                                 </span>
                               </div>
                             </div>
