@@ -16,9 +16,14 @@ import {
   FileText,
   ShieldAlert,
   CheckCircle2,
-  AlertTriangle
+  AlertTriangle,
+  TrendingUp,
+  Activity
 } from "lucide-react";
 import TwoFactorSetupButton from "@/components/TwoFactorSetupButton";
+import { PrismaClient } from "@/generated/prisma";
+
+const prisma = new PrismaClient();
 
 export default async function WebmasterDashboardPage() {
   const session = await getServerSession(authOptions);
@@ -31,6 +36,27 @@ export default async function WebmasterDashboardPage() {
   if (session.user.role !== "WEBMASTER") {
     redirect("/dashboard");
   }
+
+  // Statisztikák lekérése
+  const [
+    environmentsCount,
+    worldCardsCount,
+    leaderCardsCount,
+    dungeonsCount,
+    usersCount,
+    activeUsersCount,
+    gamesCount,
+    activeBattlesCount
+  ] = await Promise.all([
+    prisma.environment.count(),
+    prisma.worldCard.count(),
+    prisma.leaderCard.count(),
+    prisma.dungeon.count(),
+    prisma.user.count(),
+    prisma.user.count({ where: { emailVerified: true } }),
+    prisma.game.count(),
+    prisma.battle.count({ where: { status: "IN_PROGRESS" } })
+  ]);
 
   return (
     <div className="min-h-screen bg-zinc-950 p-4 md:p-8">
@@ -82,7 +108,7 @@ export default async function WebmasterDashboardPage() {
             <div className="flex items-center justify-between relative z-10">
               <div>
                 <p className="text-zinc-500 text-xs uppercase tracking-wider mb-1">Környezetek</p>
-                <p className="text-2xl font-bold text-white">12</p>
+                <p className="text-2xl font-bold text-white">{environmentsCount}</p>
               </div>
               <Globe className="w-8 h-8 text-blue-500/50 group-hover:text-blue-500 transition-colors" />
             </div>
@@ -93,7 +119,7 @@ export default async function WebmasterDashboardPage() {
             <div className="flex items-center justify-between relative z-10">
               <div>
                 <p className="text-zinc-500 text-xs uppercase tracking-wider mb-1">Világkártyák</p>
-                <p className="text-2xl font-bold text-white">48</p>
+                <p className="text-2xl font-bold text-white">{worldCardsCount}</p>
               </div>
               <Layers className="w-8 h-8 text-purple-500/50 group-hover:text-purple-500 transition-colors" />
             </div>
@@ -104,7 +130,7 @@ export default async function WebmasterDashboardPage() {
             <div className="flex items-center justify-between relative z-10">
               <div>
                 <p className="text-zinc-500 text-xs uppercase tracking-wider mb-1">Vezérkártyák</p>
-                <p className="text-2xl font-bold text-white">16</p>
+                <p className="text-2xl font-bold text-white">{leaderCardsCount}</p>
               </div>
               <Crown className="w-8 h-8 text-yellow-500/50 group-hover:text-yellow-500 transition-colors" />
             </div>
@@ -115,9 +141,58 @@ export default async function WebmasterDashboardPage() {
             <div className="flex items-center justify-between relative z-10">
               <div>
                 <p className="text-zinc-500 text-xs uppercase tracking-wider mb-1">Börtönök</p>
-                <p className="text-2xl font-bold text-white">8</p>
+                <p className="text-2xl font-bold text-white">{dungeonsCount}</p>
               </div>
               <Castle className="w-8 h-8 text-red-500/50 group-hover:text-red-500 transition-colors" />
+            </div>
+          </div>
+        </div>
+
+        {/* Additional Stats */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          <div className="group relative overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900/50 backdrop-blur-sm p-4 hover:border-cyan-500/30 transition-all">
+            <div className="absolute top-0 right-0 w-20 h-20 bg-cyan-500/10 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="flex items-center justify-between relative z-10">
+              <div>
+                <p className="text-zinc-500 text-xs uppercase tracking-wider mb-1">Felhasználók</p>
+                <p className="text-2xl font-bold text-white">{usersCount}</p>
+                <p className="text-xs text-zinc-500 mt-1">{activeUsersCount} aktív</p>
+              </div>
+              <Users className="w-8 h-8 text-cyan-500/50 group-hover:text-cyan-500 transition-colors" />
+            </div>
+          </div>
+
+          <div className="group relative overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900/50 backdrop-blur-sm p-4 hover:border-green-500/30 transition-all">
+            <div className="absolute top-0 right-0 w-20 h-20 bg-green-500/10 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="flex items-center justify-between relative z-10">
+              <div>
+                <p className="text-zinc-500 text-xs uppercase tracking-wider mb-1">Játékok össz.</p>
+                <p className="text-2xl font-bold text-white">{gamesCount}</p>
+              </div>
+              <TrendingUp className="w-8 h-8 text-green-500/50 group-hover:text-green-500 transition-colors" />
+            </div>
+          </div>
+
+          <div className="group relative overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900/50 backdrop-blur-sm p-4 hover:border-orange-500/30 transition-all">
+            <div className="absolute top-0 right-0 w-20 h-20 bg-orange-500/10 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="flex items-center justify-between relative z-10">
+              <div>
+                <p className="text-zinc-500 text-xs uppercase tracking-wider mb-1">Aktív csaták</p>
+                <p className="text-2xl font-bold text-white">{activeBattlesCount}</p>
+              </div>
+              <Activity className="w-8 h-8 text-orange-500/50 group-hover:text-orange-500 transition-colors" />
+            </div>
+          </div>
+
+          <div className="group relative overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900/50 backdrop-blur-sm p-4 hover:border-emerald-500/30 transition-all">
+            <div className="absolute top-0 right-0 w-20 h-20 bg-emerald-500/10 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="flex items-center justify-between relative z-10">
+              <div>
+                <p className="text-zinc-500 text-xs uppercase tracking-wider mb-1">Össz. kártya</p>
+                <p className="text-2xl font-bold text-white">{worldCardsCount + leaderCardsCount}</p>
+                <p className="text-xs text-zinc-500 mt-1">{worldCardsCount}+{leaderCardsCount}</p>
+              </div>
+              <BarChart3 className="w-8 h-8 text-emerald-500/50 group-hover:text-emerald-500 transition-colors" />
             </div>
           </div>
         </div>
@@ -284,7 +359,8 @@ export default async function WebmasterDashboardPage() {
           </Link>
 
           {/* Statisztikák */}
-          <Card className="relative overflow-hidden border border-zinc-800/50 bg-zinc-900/30 backdrop-blur-sm opacity-60 cursor-not-allowed h-full">
+          <Card className="relative overflow-hidden border border-zinc-800/50 bg-zinc-900/50 backdrop-blur-sm h-full">
+            <div className="absolute inset-0 bg-gradient-to-br from-green-500/10 via-transparent to-transparent opacity-50" />
             <div className="absolute top-0 right-0 w-32 h-32 bg-green-500/5 rounded-full blur-3xl" />
             <CardHeader>
               <div className="flex items-center justify-between relative z-10">
@@ -294,11 +370,26 @@ export default async function WebmasterDashboardPage() {
                   </div>
                   Statisztikák
                 </CardTitle>
-                <div className="text-xs text-zinc-600 font-medium px-2 py-1 bg-zinc-800 rounded-md">Hamarosan</div>
+                <div className="w-2 h-2 bg-green-500 rounded-full opacity-50" />
               </div>
             </CardHeader>
             <CardContent className="relative z-10">
-              <p className="text-zinc-500 text-sm">Rendszer statisztikák</p>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-zinc-400">Össz. elem:</span>
+                  <span className="text-white font-semibold">
+                    {environmentsCount + worldCardsCount + leaderCardsCount + dungeonsCount}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-zinc-400">Aktív játékosok:</span>
+                  <span className="text-white font-semibold">{activeUsersCount}</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-zinc-400">Folyó csaták:</span>
+                  <span className="text-white font-semibold">{activeBattlesCount}</span>
+                </div>
+              </div>
             </CardContent>
           </Card>
 

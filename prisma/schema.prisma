@@ -153,6 +153,8 @@ model Dungeon {
   id              String      @id @default(cuid())
   name            String      @unique
   type            DungeonType
+  order           Int         @default(0) // Sorrend - melyik kazamata nyílik fel korábban
+  requiredWins    Int         @default(0) // Hány győzelem kell az előző kazamatákból
   createdAt       DateTime    @default(now())
   
   environment     Environment? @relation(fields: [environmentId], references: [id], onDelete: Cascade)
