@@ -10,7 +10,8 @@ import {
   Text,
   Hr,
   Tailwind,
-} from '@react-email/components';
+  pixelBasedPreset,
+} from "@react-email/components";
 
 interface LoginAlertProps {
   name?: string;
@@ -26,20 +27,24 @@ interface LoginAlertProps {
 }
 
 export const LoginAlert = ({
-  name = 'Játékos',
-  loginTime = '14:30',
-  loginDate = '2025. november 7.',
-  ipAddress = '192.168.1.1',
-  location = 'Budapest, Magyarország',
-  device = 'Windows PC',
-  browser = 'Chrome',
-  securityUrl = 'https://damareen.hu/dashboard/settings',
-  supportEmail = 'support@damareen.hu',
-  company = 'Damareen',
+  name = "Játékos",
+  loginTime = "14:30",
+  loginDate = "2025. november 7.",
+  ipAddress = "192.168.1.1",
+  location = "Budapest, Magyarország",
+  device = "Windows PC",
+  browser = "Chrome",
+  securityUrl = "https://damareen.hu/dashboard/settings",
+  supportEmail = "support@damareen.hu",
+  company = "Damareen",
 }: LoginAlertProps) => {
   return (
     <Html>
-      <Tailwind>
+      <Tailwind
+        config={{
+          presets: [pixelBasedPreset],
+        }}
+      >
         <Head />
         <Preview>Új bejelentkezés észlelve a {company} fiókodban</Preview>
         <Body className="bg-zinc-950 font-sans">
@@ -59,14 +64,16 @@ export const LoginAlert = ({
               <Heading className="m-0 mb-4 text-4xl font-bold text-zinc-50 tracking-tight">
                 Új bejelentkezés 🔐
               </Heading>
-              
+
               <Text className="mb-8 text-lg leading-relaxed text-zinc-300">
-                Szia, <span className="text-purple-400 font-semibold">{name}</span>!
+                Szia,{" "}
+                <span className="text-purple-400 font-semibold">{name}</span>!
               </Text>
 
               <Text className="mb-10 text-base leading-relaxed text-zinc-400">
-                Új bejelentkezést észleltünk a fiókodba. Ha ez te voltál, nincs teendőd. 
-                Ha nem te jelentkeztél be, azonnal lépj és biztosítsd fiókodat.
+                Új bejelentkezést észleltünk a fiókodba. Ha ez te voltál, nincs
+                teendőd. Ha nem te jelentkeztél be, azonnal lépj és biztosítsd
+                fiókodat.
               </Text>
 
               {/* Login Details */}
@@ -74,7 +81,7 @@ export const LoginAlert = ({
                 <Heading className="m-0 mb-6 text-xl font-bold text-zinc-100">
                   Bejelentkezés részletei
                 </Heading>
-                
+
                 <div className="space-y-4">
                   <div className="flex items-start justify-between border-b border-purple-500/10 pb-3">
                     <Text className="m-0 text-sm font-semibold text-zinc-400">
@@ -84,25 +91,21 @@ export const LoginAlert = ({
                       {loginDate} {loginTime}
                     </Text>
                   </div>
-                  
+
                   <div className="flex items-start justify-between border-b border-purple-500/10 pb-3">
                     <Text className="m-0 text-sm font-semibold text-zinc-400">
                       Eszköz
                     </Text>
-                    <Text className="m-0 text-sm text-zinc-200">
-                      {device}
-                    </Text>
+                    <Text className="m-0 text-sm text-zinc-200">{device}</Text>
                   </div>
-                  
+
                   <div className="flex items-start justify-between border-b border-purple-500/10 pb-3">
                     <Text className="m-0 text-sm font-semibold text-zinc-400">
                       Böngésző
                     </Text>
-                    <Text className="m-0 text-sm text-zinc-200">
-                      {browser}
-                    </Text>
+                    <Text className="m-0 text-sm text-zinc-200">{browser}</Text>
                   </div>
-                  
+
                   <div className="flex items-start justify-between border-b border-purple-500/10 pb-3">
                     <Text className="m-0 text-sm font-semibold text-zinc-400">
                       Hely
@@ -111,7 +114,7 @@ export const LoginAlert = ({
                       {location}
                     </Text>
                   </div>
-                  
+
                   <div className="flex items-start justify-between">
                     <Text className="m-0 text-sm font-semibold text-zinc-400">
                       IP cím
@@ -130,10 +133,10 @@ export const LoginAlert = ({
                 <Heading className="mb-6 text-2xl font-bold text-zinc-100">
                   Nem te voltál? 🚨
                 </Heading>
-                
+
                 <Text className="mb-6 text-base leading-relaxed text-zinc-400">
-                  Ha ezt a bejelentkezést nem te kezdeményezted, valaki hozzáférhet a fiókodhoz. 
-                  Kövess az alábbi lépéseket azonnal:
+                  Ha ezt a bejelentkezést nem te kezdeményezted, valaki
+                  hozzáférhet a fiókodhoz. Kövess az alábbi lépéseket azonnal:
                 </Text>
 
                 <div className="space-y-5">
@@ -146,11 +149,12 @@ export const LoginAlert = ({
                         Változtasd meg jelszavad
                       </Text>
                       <Text className="m-0 text-sm text-zinc-500">
-                        Használj erős, egyedi jelszót amit még sehol nem használtál
+                        Használj erős, egyedi jelszót amit még sehol nem
+                        használtál
                       </Text>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-start gap-4">
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-red-500/15 border border-red-500/30 text-base font-bold text-red-400">
                       2
@@ -164,7 +168,7 @@ export const LoginAlert = ({
                       </Text>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-start gap-4">
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-red-500/15 border border-red-500/30 text-base font-bold text-red-400">
                       3
@@ -196,17 +200,22 @@ export const LoginAlert = ({
               {/* Info Section */}
               <Section className="rounded-xl border border-blue-500/20 bg-blue-950/20 p-5 mb-6">
                 <Text className="m-0 text-sm leading-relaxed text-blue-300">
-                  <span className="font-bold">ℹ️ Te voltál?</span> Ha ezt a bejelentkezést te kezdeményezted, nincs 
-                  szükség további lépésekre. Ez az email csak biztonsági célból lett elküldve, hogy tájékoztassunk 
-                  minden fiókaktivitásról.
+                  <span className="font-bold">ℹ️ Te voltál?</span> Ha ezt a
+                  bejelentkezést te kezdeményezted, nincs szükség további
+                  lépésekre. Ez az email csak biztonsági célból lett elküldve,
+                  hogy tájékoztassunk minden fiókaktivitásról.
                 </Text>
               </Section>
 
               {/* Warning */}
               <Section className="rounded-xl border border-red-500/20 bg-red-950/20 p-5">
                 <Text className="m-0 text-sm leading-relaxed text-red-300">
-                  <span className="font-bold">⚠️ Segítségre van szükséged?</span> Ha gyanús aktivitást észlelsz vagy 
-                  nem tudsz bejelentkezni a fiókodba, azonnal lépj kapcsolatba velünk: <span className="font-semibold">{supportEmail}</span>
+                  <span className="font-bold">
+                    ⚠️ Segítségre van szükséged?
+                  </span>{" "}
+                  Ha gyanús aktivitást észlelsz vagy nem tudsz bejelentkezni a
+                  fiókodba, azonnal lépj kapcsolatba velünk:{" "}
+                  <span className="font-semibold">{supportEmail}</span>
                 </Text>
               </Section>
             </Section>
@@ -220,8 +229,11 @@ export const LoginAlert = ({
                 © {new Date().getFullYear()} {company}. Minden jog fenntartva.
               </Text>
               <Text className="mt-5 text-xs text-zinc-600">
-                Kérdésed van? Írj nekünk:{' '}
-                <a href={`mailto:${supportEmail}`} className="text-purple-400 hover:text-purple-300 underline">
+                Kérdésed van? Írj nekünk:{" "}
+                <a
+                  href={`mailto:${supportEmail}`}
+                  className="text-purple-400 hover:text-purple-300 underline"
+                >
                   {supportEmail}
                 </a>
               </Text>

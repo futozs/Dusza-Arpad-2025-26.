@@ -10,7 +10,8 @@ import {
   Text,
   Hr,
   Tailwind,
-} from '@react-email/components';
+  pixelBasedPreset,
+} from "@react-email/components";
 
 interface VerificationEmailProps {
   name?: string;
@@ -21,17 +22,23 @@ interface VerificationEmailProps {
 }
 
 export const VerificationEmail = ({
-  name = 'Játékos',
-  verificationUrl = 'https://damareen.hu/auth/verify',
-  expiresIn = '24 óra',
-  supportEmail = 'support@damareen.hu',
-  company = 'Damareen',
+  name = "Játékos",
+  verificationUrl = "https://damareen.hu/auth/verify",
+  expiresIn = "24 óra",
+  supportEmail = "support@damareen.hu",
+  company = "Damareen",
 }: VerificationEmailProps) => {
   return (
     <Html>
-      <Tailwind>
+      <Tailwind
+        config={{
+          presets: [pixelBasedPreset],
+        }}
+      >
         <Head />
-        <Preview>Erősítsd meg email címedet a {company} regisztrációhoz</Preview>
+        <Preview>
+          Erősítsd meg email címedet a {company} regisztrációhoz
+        </Preview>
         <Body className="bg-zinc-950 font-sans">
           <Container className="mx-auto my-12 max-w-2xl rounded-2xl border border-purple-500/20 bg-gradient-to-br from-zinc-900/95 to-zinc-950 p-12 shadow-2xl">
             {/* Header */}
@@ -49,14 +56,20 @@ export const VerificationEmail = ({
               <Heading className="m-0 mb-4 text-4xl font-bold text-zinc-50 tracking-tight">
                 Üdvözlünk, {name}! 🎮
               </Heading>
-              
+
               <Text className="mb-8 text-lg leading-relaxed text-zinc-300">
-                Köszönjük, hogy csatlakoztál a <span className="text-purple-400 font-semibold">{company}</span> fantasy kártyajáték világához!
+                Köszönjük, hogy csatlakoztál a{" "}
+                <span className="text-purple-400 font-semibold">{company}</span>{" "}
+                fantasy kártyajáték világához!
               </Text>
 
               <Text className="mb-10 text-base leading-relaxed text-zinc-400">
-                A regisztrációd befejezéséhez erősítsd meg email címedet az alábbi gombra kattintva. 
-                Ez a link <span className="text-purple-400 font-semibold">{expiresIn}</span> múlva lejár.
+                A regisztrációd befejezéséhez erősítsd meg email címedet az
+                alábbi gombra kattintva. Ez a link{" "}
+                <span className="text-purple-400 font-semibold">
+                  {expiresIn}
+                </span>{" "}
+                múlva lejár.
               </Text>
 
               {/* CTA Button */}
@@ -84,7 +97,7 @@ export const VerificationEmail = ({
                 <Heading className="mb-6 text-2xl font-bold text-zinc-100">
                   Mi vár rád ezután?
                 </Heading>
-                
+
                 <div className="space-y-5">
                   <div className="flex items-start gap-4">
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-purple-500/15 border border-purple-500/30 text-base font-bold text-purple-400">
@@ -99,7 +112,7 @@ export const VerificationEmail = ({
                       </Text>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-start gap-4">
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-purple-500/15 border border-purple-500/30 text-base font-bold text-purple-400">
                       2
@@ -113,7 +126,7 @@ export const VerificationEmail = ({
                       </Text>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-start gap-4">
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-purple-500/15 border border-purple-500/30 text-base font-bold text-purple-400">
                       3
@@ -135,8 +148,10 @@ export const VerificationEmail = ({
               {/* Warning */}
               <Section className="rounded-xl border border-red-500/20 bg-red-950/20 p-5">
                 <Text className="m-0 text-sm leading-relaxed text-red-300">
-                  <span className="font-bold">⚠️ Biztonság:</span> Ha nem te regisztráltál, hagyd figyelmen kívül ezt az emailt, 
-                  vagy jelezd nekünk a következő címen: <span className="font-semibold">{supportEmail}</span>
+                  <span className="font-bold">⚠️ Biztonság:</span> Ha nem te
+                  regisztráltál, hagyd figyelmen kívül ezt az emailt, vagy
+                  jelezd nekünk a következő címen:{" "}
+                  <span className="font-semibold">{supportEmail}</span>
                 </Text>
               </Section>
             </Section>
@@ -150,8 +165,11 @@ export const VerificationEmail = ({
                 © {new Date().getFullYear()} {company}. Minden jog fenntartva.
               </Text>
               <Text className="mt-5 text-xs text-zinc-600">
-                Kérdésed van? Írj nekünk:{' '}
-                <a href={`mailto:${supportEmail}`} className="text-purple-400 hover:text-purple-300 underline">
+                Kérdésed van? Írj nekünk:{" "}
+                <a
+                  href={`mailto:${supportEmail}`}
+                  className="text-purple-400 hover:text-purple-300 underline"
+                >
                   {supportEmail}
                 </a>
               </Text>

@@ -10,6 +10,7 @@ import {
   Text,
   Hr,
   Tailwind,
+  pixelBasedPreset,
 } from "@react-email/components";
 
 interface PasswordResetEmailProps {
@@ -29,7 +30,11 @@ export const PasswordResetEmail = ({
 }: PasswordResetEmailProps) => {
   return (
     <Html>
-      <Tailwind>
+      <Tailwind
+        config={{
+          presets: [pixelBasedPreset],
+        }}
+      >
         <Head />
         <Preview>Jelszó visszaállítás a {company} fiókodhoz</Preview>
         <Body className="bg-zinc-950 font-sans">
