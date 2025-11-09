@@ -49,7 +49,7 @@ async function main() {
       password,
       role: "WEBMASTER",
       emailVerified: true,
-      twoFactorEnabled: true,
+      twoFactorEnabled: false,
     },
   });
 
