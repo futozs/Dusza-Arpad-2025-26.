@@ -1,16 +1,12 @@
 import {
   Body,
-  Button,
   Container,
   Head,
   Heading,
   Html,
   Preview,
-  Section,
   Text,
   Hr,
-  Tailwind,
-  pixelBasedPreset,
 } from "@react-email/components";
 
 interface LoginAlertProps {
@@ -40,207 +36,751 @@ export const LoginAlert = ({
 }: LoginAlertProps) => {
   return (
     <Html>
-      <Tailwind
-        config={{
-          presets: [pixelBasedPreset],
+      <Head />
+      <Preview>Új bejelentkezés észlelve a {company} fiókodban</Preview>
+      <Body
+        style={{
+          backgroundColor: "#09090b",
+          fontFamily:
+            'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+          margin: "0",
+          padding: "0",
         }}
       >
-        <Head />
-        <Preview>Új bejelentkezés észlelve a {company} fiókodban</Preview>
-        <Body className="bg-zinc-950 font-sans">
-          <Container className="mx-auto my-12 max-w-2xl rounded-2xl border border-purple-500/20 bg-gradient-to-br from-zinc-900/95 to-zinc-950 p-12 shadow-2xl">
-            {/* Header */}
-            <Section className="text-center mb-12">
-              <Heading className="m-0 text-6xl font-black text-purple-400 tracking-tight">
-                {company}
-              </Heading>
-              <Text className="mt-3 text-base text-zinc-500 font-semibold tracking-wide uppercase">
-                A Kazamaták Harcosa
-              </Text>
-            </Section>
-
-            {/* Main Content */}
-            <Section>
-              <Heading className="m-0 mb-4 text-4xl font-bold text-zinc-50 tracking-tight">
-                Új bejelentkezés 🔐
-              </Heading>
-
-              <Text className="mb-8 text-lg leading-relaxed text-zinc-300">
-                Szia,{" "}
-                <span className="text-purple-400 font-semibold">{name}</span>!
-              </Text>
-
-              <Text className="mb-10 text-base leading-relaxed text-zinc-400">
-                Új bejelentkezést észleltünk a fiókodba. Ha ez te voltál, nincs
-                teendőd. Ha nem te jelentkeztél be, azonnal lépj és biztosítsd
-                fiókodat.
-              </Text>
-
-              {/* Login Details */}
-              <Section className="mb-10 rounded-xl border border-purple-500/20 bg-zinc-900/50 p-6">
-                <Heading className="m-0 mb-6 text-xl font-bold text-zinc-100">
-                  Bejelentkezés részletei
-                </Heading>
-
-                <div className="space-y-4">
-                  <div className="flex items-start justify-between border-b border-purple-500/10 pb-3">
-                    <Text className="m-0 text-sm font-semibold text-zinc-400">
-                      Időpont
-                    </Text>
-                    <Text className="m-0 text-sm text-zinc-200">
-                      {loginDate} {loginTime}
-                    </Text>
-                  </div>
-
-                  <div className="flex items-start justify-between border-b border-purple-500/10 pb-3">
-                    <Text className="m-0 text-sm font-semibold text-zinc-400">
-                      Eszköz
-                    </Text>
-                    <Text className="m-0 text-sm text-zinc-200">{device}</Text>
-                  </div>
-
-                  <div className="flex items-start justify-between border-b border-purple-500/10 pb-3">
-                    <Text className="m-0 text-sm font-semibold text-zinc-400">
-                      Böngésző
-                    </Text>
-                    <Text className="m-0 text-sm text-zinc-200">{browser}</Text>
-                  </div>
-
-                  <div className="flex items-start justify-between border-b border-purple-500/10 pb-3">
-                    <Text className="m-0 text-sm font-semibold text-zinc-400">
-                      Hely
-                    </Text>
-                    <Text className="m-0 text-sm text-zinc-200">
-                      {location}
-                    </Text>
-                  </div>
-
-                  <div className="flex items-start justify-between">
-                    <Text className="m-0 text-sm font-semibold text-zinc-400">
-                      IP cím
-                    </Text>
-                    <Text className="m-0 text-sm text-zinc-200 font-mono">
-                      {ipAddress}
-                    </Text>
-                  </div>
-                </div>
-              </Section>
-
-              <Hr className="my-10 border-purple-500/20" />
-
-              {/* Security Actions */}
-              <Section className="mb-10">
-                <Heading className="mb-6 text-2xl font-bold text-zinc-100">
-                  Nem te voltál? 🚨
-                </Heading>
-
-                <Text className="mb-6 text-base leading-relaxed text-zinc-400">
-                  Ha ezt a bejelentkezést nem te kezdeményezted, valaki
-                  hozzáférhet a fiókodhoz. Kövess az alábbi lépéseket azonnal:
-                </Text>
-
-                <div className="space-y-5">
-                  <div className="flex items-start gap-4">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-red-500/15 border border-red-500/30 text-base font-bold text-red-400">
-                      1
-                    </div>
-                    <div className="pt-1">
-                      <Text className="m-0 mb-1 text-base font-semibold text-zinc-200">
-                        Változtasd meg jelszavad
+        <table
+          width="100%"
+          cellPadding="0"
+          cellSpacing="0"
+          style={{ backgroundColor: "#09090b" }}
+        >
+          <tr>
+            <td align="center" style={{ padding: "48px 20px" }}>
+              <Container
+                style={{
+                  margin: "0 auto",
+                  maxWidth: "672px",
+                  border: "1px solid #3d2663",
+                  backgroundColor: "#18181b",
+                  padding: "48px",
+                }}
+              >
+                {/* Header */}
+                <table width="100%" cellPadding="0" cellSpacing="0">
+                  <tr>
+                    <td align="center" style={{ paddingBottom: "48px" }}>
+                      <Heading
+                        style={{
+                          margin: "0",
+                          fontSize: "60px",
+                          fontWeight: "900",
+                          color: "#c084fc",
+                          letterSpacing: "-3px",
+                        }}
+                      >
+                        {company}
+                      </Heading>
+                      <Text
+                        style={{
+                          marginTop: "12px",
+                          marginBottom: "0",
+                          fontSize: "16px",
+                          color: "#71717a",
+                          fontWeight: "600",
+                          letterSpacing: "1.6px",
+                          textTransform: "uppercase",
+                        }}
+                      >
+                        A Kazamaták Harcosa
                       </Text>
-                      <Text className="m-0 text-sm text-zinc-500">
-                        Használj erős, egyedi jelszót amit még sehol nem
-                        használtál
-                      </Text>
-                    </div>
-                  </div>
+                    </td>
+                  </tr>
+                </table>
 
-                  <div className="flex items-start gap-4">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-red-500/15 border border-red-500/30 text-base font-bold text-red-400">
-                      2
-                    </div>
-                    <div className="pt-1">
-                      <Text className="m-0 mb-1 text-base font-semibold text-zinc-200">
-                        Aktiváld a 2FA-t
-                      </Text>
-                      <Text className="m-0 text-sm text-zinc-500">
-                        Kétfaktoros hitelesítés további védelmet biztosít
-                      </Text>
-                    </div>
-                  </div>
+                {/* Main Content */}
+                <table width="100%" cellPadding="0" cellSpacing="0">
+                  <tr>
+                    <td>
+                      <Heading
+                        style={{
+                          margin: "0 0 16px 0",
+                          fontSize: "36px",
+                          fontWeight: "700",
+                          color: "#fafafa",
+                          letterSpacing: "-0.9px",
+                        }}
+                      >
+                        Új bejelentkezés 🔐
+                      </Heading>
 
-                  <div className="flex items-start gap-4">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-red-500/15 border border-red-500/30 text-base font-bold text-red-400">
-                      3
-                    </div>
-                    <div className="pt-1">
-                      <Text className="m-0 mb-1 text-base font-semibold text-zinc-200">
-                        Ellenőrizd aktív munkameneteid
+                      <Text
+                        style={{
+                          marginBottom: "32px",
+                          marginTop: "0",
+                          fontSize: "18px",
+                          lineHeight: "29px",
+                          color: "#d4d4d8",
+                        }}
+                      >
+                        Szia,{" "}
+                        <span style={{ color: "#c084fc", fontWeight: "600" }}>
+                          {name}
+                        </span>
+                        !
                       </Text>
-                      <Text className="m-0 text-sm text-zinc-500">
-                        Jelentkeztesd ki az ismeretlen eszközöket
-                      </Text>
-                    </div>
-                  </div>
-                </div>
-              </Section>
 
-              {/* CTA Button */}
-              <Section className="text-center my-12">
-                <Button
-                  href={securityUrl}
-                  className="inline-block rounded-xl bg-gradient-to-r from-purple-600 via-violet-600 to-fuchsia-600 px-12 py-5 text-base font-bold text-white shadow-lg hover:shadow-purple-500/50 transition-shadow"
+                      <Text
+                        style={{
+                          marginBottom: "40px",
+                          marginTop: "0",
+                          fontSize: "16px",
+                          lineHeight: "26px",
+                          color: "#a1a1aa",
+                        }}
+                      >
+                        Új bejelentkezést észleltünk a fiókodba. Ha ez te voltál,
+                        nincs teendőd. Ha nem te jelentkeztél be, azonnal lépj és
+                        biztosítsd fiókodat.
+                      </Text>
+
+                      {/* Login Details */}
+                      <table
+                        width="100%"
+                        cellPadding="0"
+                        cellSpacing="0"
+                        style={{
+                          marginBottom: "40px",
+                          border: "1px solid #3d2663",
+                          backgroundColor: "#1c1c21",
+                          padding: "24px",
+                        }}
+                      >
+                        <tr>
+                          <td>
+                            <Heading
+                              style={{
+                                margin: "0 0 24px 0",
+                                fontSize: "20px",
+                                fontWeight: "700",
+                                color: "#f4f4f5",
+                              }}
+                            >
+                              Bejelentkezés részletei
+                            </Heading>
+
+                            <table width="100%" cellPadding="0" cellSpacing="0">
+                              <tr>
+                                <td
+                                  style={{
+                                    borderBottom: "1px solid #2d1b3d",
+                                    paddingBottom: "12px",
+                                    paddingTop: "0",
+                                  }}
+                                >
+                                  <table
+                                    width="100%"
+                                    cellPadding="0"
+                                    cellSpacing="0"
+                                  >
+                                    <tr>
+                                      <td width="50%" valign="top">
+                                        <Text
+                                          style={{
+                                            margin: "0",
+                                            fontSize: "14px",
+                                            fontWeight: "600",
+                                            color: "#a1a1aa",
+                                          }}
+                                        >
+                                          Időpont
+                                        </Text>
+                                      </td>
+                                      <td width="50%" valign="top" align="right">
+                                        <Text
+                                          style={{
+                                            margin: "0",
+                                            fontSize: "14px",
+                                            color: "#e4e4e7",
+                                          }}
+                                        >
+                                          {loginDate} {loginTime}
+                                        </Text>
+                                      </td>
+                                    </tr>
+                                  </table>
+                                </td>
+                              </tr>
+
+                              <tr>
+                                <td
+                                  style={{
+                                    borderBottom: "1px solid #2d1b3d",
+                                    paddingBottom: "12px",
+                                    paddingTop: "16px",
+                                  }}
+                                >
+                                  <table
+                                    width="100%"
+                                    cellPadding="0"
+                                    cellSpacing="0"
+                                  >
+                                    <tr>
+                                      <td width="50%" valign="top">
+                                        <Text
+                                          style={{
+                                            margin: "0",
+                                            fontSize: "14px",
+                                            fontWeight: "600",
+                                            color: "#a1a1aa",
+                                          }}
+                                        >
+                                          Eszköz
+                                        </Text>
+                                      </td>
+                                      <td width="50%" valign="top" align="right">
+                                        <Text
+                                          style={{
+                                            margin: "0",
+                                            fontSize: "14px",
+                                            color: "#e4e4e7",
+                                          }}
+                                        >
+                                          {device}
+                                        </Text>
+                                      </td>
+                                    </tr>
+                                  </table>
+                                </td>
+                              </tr>
+
+                              <tr>
+                                <td
+                                  style={{
+                                    borderBottom: "1px solid #2d1b3d",
+                                    paddingBottom: "12px",
+                                    paddingTop: "16px",
+                                  }}
+                                >
+                                  <table
+                                    width="100%"
+                                    cellPadding="0"
+                                    cellSpacing="0"
+                                  >
+                                    <tr>
+                                      <td width="50%" valign="top">
+                                        <Text
+                                          style={{
+                                            margin: "0",
+                                            fontSize: "14px",
+                                            fontWeight: "600",
+                                            color: "#a1a1aa",
+                                          }}
+                                        >
+                                          Böngésző
+                                        </Text>
+                                      </td>
+                                      <td width="50%" valign="top" align="right">
+                                        <Text
+                                          style={{
+                                            margin: "0",
+                                            fontSize: "14px",
+                                            color: "#e4e4e7",
+                                          }}
+                                        >
+                                          {browser}
+                                        </Text>
+                                      </td>
+                                    </tr>
+                                  </table>
+                                </td>
+                              </tr>
+
+                              <tr>
+                                <td
+                                  style={{
+                                    borderBottom: "1px solid #2d1b3d",
+                                    paddingBottom: "12px",
+                                    paddingTop: "16px",
+                                  }}
+                                >
+                                  <table
+                                    width="100%"
+                                    cellPadding="0"
+                                    cellSpacing="0"
+                                  >
+                                    <tr>
+                                      <td width="50%" valign="top">
+                                        <Text
+                                          style={{
+                                            margin: "0",
+                                            fontSize: "14px",
+                                            fontWeight: "600",
+                                            color: "#a1a1aa",
+                                          }}
+                                        >
+                                          Hely
+                                        </Text>
+                                      </td>
+                                      <td width="50%" valign="top" align="right">
+                                        <Text
+                                          style={{
+                                            margin: "0",
+                                            fontSize: "14px",
+                                            color: "#e4e4e7",
+                                          }}
+                                        >
+                                          {location}
+                                        </Text>
+                                      </td>
+                                    </tr>
+                                  </table>
+                                </td>
+                              </tr>
+
+                              <tr>
+                                <td style={{ paddingTop: "16px" }}>
+                                  <table
+                                    width="100%"
+                                    cellPadding="0"
+                                    cellSpacing="0"
+                                  >
+                                    <tr>
+                                      <td width="50%" valign="top">
+                                        <Text
+                                          style={{
+                                            margin: "0",
+                                            fontSize: "14px",
+                                            fontWeight: "600",
+                                            color: "#a1a1aa",
+                                          }}
+                                        >
+                                          IP cím
+                                        </Text>
+                                      </td>
+                                      <td width="50%" valign="top" align="right">
+                                        <Text
+                                          style={{
+                                            margin: "0",
+                                            fontSize: "14px",
+                                            color: "#e4e4e7",
+                                            fontFamily: "monospace",
+                                          }}
+                                        >
+                                          {ipAddress}
+                                        </Text>
+                                      </td>
+                                    </tr>
+                                  </table>
+                                </td>
+                              </tr>
+                            </table>
+                          </td>
+                        </tr>
+                      </table>
+
+                      <Hr
+                        style={{
+                          borderWidth: "0",
+                          borderTop: "1px solid #3d2663",
+                          margin: "40px 0",
+                        }}
+                      />
+
+                      {/* Security Actions */}
+                      <table
+                        width="100%"
+                        cellPadding="0"
+                        cellSpacing="0"
+                        style={{ marginBottom: "40px" }}
+                      >
+                        <tr>
+                          <td>
+                            <Heading
+                              style={{
+                                marginBottom: "24px",
+                                marginTop: "0",
+                                fontSize: "24px",
+                                fontWeight: "700",
+                                color: "#f4f4f5",
+                              }}
+                            >
+                              Nem te voltál? 🚨
+                            </Heading>
+
+                            <Text
+                              style={{
+                                marginBottom: "24px",
+                                marginTop: "0",
+                                fontSize: "16px",
+                                lineHeight: "26px",
+                                color: "#a1a1aa",
+                              }}
+                            >
+                              Ha ezt a bejelentkezést nem te kezdeményezted,
+                              valaki hozzáférhet a fiókodhoz. Kövesd az alábbi
+                              lépéseket azonnal:
+                            </Text>
+                          </td>
+                        </tr>
+
+                        {/* Step 1 */}
+                        <tr>
+                          <td style={{ paddingBottom: "20px" }}>
+                            <table width="100%" cellPadding="0" cellSpacing="0">
+                              <tr>
+                                <td
+                                  width="40"
+                                  valign="top"
+                                  style={{ paddingRight: "16px" }}
+                                >
+                                  <table
+                                    width="40"
+                                    cellPadding="0"
+                                    cellSpacing="0"
+                                    style={{ height: "40px" }}
+                                  >
+                                    <tr>
+                                      <td
+                                        align="center"
+                                        valign="middle"
+                                        style={{
+                                          backgroundColor: "#3d1616",
+                                          border: "1px solid #5c1d1d",
+                                          fontSize: "16px",
+                                          fontWeight: "700",
+                                          color: "#f87171",
+                                        }}
+                                      >
+                                        1
+                                      </td>
+                                    </tr>
+                                  </table>
+                                </td>
+                                <td valign="top" style={{ paddingTop: "4px" }}>
+                                  <Text
+                                    style={{
+                                      margin: "0 0 4px 0",
+                                      fontSize: "16px",
+                                      fontWeight: "600",
+                                      color: "#e4e4e7",
+                                    }}
+                                  >
+                                    Változtasd meg jelszavad
+                                  </Text>
+                                  <Text
+                                    style={{
+                                      margin: "0",
+                                      fontSize: "14px",
+                                      color: "#71717a",
+                                    }}
+                                  >
+                                    Használj erős, egyedi jelszót amit még sehol
+                                    nem használtál
+                                  </Text>
+                                </td>
+                              </tr>
+                            </table>
+                          </td>
+                        </tr>
+
+                        {/* Step 2 */}
+                        <tr>
+                          <td style={{ paddingBottom: "20px" }}>
+                            <table width="100%" cellPadding="0" cellSpacing="0">
+                              <tr>
+                                <td
+                                  width="40"
+                                  valign="top"
+                                  style={{ paddingRight: "16px" }}
+                                >
+                                  <table
+                                    width="40"
+                                    cellPadding="0"
+                                    cellSpacing="0"
+                                    style={{ height: "40px" }}
+                                  >
+                                    <tr>
+                                      <td
+                                        align="center"
+                                        valign="middle"
+                                        style={{
+                                          backgroundColor: "#3d1616",
+                                          border: "1px solid #5c1d1d",
+                                          fontSize: "16px",
+                                          fontWeight: "700",
+                                          color: "#f87171",
+                                        }}
+                                      >
+                                        2
+                                      </td>
+                                    </tr>
+                                  </table>
+                                </td>
+                                <td valign="top" style={{ paddingTop: "4px" }}>
+                                  <Text
+                                    style={{
+                                      margin: "0 0 4px 0",
+                                      fontSize: "16px",
+                                      fontWeight: "600",
+                                      color: "#e4e4e7",
+                                    }}
+                                  >
+                                    Aktiváld a 2FA-t
+                                  </Text>
+                                  <Text
+                                    style={{
+                                      margin: "0",
+                                      fontSize: "14px",
+                                      color: "#71717a",
+                                    }}
+                                  >
+                                    Kétfaktoros hitelesítés további védelmet
+                                    biztosít
+                                  </Text>
+                                </td>
+                              </tr>
+                            </table>
+                          </td>
+                        </tr>
+
+                        {/* Step 3 */}
+                        <tr>
+                          <td>
+                            <table width="100%" cellPadding="0" cellSpacing="0">
+                              <tr>
+                                <td
+                                  width="40"
+                                  valign="top"
+                                  style={{ paddingRight: "16px" }}
+                                >
+                                  <table
+                                    width="40"
+                                    cellPadding="0"
+                                    cellSpacing="0"
+                                    style={{ height: "40px" }}
+                                  >
+                                    <tr>
+                                      <td
+                                        align="center"
+                                        valign="middle"
+                                        style={{
+                                          backgroundColor: "#3d1616",
+                                          border: "1px solid #5c1d1d",
+                                          fontSize: "16px",
+                                          fontWeight: "700",
+                                          color: "#f87171",
+                                        }}
+                                      >
+                                        3
+                                      </td>
+                                    </tr>
+                                  </table>
+                                </td>
+                                <td valign="top" style={{ paddingTop: "4px" }}>
+                                  <Text
+                                    style={{
+                                      margin: "0 0 4px 0",
+                                      fontSize: "16px",
+                                      fontWeight: "600",
+                                      color: "#e4e4e7",
+                                    }}
+                                  >
+                                    Ellenőrizd aktív munkameneteid
+                                  </Text>
+                                  <Text
+                                    style={{
+                                      margin: "0",
+                                      fontSize: "14px",
+                                      color: "#71717a",
+                                    }}
+                                  >
+                                    Jelentkeztesd ki az ismeretlen eszközöket
+                                  </Text>
+                                </td>
+                              </tr>
+                            </table>
+                          </td>
+                        </tr>
+                      </table>
+
+                      {/* CTA Button */}
+                      <table
+                        width="100%"
+                        cellPadding="0"
+                        cellSpacing="0"
+                        style={{ margin: "48px 0" }}
+                      >
+                        <tr>
+                          <td align="center">
+                            <table cellPadding="0" cellSpacing="0">
+                              <tr>
+                                <td
+                                  align="center"
+                                  style={{
+                                    backgroundColor: "#9333ea",
+                                    padding: "20px 48px",
+                                  }}
+                                >
+                                  <a
+                                    href={securityUrl}
+                                    style={{
+                                      fontSize: "16px",
+                                      fontWeight: "700",
+                                      color: "#ffffff",
+                                      textDecoration: "none",
+                                      display: "inline-block",
+                                    }}
+                                  >
+                                    Biztonsági beállítások
+                                  </a>
+                                </td>
+                              </tr>
+                            </table>
+                          </td>
+                        </tr>
+                      </table>
+
+                      <Hr
+                        style={{
+                          borderWidth: "0",
+                          borderTop: "1px solid #3d2663",
+                          margin: "40px 0",
+                        }}
+                      />
+
+                      {/* Info Section */}
+                      <table
+                        width="100%"
+                        cellPadding="0"
+                        cellSpacing="0"
+                        style={{ marginBottom: "24px" }}
+                      >
+                        <tr>
+                          <td
+                            style={{
+                              border: "1px solid #1e3a5f",
+                              backgroundColor: "#0f1c2e",
+                              padding: "20px",
+                            }}
+                          >
+                            <Text
+                              style={{
+                                margin: "0",
+                                fontSize: "14px",
+                                lineHeight: "23px",
+                                color: "#93c5fd",
+                              }}
+                            >
+                              <span style={{ fontWeight: "700" }}>
+                                ℹ️ Te voltál?
+                              </span>{" "}
+                              Ha ezt a bejelentkezést te kezdeményezted, nincs
+                              szükség további lépésekre. Ez az email csak
+                              biztonsági célból lett elküldve, hogy tájékoztassunk
+                              minden fiókaktivitásról.
+                            </Text>
+                          </td>
+                        </tr>
+                      </table>
+
+                      {/* Warning */}
+                      <table
+                        width="100%"
+                        cellPadding="0"
+                        cellSpacing="0"
+                        style={{ marginBottom: "0" }}
+                      >
+                        <tr>
+                          <td
+                            style={{
+                              border: "1px solid #5c1d1d",
+                              backgroundColor: "#231616",
+                              padding: "20px",
+                            }}
+                          >
+                            <Text
+                              style={{
+                                margin: "0",
+                                fontSize: "14px",
+                                lineHeight: "23px",
+                                color: "#fca5a5",
+                              }}
+                            >
+                              <span style={{ fontWeight: "700" }}>
+                                ⚠️ Segítségre van szükséged?
+                              </span>{" "}
+                              Ha gyanús aktivitást észlelsz vagy nem tudsz
+                              bejelentkezni a fiókodba, azonnal lépj kapcsolatba
+                              velünk:{" "}
+                              <span style={{ fontWeight: "600" }}>
+                                {supportEmail}
+                              </span>
+                            </Text>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+
+                {/* Footer */}
+                <table
+                  width="100%"
+                  cellPadding="0"
+                  cellSpacing="0"
+                  style={{
+                    marginTop: "48px",
+                    paddingTop: "32px",
+                    borderTop: "1px solid #2d1b3d",
+                  }}
                 >
-                  Biztonsági beállítások
-                </Button>
-              </Section>
-
-              <Hr className="my-10 border-purple-500/20" />
-
-              {/* Info Section */}
-              <Section className="rounded-xl border border-blue-500/20 bg-blue-950/20 p-5 mb-6">
-                <Text className="m-0 text-sm leading-relaxed text-blue-300">
-                  <span className="font-bold">ℹ️ Te voltál?</span> Ha ezt a
-                  bejelentkezést te kezdeményezted, nincs szükség további
-                  lépésekre. Ez az email csak biztonsági célból lett elküldve,
-                  hogy tájékoztassunk minden fiókaktivitásról.
-                </Text>
-              </Section>
-
-              {/* Warning */}
-              <Section className="rounded-xl border border-red-500/20 bg-red-950/20 p-5">
-                <Text className="m-0 text-sm leading-relaxed text-red-300">
-                  <span className="font-bold">
-                    ⚠️ Segítségre van szükséged?
-                  </span>{" "}
-                  Ha gyanús aktivitást észlelsz vagy nem tudsz bejelentkezni a
-                  fiókodba, azonnal lépj kapcsolatba velünk:{" "}
-                  <span className="font-semibold">{supportEmail}</span>
-                </Text>
-              </Section>
-            </Section>
-
-            {/* Footer */}
-            <Section className="mt-12 pt-8 border-t border-purple-500/10 text-center">
-              <Text className="mb-3 text-xs text-zinc-500">
-                Ezt az emailt a {company} küldte.
-              </Text>
-              <Text className="m-0 text-xs text-zinc-600">
-                © {new Date().getFullYear()} {company}. Minden jog fenntartva.
-              </Text>
-              <Text className="mt-5 text-xs text-zinc-600">
-                Kérdésed van? Írj nekünk:{" "}
-                <a
-                  href={`mailto:${supportEmail}`}
-                  className="text-purple-400 hover:text-purple-300 underline"
-                >
-                  {supportEmail}
-                </a>
-              </Text>
-            </Section>
-          </Container>
-        </Body>
-      </Tailwind>
+                  <tr>
+                    <td align="center">
+                      <Text
+                        style={{
+                          marginBottom: "12px",
+                          marginTop: "0",
+                          fontSize: "12px",
+                          color: "#71717a",
+                        }}
+                      >
+                        Ezt az emailt a {company} küldte.
+                      </Text>
+                      <Text
+                        style={{
+                          margin: "0",
+                          fontSize: "12px",
+                          color: "#52525b",
+                        }}
+                      >
+                        © {new Date().getFullYear()} {company}. Minden jog
+                        fenntartva.
+                      </Text>
+                      <Text
+                        style={{
+                          marginTop: "20px",
+                          marginBottom: "0",
+                          fontSize: "12px",
+                          color: "#52525b",
+                        }}
+                      >
+                        Kérdésed van? Írj nekünk:{" "}
+                        <a
+                          href={`mailto:${supportEmail}`}
+                          style={{
+                            color: "#c084fc",
+                          }}
+                        >
+                          {supportEmail}
+                        </a>
+                      </Text>
+                    </td>
+                  </tr>
+                </table>
+              </Container>
+            </td>
+          </tr>
+        </table>
+      </Body>
     </Html>
   );
 };
