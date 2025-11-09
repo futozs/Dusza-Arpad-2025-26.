@@ -159,10 +159,10 @@ export default function SettingsPage() {
                   <div>
                     <label className="text-sm text-zinc-400 mb-2 block">Szerepkör</label>
                     <div className="flex items-center gap-2 p-3 rounded-lg bg-zinc-950/50 border border-zinc-800">
-                      {session.user.role === "WEBMASTER" ? (
+                      {session.user.role === "JATEKMESTER" ? (
                         <>
                           <Shield className="w-5 h-5 text-red-400" />
-                          <span className="text-white font-medium">Webmester</span>
+                          <span className="text-white font-medium">Játékmester</span>
                         </>
                       ) : (
                         <>

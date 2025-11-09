@@ -66,26 +66,26 @@ const getCardTypeIcon = (type: CardType, className = "w-5 h-5") => {
 const getCardTypeBg = (type: CardType) => {
   switch (type) {
     case "FIRE":
-      return "bg-zinc-900 border-red-500";
+      return "bg-zinc-900 border-zinc-700";
     case "WATER":
-      return "bg-zinc-900 border-blue-500";
+      return "bg-zinc-900 border-zinc-700";
     case "AIR":
-      return "bg-zinc-900 border-cyan-500";
+      return "bg-zinc-900 border-zinc-700";
     case "EARTH":
-      return "bg-zinc-900 border-amber-500";
+      return "bg-zinc-900 border-zinc-700";
   }
 };
 
 const getCardTypeGlow = (type: CardType) => {
   switch (type) {
     case "FIRE":
-      return "shadow-lg shadow-red-500/30";
+      return "shadow-lg shadow-zinc-500/20";
     case "WATER":
-      return "shadow-lg shadow-blue-500/30";
+      return "shadow-lg shadow-zinc-500/20";
     case "AIR":
-      return "shadow-lg shadow-cyan-500/30";
+      return "shadow-lg shadow-zinc-500/20";
     case "EARTH":
-      return "shadow-lg shadow-amber-500/30";
+      return "shadow-lg shadow-zinc-500/20";
   }
 };
 
@@ -95,49 +95,59 @@ const BattleCard = ({
   isActive,
   isDead,
   showDamageAmount,
+  previousHealth,
 }: {
   card: BattleCard;
   side: "player" | "dungeon";
   isActive: boolean;
   isDead: boolean;
   showDamageAmount?: number;
+  previousHealth?: number;
 }) => {
-  const healthPercent = (card.currentHealth / card.health) * 100;
+  const healthPercent = useMemo(() => {
+    return Math.max(0, Math.min(100, (card.currentHealth / card.health) * 100));
+  }, [card.currentHealth, card.health]);
+
+  const previousHealthPercent = useMemo(() => {
+    if (previousHealth === undefined) return 100;
+    return Math.max(0, Math.min(100, (previousHealth / card.health) * 100));
+  }, [previousHealth, card.health]);
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: side === "player" ? 20 : -20 }}
+      initial={{ opacity: 0, y: side === "player" ? 30 : -30 }}
       animate={{
-        opacity: isDead ? 0.4 : 1,
-        scale: isActive ? 1.05 : 1,
+        opacity: isDead ? 0.5 : 1,
+        scale: isActive ? 1.02 : 1,
         y: 0,
       }}
-      transition={{ type: "spring", stiffness: 200, damping: 20 }}
+      transition={{ type: "spring", stiffness: 300, damping: 25 }}
       className="relative w-full max-w-[280px]"
     >
       <Card
-        className={`border-2 transition-all duration-300 relative overflow-hidden ${
+        className={`border transition-all duration-300 relative overflow-hidden ${
           isActive && !isDead ? getCardTypeGlow(card.type) : "shadow-md"
         } ${isDead ? "grayscale opacity-50" : ""} ${getCardTypeBg(card.type)}`}
       >
-        <CardContent className="p-4 relative z-10">
+        <CardContent className="p-5 relative z-10">
           {/* Fejléc */}
-          <div className="flex items-start justify-between mb-3">
+          <div className="flex items-start justify-between mb-4">
             <div className="flex-1">
-              <h3 className="font-bold text-white text-lg mb-1 truncate">
+              <h3 className="font-semibold text-white text-lg mb-2 truncate">
                 {card.name}
               </h3>
-              <Badge className="bg-zinc-800 border border-zinc-700 text-xs px-1.5 py-0.5 flex items-center gap-1 w-fit">
-                {getCardTypeIcon(card.type, "w-3 h-3")}
+              <Badge className="bg-zinc-800/50 border border-zinc-700/50 text-zinc-300 text-xs px-2 py-1 flex items-center gap-1.5 w-fit">
+                {getCardTypeIcon(card.type, "w-3.5 h-3.5")}
+                <span className="text-xs">{card.type}</span>
               </Badge>
             </div>
           </div>
 
           {/* Stats */}
-          <div className="space-y-2">
+          <div className="space-y-3">
             {/* Sebzés */}
             <div className="flex items-center justify-between">
-              <span className="text-orange-400 flex items-center gap-1 text-sm">
+              <span className="text-zinc-400 flex items-center gap-1.5 text-sm font-medium">
                 <Swords className="w-4 h-4" /> Sebzés
               </span>
               <span className="text-white font-bold text-lg">
@@ -147,24 +157,29 @@ const BattleCard = ({
 
             {/* Életerő */}
             <div>
-              <div className="flex items-center justify-between mb-1">
-                <span className="text-red-400 flex items-center gap-1 text-sm">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-zinc-400 flex items-center gap-1.5 text-sm font-medium">
                   <Heart className="w-4 h-4" /> Életerő
                 </span>
-                <span className="text-white font-bold text-sm">
+                <span className="text-white font-semibold text-sm">
                   {card.currentHealth} / {card.health}
                 </span>
               </div>
-              <div className="w-full h-2 bg-zinc-800 rounded-full overflow-hidden border border-zinc-700">
+              <div className="w-full h-2.5 bg-zinc-800/50 rounded-full overflow-hidden border border-zinc-700/50">
                 <motion.div
                   className={`h-full ${
-                    side === "player" ? "bg-green-500" : "bg-red-500"
+                    side === "player" ? "bg-emerald-500" : "bg-rose-500"
                   }`}
-                  initial={{ width: "100%" }}
+                  initial={{ width: `${previousHealthPercent}%` }}
                   animate={{
-                    width: `${Math.max(0, healthPercent)}%`,
+                    width: `${healthPercent}%`,
                   }}
-                  transition={{ duration: 0.5, ease: "easeOut" }}
+                  transition={{ 
+                    duration: 0.8, 
+                    ease: [0.4, 0, 0.2, 1],
+                    type: "tween"
+                  }}
+                  key={`${card.currentHealth}-${card.health}`}
                 />
               </div>
             </div>
@@ -173,29 +188,41 @@ const BattleCard = ({
           {/* Halál effekt */}
           {isDead && (
             <motion.div
-              initial={{ scale: 0, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              className="absolute inset-0 flex items-center justify-center bg-black/60"
+              initial={{ scale: 0, opacity: 0, rotate: -180 }}
+              animate={{ scale: 1, opacity: 1, rotate: 0 }}
+              transition={{ type: "spring", stiffness: 200, damping: 15 }}
+              className="absolute inset-0 flex items-center justify-center bg-black/70 backdrop-blur-sm"
             >
-              <Skull className="w-16 h-16 text-red-500" />
+              <Skull className="w-20 h-20 text-zinc-400" />
             </motion.div>
           )}
         </CardContent>
       </Card>
 
       {/* Sebzés számok */}
-      <AnimatePresence>
+      <AnimatePresence mode="wait">
         {showDamageAmount && showDamageAmount > 0 && (
           <motion.div
-            initial={{ opacity: 1, y: 0, scale: 1, x: "-50%" }}
-            animate={{ opacity: 0, y: -50, scale: 1.5 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
+            key={showDamageAmount}
+            initial={{ opacity: 0, y: 0, scale: 0.8, x: "-50%" }}
+            animate={{ opacity: 1, y: -60, scale: 1.2, x: "-50%" }}
+            exit={{ opacity: 0, y: -80, scale: 0.6 }}
+            transition={{ 
+              duration: 1, 
+              ease: [0.34, 1.56, 0.64, 1],
+              type: "spring",
+              stiffness: 200
+            }}
             className="absolute top-1/2 left-1/2 pointer-events-none z-50"
           >
-            <span className="text-red-500 font-black text-3xl drop-shadow-lg">
+            <motion.span
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.1, type: "spring", stiffness: 300 }}
+              className="text-red-400 font-black text-4xl drop-shadow-2xl"
+            >
               -{showDamageAmount}
-            </span>
+            </motion.span>
           </motion.div>
         )}
       </AnimatePresence>
@@ -223,6 +250,10 @@ export default function BattleArena({
   // Kártyák aktuális életereje
   const [playerCurrentHealth, setPlayerCurrentHealth] = useState(0);
   const [dungeonCurrentHealth, setDungeonCurrentHealth] = useState(0);
+  
+  // Előző életerő értékek az animációhoz
+  const [previousPlayerHealth, setPreviousPlayerHealth] = useState<number | undefined>(undefined);
+  const [previousDungeonHealth, setPreviousDungeonHealth] = useState<number | undefined>(undefined);
 
   const currentClash = clashes[currentClashIndex];
   const isLastClash = currentClashIndex === clashes.length - 1;
@@ -255,6 +286,8 @@ export default function BattleArena({
     if (currentClash) {
       setPlayerCurrentHealth(currentClash.playerHealth);
       setDungeonCurrentHealth(currentClash.dungeonHealth);
+      setPreviousPlayerHealth(undefined);
+      setPreviousDungeonHealth(undefined);
       setClashComplete(false);
       setShowPlayerDamage(0);
       setShowDungeonDamage(0);
@@ -269,39 +302,34 @@ export default function BattleArena({
     setIsProcessing(true);
 
     // Várakozás
-    await new Promise((r) => setTimeout(r, 500));
-
-    // DOKUMENTÁCIÓ SZERINT: 
-    // 1. Sebzés alapján: kártya nyer ha sebzése > ellenfél életereje
-    // 2. Ha ez alapján nincs győztes, típus előny dönt
-    // 3. Ha ez alapján sincs, kazamata nyer
-
-    // A backend már kiszámolta a győztest, mi csak vizualizáljuk
+    await new Promise((r) => setTimeout(r, 400));
 
     // Játékos támadása
+    setPreviousDungeonHealth(dungeonCard.currentHealth);
     setShowDungeonDamage(playerCard.damage);
     
     // Kazamata életerő csökkentése a játékos sebzése alapján
     const dungeonHealthAfterPlayerAttack = Math.max(0, dungeonCard.currentHealth - playerCard.damage);
     setDungeonCurrentHealth(dungeonHealthAfterPlayerAttack);
     
-    await new Promise((r) => setTimeout(r, 1200));
+    await new Promise((r) => setTimeout(r, 1000));
     setShowDungeonDamage(0);
 
     // Kazamata visszatámad (ha még él)
     if (dungeonHealthAfterPlayerAttack > 0) {
-      await new Promise((r) => setTimeout(r, 500));
+      await new Promise((r) => setTimeout(r, 400));
+      setPreviousPlayerHealth(playerCard.currentHealth);
       setShowPlayerDamage(dungeonCard.damage);
       
       // Játékos életerő csökkentése a kazamata sebzése alapján
       const playerHealthAfterDungeonAttack = Math.max(0, playerCard.currentHealth - dungeonCard.damage);
       setPlayerCurrentHealth(playerHealthAfterDungeonAttack);
       
-      await new Promise((r) => setTimeout(r, 1200));
+      await new Promise((r) => setTimeout(r, 1000));
       setShowPlayerDamage(0);
     }
 
-    await new Promise((r) => setTimeout(r, 500));
+    await new Promise((r) => setTimeout(r, 400));
     setClashComplete(true);
     
     // MOST frissítjük a pontszámot a clash eredménye alapján!
@@ -329,34 +357,75 @@ export default function BattleArena({
   };
 
   return (
-    <div className="w-full max-w-5xl mx-auto space-y-6 p-4">
+    <div className="w-full max-w-5xl mx-auto space-y-8 p-6">
       {/* Pontszám */}
-      <div className="flex items-center justify-center gap-6">
-        <div className="text-center p-4 bg-green-900/30 border-2 border-green-500 rounded-lg min-w-[120px]">
-          <p className="text-green-400 font-bold text-sm mb-1">JÁTÉKOS</p>
-          <p className="text-4xl font-bold text-white">{playerWins}</p>
-        </div>
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="flex items-center justify-center gap-8"
+      >
+        <motion.div
+          whileHover={{ scale: 1.05 }}
+          className="text-center p-5 bg-zinc-900/50 border border-zinc-700 rounded-xl min-w-[140px] backdrop-blur-sm"
+        >
+          <p className="text-zinc-400 font-semibold text-xs mb-2 uppercase tracking-wider">Játékos</p>
+          <motion.p
+            key={playerWins}
+            initial={{ scale: 1.3, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: "spring", stiffness: 300 }}
+            className="text-5xl font-bold text-white"
+          >
+            {playerWins}
+          </motion.p>
+        </motion.div>
 
-        <Swords className="w-10 h-10 text-zinc-600" />
+        <motion.div
+          animate={{ rotate: [0, 10, -10, 0] }}
+          transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
+        >
+          <Swords className="w-12 h-12 text-zinc-500" />
+        </motion.div>
 
-        <div className="text-center p-4 bg-red-900/30 border-2 border-red-500 rounded-lg min-w-[120px]">
-          <p className="text-red-400 font-bold text-sm mb-1">KAZAMATA</p>
-          <p className="text-4xl font-bold text-white">{dungeonWins}</p>
-        </div>
-      </div>
+        <motion.div
+          whileHover={{ scale: 1.05 }}
+          className="text-center p-5 bg-zinc-900/50 border border-zinc-700 rounded-xl min-w-[140px] backdrop-blur-sm"
+        >
+          <p className="text-zinc-400 font-semibold text-xs mb-2 uppercase tracking-wider">Kazamata</p>
+          <motion.p
+            key={dungeonWins}
+            initial={{ scale: 1.3, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: "spring", stiffness: 300 }}
+            className="text-5xl font-bold text-white"
+          >
+            {dungeonWins}
+          </motion.p>
+        </motion.div>
+      </motion.div>
 
       {/* Ütközet számláló */}
       {!allComplete && (
-        <div className="text-center">
-          <Badge variant="outline" className="text-lg px-4 py-2">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="text-center"
+        >
+          <Badge variant="outline" className="text-base px-5 py-2.5 bg-zinc-900/30 border-zinc-700 text-zinc-300">
             Ütközet {currentClashIndex + 1} / {clashes.length}
           </Badge>
-        </div>
+        </motion.div>
       )}
 
       {/* Harci aréna */}
       {!allComplete && (
-        <div className="grid grid-cols-3 gap-8 items-center min-h-[320px]">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          className="grid grid-cols-3 gap-10 items-center min-h-[360px]"
+        >
           {/* Játékos kártya */}
           <div className="flex justify-end">
             {playerCard && (
@@ -366,16 +435,24 @@ export default function BattleArena({
                 isActive={!clashComplete}
                 isDead={playerCard.currentHealth <= 0}
                 showDamageAmount={showPlayerDamage}
+                previousHealth={previousPlayerHealth}
               />
             )}
           </div>
 
           {/* Középső rész - VS */}
-          <div className="flex flex-col items-center justify-center gap-4">
+          <div className="flex flex-col items-center justify-center gap-6">
             <motion.div
-              animate={{ scale: [1, 1.1, 1] }}
-              transition={{ repeat: Infinity, duration: 2 }}
-              className="text-6xl font-black text-purple-500"
+              animate={{ 
+                scale: [1, 1.08, 1],
+                opacity: [0.7, 1, 0.7]
+              }}
+              transition={{ 
+                repeat: Infinity, 
+                duration: 2.5,
+                ease: "easeInOut"
+              }}
+              className="text-7xl font-black text-zinc-400 select-none"
             >
               VS
             </motion.div>
@@ -383,41 +460,48 @@ export default function BattleArena({
             {/* Győztes kijelzés */}
             {clashComplete && currentClash && (
               <motion.div
-                initial={{ opacity: 0, scale: 0.5 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="text-center"
+                initial={{ opacity: 0, scale: 0.6, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                transition={{ type: "spring", stiffness: 200, damping: 20 }}
+                className="text-center w-full"
               >
-                <Card
-                  className={`border-2 ${
-                    currentClash.winner === "PLAYER"
-                      ? "border-green-500 bg-green-500/10"
-                      : "border-red-500 bg-red-500/10"
-                  }`}
-                >
-                  <CardContent className="p-4">
-                    <div className="flex items-center gap-2 mb-2">
+                <Card className="border border-zinc-700 bg-zinc-900/80 backdrop-blur-sm">
+                  <CardContent className="p-5">
+                    <div className="flex items-center justify-center gap-3 mb-3">
                       {currentClash.winner === "PLAYER" ? (
-                        <Trophy className="w-5 h-5 text-green-400" />
+                        <motion.div
+                          initial={{ rotate: -180, scale: 0 }}
+                          animate={{ rotate: 0, scale: 1 }}
+                          transition={{ type: "spring", stiffness: 200 }}
+                        >
+                          <Trophy className="w-6 h-6 text-emerald-400" />
+                        </motion.div>
                       ) : (
-                        <Skull className="w-5 h-5 text-red-400" />
+                        <motion.div
+                          initial={{ rotate: 180, scale: 0 }}
+                          animate={{ rotate: 0, scale: 1 }}
+                          transition={{ type: "spring", stiffness: 200 }}
+                        >
+                          <Skull className="w-6 h-6 text-rose-400" />
+                        </motion.div>
                       )}
                       <span
-                        className={`text-lg font-bold ${
+                        className={`text-lg font-semibold ${
                           currentClash.winner === "PLAYER"
-                            ? "text-green-400"
-                            : "text-red-400"
+                            ? "text-emerald-400"
+                            : "text-rose-400"
                         }`}
                       >
-                        {currentClash.winner === "PLAYER" ? "Győzelem!" : "Vereség"}
+                        {currentClash.winner === "PLAYER" ? "Győzelem" : "Vereség"}
                       </span>
                     </div>
-                    <p className="text-xs text-zinc-400">
+                    <p className="text-xs text-zinc-400 leading-relaxed">
                       {currentClash.winReason === "DAMAGE"
                         ? currentClash.winner === "PLAYER"
-                          ? `Játékos sebzés (${currentClash.playerDamage}) > Kazamata életerő (${currentClash.dungeonHealth})`
-                          : `Kazamata sebzés (${currentClash.dungeonDamage}) > Játékos életerő (${currentClash.playerHealth})`
+                          ? `Sebzés (${currentClash.playerDamage}) > Életerő (${currentClash.dungeonHealth})`
+                          : `Sebzés (${currentClash.dungeonDamage}) > Életerő (${currentClash.playerHealth})`
                         : currentClash.winReason === "TYPE_ADVANTAGE"
-                        ? `Típus előny: ${currentClash.winner === "PLAYER" ? currentClash.playerCardType : currentClash.dungeonCardType} legyőzi`
+                        ? `Típus előny: ${currentClash.winner === "PLAYER" ? currentClash.playerCardType : currentClash.dungeonCardType}`
                         : "Döntetlen - Kazamata nyer"}
                     </p>
                   </CardContent>
@@ -435,80 +519,113 @@ export default function BattleArena({
                 isActive={!clashComplete}
                 isDead={dungeonCard.currentHealth <= 0}
                 showDamageAmount={showDungeonDamage}
+                previousHealth={previousDungeonHealth}
               />
             )}
           </div>
-        </div>
+        </motion.div>
       )}
 
       {/* Végső eredmény */}
       {allComplete && (
         <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="text-center space-y-6 py-8"
+          initial={{ opacity: 0, scale: 0.9, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="text-center space-y-8 py-12"
         >
           <div>
             {finalPlayerWins > finalDungeonWins ? (
-              <div className="space-y-4">
-                <Trophy className="w-24 h-24 text-yellow-400 mx-auto" />
-                <h2 className="text-5xl font-black text-green-400">
-                  🏆 GYŐZELEM! 🏆
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ type: "spring", stiffness: 200, delay: 0.2 }}
+                className="space-y-5"
+              >
+                <Trophy className="w-28 h-28 text-emerald-400 mx-auto" />
+                <h2 className="text-5xl font-bold text-emerald-400">
+                  Győzelem
                 </h2>
                 <p className="text-xl text-zinc-300">
                   Legyőzted a kazamatát!
                 </p>
-              </div>
+              </motion.div>
             ) : finalPlayerWins === finalDungeonWins ? (
-              <div className="space-y-4">
-                <Swords className="w-24 h-24 text-yellow-500 mx-auto" />
-                <h2 className="text-5xl font-black text-yellow-500">
-                  ⚔️ DÖNTETLEN ⚔️
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ type: "spring", stiffness: 200, delay: 0.2 }}
+                className="space-y-5"
+              >
+                <Swords className="w-28 h-28 text-zinc-400 mx-auto" />
+                <h2 className="text-5xl font-bold text-zinc-400">
+                  Döntetlen
                 </h2>
                 <p className="text-xl text-zinc-300">
                   Egyenlő erővel csaptak össze a seregek!
                 </p>
-              </div>
+              </motion.div>
             ) : (
-              <div className="space-y-4">
-                <Skull className="w-24 h-24 text-red-400 mx-auto" />
-                <h2 className="text-5xl font-black text-red-400">
-                  💀 VERESÉG 💀
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ type: "spring", stiffness: 200, delay: 0.2 }}
+                className="space-y-5"
+              >
+                <Skull className="w-28 h-28 text-rose-400 mx-auto" />
+                <h2 className="text-5xl font-bold text-rose-400">
+                  Vereség
                 </h2>
                 <p className="text-xl text-zinc-300">
                   A kazamata legyőzött...
                 </p>
-              </div>
+              </motion.div>
             )}
           </div>
 
-          <div className="text-2xl font-bold text-white">
-            Végeredmény: {finalPlayerWins} - {finalDungeonWins}
-          </div>
-
-          <Button
-            onClick={finish}
-            size="lg"
-            className="bg-gradient-to-r from-purple-500 to-violet-500 text-lg px-8 py-6"
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4 }}
+            className="text-3xl font-semibold text-white"
           >
-            <Check className="w-6 h-6 mr-2" />
-            Tovább
-          </Button>
+            Végeredmény: {finalPlayerWins} - {finalDungeonWins}
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+          >
+            <Button
+              onClick={finish}
+              size="lg"
+              className="bg-zinc-800 hover:bg-zinc-700 text-white text-lg px-10 py-7 border border-zinc-700 transition-all duration-200"
+            >
+              <Check className="w-6 h-6 mr-2" />
+              Tovább
+            </Button>
+          </motion.div>
         </motion.div>
       )}
 
       {/* Kontroll gombok */}
       {!allComplete && (
-        <div className="flex items-center justify-center gap-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="flex items-center justify-center gap-4"
+        >
           {!clashComplete ? (
             <Button
               onClick={playClash}
               disabled={isProcessing}
               size="lg"
-              className="bg-gradient-to-r from-purple-500 to-violet-500 text-lg px-8 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-zinc-800 hover:bg-zinc-700 text-white text-lg px-10 py-7 border border-zinc-700 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-zinc-800"
             >
               <Sparkles className="w-5 h-5 mr-2" />
-              Harc!
+              {isProcessing ? "Folyamatban..." : "Harc!"}
             </Button>
           ) : (
             <Button
@@ -516,7 +633,7 @@ export default function BattleArena({
               disabled={isProcessing}
               size="lg"
               variant="outline"
-              className="border-purple-500/50 text-purple-400 text-lg px-8 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="border-zinc-700 text-white hover:bg-zinc-800 hover:text-white text-lg px-10 py-7 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
             >
               {isLastClash ? (
                 <>
@@ -531,7 +648,7 @@ export default function BattleArena({
               )}
             </Button>
           )}
-        </div>
+        </motion.div>
       )}
     </div>
   );

@@ -2,7 +2,7 @@ import { z } from "zod";
 
 /**
  * SignIn Schema
- * Használat: Bejelentkezés validálására (felhasználók és webmesterek)
+ * Használat: Bejelentkezés validálására (felhasználók és játékmesterek)
  */
 export const SignInSchema = z.object({
   email: z

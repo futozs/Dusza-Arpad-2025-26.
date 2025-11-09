@@ -85,14 +85,14 @@ export default function DashboardNavbar() {
 
           {/* Right Side Actions */}
           <div className="hidden items-center gap-3 md:flex">
-            {session?.user.role === "WEBMASTER" && (
-              <Link href="/webmaster">
+            {session?.user.role === "JATEKMESTER" && (
+              <Link href="/jatekmester">
                 <Button 
                   variant="outline"
                   className="border-red-500/30 text-red-400 hover:bg-red-500/10 hover:text-red-300 hover:border-red-500/50 transition-all flex items-center gap-2"
                 >
                   <Shield className="w-4 h-4" />
-                  Webmester Panel
+                  Játékmester Panel
                 </Button>
               </Link>
             )}
@@ -174,14 +174,14 @@ export default function DashboardNavbar() {
               <span className="font-medium">Beállítások</span>
             </Link>
             
-            {session?.user.role === "WEBMASTER" && (
+            {session?.user.role === "JATEKMESTER" && (
               <Link
-                href="/webmaster"
+                href="/jatekmester"
                 className="flex items-center gap-3 px-4 py-3 rounded-lg text-red-400 hover:bg-red-500/10 transition-all"
                 onClick={() => setIsMenuOpen(false)}
               >
                 <Shield className="w-5 h-5" />
-                <span className="font-medium">Webmester Panel</span>
+                <span className="font-medium">Játékmester Panel</span>
               </Link>
             )}
 

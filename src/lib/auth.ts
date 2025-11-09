@@ -1,12 +1,9 @@
 import type { NextAuthOptions } from "next-auth";
-import type { JWT } from "next-auth/jwt";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { PrismaClient, UserRole } from "@/generated/prisma";
+import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { SignInSchema } from "@/schemas/auth.schemas";
 import * as speakeasy from "speakeasy";
-
-const prisma = new PrismaClient();
 
 /**
  * Parse user agent string to extract device and browser info
@@ -54,7 +51,7 @@ declare module "next-auth" {
       id: string;
       email: string;
       username: string;
-      role: UserRole;
+      role: "PLAYER" | "JATEKMESTER";
       emailVerified: boolean;
       twoFactorEnabled: boolean;
       profileVisibility: boolean;
@@ -65,7 +62,7 @@ declare module "next-auth" {
     id: string;
     email: string;
     username: string;
-    role: UserRole;
+    role: "PLAYER" | "JATEKMESTER";
     emailVerified: boolean;
     twoFactorEnabled: boolean;
     twoFactorSecret?: string | null;
@@ -78,7 +75,7 @@ declare module "next-auth/jwt" {
     id: string;
     email: string;
     username: string;
-    role: UserRole;
+    role: "PLAYER" | "JATEKMESTER";
     emailVerified: boolean;
     twoFactorEnabled: boolean;
     profileVisibility: boolean;
@@ -96,7 +93,7 @@ declare module "next-auth/jwt" {
  * - JWT alapú session (stateless, scalable)
  * - Credentials provider bcrypt-tel
  * - 2FA támogatás TOTP-vel
- * - Role-based access control (PLAYER/WEBMASTER)
+ * - Role-based access control (PLAYER/JATEKMESTER)
  */
 export const authOptions: NextAuthOptions = {
   // JWT Strategy - biztonságos, nem kell DB session

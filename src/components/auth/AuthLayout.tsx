@@ -14,7 +14,7 @@ interface AuthLayoutProps {
   showBackButton?: boolean;
   backButtonText?: string;
   backButtonHref?: string;
-  variant?: "default" | "webmaster";
+  variant?: "default" | "jatekmester";
   maxWidth?: "sm" | "md" | "lg";
 }
 
@@ -28,7 +28,7 @@ export default function AuthLayout({
   variant = "default",
   maxWidth = "md",
 }: AuthLayoutProps) {
-  const isWebmaster = variant === "webmaster";
+  const isJatekmester = variant === "jatekmester";
   
   // Color schemes based on variant
   const colors = {
@@ -41,7 +41,7 @@ export default function AuthLayout({
       shadow: "shadow-purple-900/30",
       liquidColors: ["#5227FF", "#FF9FFC", "#B19EEF"],
     },
-    webmaster: {
+    jatekmester: {
       gradient: "from-red-200 via-orange-200 to-red-200",
       buttonBorder: "border-red-400/30",
       buttonBg: "bg-zinc-950/60",
@@ -110,7 +110,7 @@ export default function AuthLayout({
         <div className={`relative z-10 w-full ${maxWidthClass}`}>
           {/* Header Section */}
           <div className="mb-8 text-center">
-            {isWebmaster && (
+            {isJatekmester && (
               <div className="mb-4 flex justify-center">
                 <div className="p-4 rounded-2xl bg-linear-to-br from-red-500/20 to-orange-500/20 border-2 border-red-400/30 shadow-2xl shadow-red-900/40">
                   <Shield className="h-12 w-12 text-red-300" />

@@ -36,20 +36,20 @@ async function main() {
       email: "admin@damareen.hu",
       username: "Admin",
       password,
-      role: "WEBMASTER",
+      role: "JATEKMESTER",
       emailVerified: true,
       twoFactorEnabled: false,
     },
   });
 
-  const webmaster = await prisma.user.create({
+  const jatekmester = await prisma.user.create({
     data: {
-      email: "webmaster@damareen.hu",
-      username: "Webmester",
+      email: "jatekmester@damareen.hu",
+      username: "Játékmester",
       password,
-      role: "WEBMASTER",
+      role: "JATEKMESTER",
       emailVerified: true,
-      twoFactorEnabled: true,
+      twoFactorEnabled: false,
     },
   });
 
@@ -1660,13 +1660,13 @@ async function main() {
   console.log("\n🎉 Adatbázis sikeresen feltöltve!");
   console.log("=====================================");
   console.log(`👥 Felhasználók: 8`);
-  console.log(`   - 2 webmester (admin, webmaster)`);
+  console.log(`   - 2 jatekmester (admin, jatekmester)`);
   console.log(`   - 6 játékos`);
   console.log(`   - Jelszó MINDENKINEK: 123456789`);
   console.log(``);
   console.log(`📧 Belépési adatok:`);
   console.log(`   Admin:          admin@damareen.hu / 123456789`);
-  console.log(`   Webmester:      webmaster@damareen.hu / 123456789`);
+  console.log(`   Játékmester:    jatekmester@damareen.hu / 123456789`);
   console.log(`   Játékos 1:      jatekos1@damareen.hu / 123456789 (DragonSlayer)`);
   console.log(`   Játékos 2:      jatekos2@damareen.hu / 123456789 (MysticMage)`);
   console.log(`   Játékos 3:      jatekos3@damareen.hu / 123456789 (ShadowHunter)`);

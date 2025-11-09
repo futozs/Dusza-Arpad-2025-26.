@@ -59,7 +59,6 @@ bunx auth secret
 Hozz létre `.env` fájlt:
 
 ```env
-```env
 DATABASE_URL="mysql://username:password@localhost:3306/damareen"
 NEXTAUTH_URL="http://localhost:3000"
 NEXTAUTH_SECRET="<generated-secret-from-npx-auth-secret>"
@@ -123,7 +122,7 @@ docker-compose -f .devcontainer/docker-compose.yml up --build
 | Szerep | Email | Jelszó |
 |:------:|:------|:------:|
 | Admin | `admin@damareen.hu` | `123456789` |
-| Webmaster | `webmaster@damareen.hu` | `123456789` |
+| Játékmester | `jatekmester@damareen.hu` | `123456789` |
 | Játékos | `jatekos1@damareen.hu` | `123456789` |
 | Játékos | `jatekos2@damareen.hu` | `123456789` |
 | Játékos | `jatekos3@damareen.hu` | `123456789` |
@@ -154,7 +153,7 @@ A játékosok különböző dungeon-ökön keresztül haladnak, ahol stratégiai
 | **🔐 Autentikáció & Biztonság** | NextAuth.js alapú bejelentkezés<br/>Kétfaktoros hitelesítés (2FA)<br/>Email verifikáció<br/>Jelszó visszaállítás<br/>Backup kódok kezelése<br/>Session management | NextAuth.js v5<br/>Prisma Session Store<br/>TOTP (speakeasy)<br/>bcrypt |
 | **🎮 Játék Mechanika** | Dungeon progresszió nyomon követés<br/>Dinamikus kártya kollekció<br/>Interaktív deck builder<br/>Turn-based csata rendszer<br/>Leader & World kártyák<br/>Real-time battle arena | React State Management<br/>Framer Motion<br/>Custom Game Engine |
 | **📊 Dashboard & Profilok** | Személyre szabható profil<br/>Részletes statisztikák<br/>Globális ranglisták<br/>Játék történet & replay<br/>Teljesítmény metrikák<br/>Profil láthatóság beállítások | React Query<br/>Chart.js/Recharts<br/>Server Components |
-| **⚙️ Admin & Webmaster Panel** | User management & role kezelés<br/>Kártya létrehozás & szerkesztés<br/>Environment konfiguráció<br/>Dungeon szerkesztő<br/>Játék paraméterek finomhangolása<br/>Audit log rendszer | Role-based Access Control<br/>Server Actions<br/>Optimistic Updates |
+| **⚙️ Admin & Játékmester Panel** | User management & role kezelés<br/>Kártya létrehozás & szerkesztés<br/>Environment konfiguráció<br/>Dungeon szerkesztő<br/>Játék paraméterek finomhangolása<br/>Audit log rendszer | Role-based Access Control<br/>Server Actions<br/>Optimistic Updates |
 | **📧 Email Rendszer** | Bejelentkezési értesítések<br/>Jelszó visszaállítás email<br/>Email cím verifikáció<br/>Egyedi HTML templates<br/>Automatikus email küldés | React Email<br/>Nodemailer<br/>SMTP konfiguráció |
 | **🎨 UI/UX** | Responsive design minden eszközön<br/>Dark mode támogatás<br/>Animált komponensek<br/>Scroll reveal effektek<br/>Spotlight kártyák<br/>Liquid ether háttér | Tailwind CSS<br/>Framer Motion<br/>Radix UI<br/>shadcn/ui |
 

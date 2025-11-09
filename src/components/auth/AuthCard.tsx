@@ -18,7 +18,7 @@ interface AuthCardProps {
   footerText?: string;
   footerLink?: string;
   footerLinkText?: string;
-  variant?: "default" | "webmaster";
+  variant?: "default" | "jatekmester";
   icon?: ReactNode;
 }
 
@@ -42,7 +42,7 @@ export default function AuthCard({
       description: "text-zinc-300",
       footerLink: "text-purple-300 hover:text-purple-200",
     },
-    webmaster: {
+    jatekmester: {
       border: "border-red-500/40",
       bg: "bg-zinc-900/95",
       shadow: "shadow-red-900/50",
