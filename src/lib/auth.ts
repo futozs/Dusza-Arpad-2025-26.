@@ -417,21 +417,7 @@ export const authOptions: NextAuthOptions = {
   debug: process.env.NODE_ENV === "development",
 };
 
-/**
- * Helper függvény biztonságos session ellenőrzéshez
- * 
- * Ez a függvény ellenőrzi, hogy:
- * 1. Van-e aktív session
- * 2. A user még létezik-e az adatbázisban
- * 
- * Használat API route-okban:
- * ```ts
- * const session = await getValidatedSession();
- * if (!session) {
- *   return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
- * }
- * ```
- */
+
 export async function getValidatedSession() {
   const { getServerSession } = await import("next-auth");
   const session = await getServerSession(authOptions);

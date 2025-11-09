@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="public/damareen.png" alt="Damareen Logo" width="200"/>
+  <img src="public/damareen.png" alt="Damareen Logo" width="200" style="border-radius: 20px;"/>
   
   # Damareen
   
@@ -19,19 +19,13 @@
   
 </div>
 
-<div align="center">
-
 ## ⚡ Gyors Indítás
 
 **Előfeltételek:** `Node.js 18+` • `MySQL 8.0+`
 
-</div>
-
-<div align="center">
-
 <table>
 <tr>
-<td width="50%" valign="top" align="center">
+<td width="50%" valign="top">
 
 ### <a href="https://nodejs.org/en/download" target="_blank">Node.js</a>
 
@@ -44,7 +38,7 @@ npx auth secret
 ```
 
 </td>
-<td width="50%" valign="top" align="center">
+<td width="50%" valign="top">
 
 ### <a href="https://bun.sh/" target="_blank">Bun</a> (gyorsabb)
 
@@ -60,19 +54,11 @@ bunx auth secret
 </tr>
 </table>
 
-</div>
-
-<div align="center">
-
 ### 🔧 Környezeti Változók
 
 Hozz létre `.env` fájlt:
 
-</div>
-
-<div align="center">
-<div style="text-align: left; display: inline-block; max-width: 650px;">
-
+```env
 ```env
 DATABASE_URL="mysql://username:password@localhost:3306/damareen"
 NEXTAUTH_URL="http://localhost:3000"
@@ -89,17 +75,11 @@ MAILCOW_SECURE="false"
 EMAIL_FROM="noreply@localhost"
 ```
 
-</div>
-</div>
-
-
-<div align="center">
-
 ### 🗄️ Adatbázis & Indítás
 
 <table>
 <tr>
-<td width="50%" valign="top" align="center">
+<td width="50%" valign="top">
 
 **Node.js**
 ```bash
@@ -110,7 +90,7 @@ npm run start
 ```
 
 </td>
-<td width="50%" valign="top" align="center">
+<td width="50%" valign="top">
 
 **Bun**
 ```bash
@@ -124,15 +104,9 @@ bun run start
 </tr>
 </table>
 
-<div align="center">
-
 > **Alkalmazás fut:** [`http://localhost:3000`](http://localhost:3000)
 
-</div>
-
 ---
-
-<div align="center">
 
 ## 🐳 Docker
 
@@ -142,11 +116,7 @@ docker-compose -f .devcontainer/docker-compose.yml up --build
 
 (ARM platformok nem támogatottak!)
 
-</div>
-
-<br/>
-
-<div align="center">
+---
 
 ## 🔑 Teszt Fiókok
 
@@ -157,8 +127,6 @@ docker-compose -f .devcontainer/docker-compose.yml up --build
 | Játékos | `jatekos1@damareen.hu` | `123456789` |
 | Játékos | `jatekos2@damareen.hu` | `123456789` |
 | Játékos | `jatekos3@damareen.hu` | `123456789` |
-
-</div>
 
 ---
 
@@ -225,7 +193,7 @@ A játékosok különböző dungeon-ökön keresztül haladnak, ahol stratégiai
 
 ## 🚀 Development
 
-<div align="center">
+## 🚀 Development
 
 ### Fejlesztői Parancsok
 
@@ -239,7 +207,7 @@ A játékosok különböző dungeon-ökön keresztül haladnak, ahol stratégiai
 | `npx prisma migrate dev` | Új migráció létrehozása |
 | `npm run email:dev` | Email template preview szerver |
 
-</div>
+---
 
 ## 📧 Email Szolgáltatás
 
@@ -265,10 +233,6 @@ Email templatek szerkesztése közben élőben látható preview minden template
 
 ### Fő Táblák
 
-<div align="center">
-
-| Tábla | Leírás | Kapcsolatok |
-|:------|:-------|:------------|
 | Tábla | Leírás | Kapcsolatok |
 |:------|:-------|:------------|
 | **Felhasználó** | Felhasználói adatok, szerepkör kezelése | → Fiók, Munkamenet, Játékos |
@@ -279,7 +243,7 @@ Email templatek szerkesztése közben élőben látható preview minden template
 | **Környezet** | Környezeti típusok és módosítók | → Csatafeltételek |
 | **Csata** | Csaták története és eredményei | → Játékos, Vezérkártya |
 
-</div>
+---
 
 ## Jövőbeli Funkciók
 
@@ -319,5 +283,7 @@ Email templatek szerkesztése közben élőben látható preview minden template
 ### ⭐ Ha tetszik a projekt, adj neki egy csillagot!
 
 **Made with ❤️ by Npm Install**
+
+</div>
 
 </div>

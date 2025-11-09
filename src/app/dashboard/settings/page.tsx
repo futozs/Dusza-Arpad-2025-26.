@@ -23,7 +23,6 @@ import EditProfileModal from "@/components/settings/EditProfileModal";
 import ChangePasswordModal from "@/components/settings/ChangePasswordModal";
 import VerifyEmailModal from "@/components/settings/VerifyEmailModal";
 import ChangeEmailModal from "@/components/settings/ChangeEmailModal";
-import SessionManagementModal from "@/components/settings/SessionManagementModal";
 import DeleteAccountModal from "@/components/settings/DeleteAccountModal";
 import PrivacySettingsModal from "@/components/settings/PrivacySettingsModal";
 
@@ -35,7 +34,6 @@ export default function SettingsPage() {
   const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
   const [isVerifyEmailOpen, setIsVerifyEmailOpen] = useState(false);
   const [isChangeEmailOpen, setIsChangeEmailOpen] = useState(false);
-  const [isSessionManagementOpen, setIsSessionManagementOpen] = useState(false);
   const [isDeleteAccountOpen, setIsDeleteAccountOpen] = useState(false);
   const [isPrivacySettingsOpen, setIsPrivacySettingsOpen] = useState(false);
 
@@ -80,10 +78,6 @@ export default function SettingsPage() {
         isOpen={isChangeEmailOpen}
         onClose={() => setIsChangeEmailOpen(false)}
         currentEmail={session.user.email}
-      />
-      <SessionManagementModal
-        isOpen={isSessionManagementOpen}
-        onClose={() => setIsSessionManagementOpen(false)}
       />
       <DeleteAccountModal
         isOpen={isDeleteAccountOpen}
@@ -221,24 +215,7 @@ export default function SettingsPage() {
                     </div>
                   </div>
 
-                  <div className="p-4 rounded-lg bg-zinc-950/50 border border-zinc-800">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <Eye className="w-5 h-5 text-cyan-400" />
-                        <div>
-                          <h3 className="text-white font-medium">Aktív Munkamenetek</h3>
-                          <p className="text-zinc-500 text-sm">Jelenleg 1 aktív eszköz</p>
-                        </div>
-                      </div>
-                      <Button 
-                        variant="outline" 
-                        onClick={() => setIsSessionManagementOpen(true)}
-                        className="border-zinc-700 text-zinc-300 hover:bg-zinc-800"
-                      >
-                        Kezelés
-                      </Button>
-                    </div>
-                  </div>
+
                 </CardContent>
               </Card>
 
