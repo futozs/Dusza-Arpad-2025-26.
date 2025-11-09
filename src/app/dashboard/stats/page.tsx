@@ -111,7 +111,7 @@ interface PlayerStats {
 
 interface Battle {
   id: string;
-  status: "WON" | "LOST";
+  status: "WON" | "LOST" | "DRAW";
   playerWins: number;
   dungeonWins: number;
   createdAt: string;
@@ -706,8 +706,10 @@ export default function StatsPage() {
                               <div className="flex items-center justify-between">
                                 <div className="flex-1">
                                   <div className="flex items-center gap-3 mb-2">
-                                    {battle.status === "WON" ? (
+                                    {battle.playerWins > battle.dungeonWins ? (
                                       <CheckCircle2 className="w-5 h-5 text-white" />
+                                    ) : battle.playerWins === battle.dungeonWins ? (
+                                      <Swords className="w-5 h-5 text-white" />
                                     ) : (
                                       <XCircle className="w-5 h-5 text-white" />
                                     )}
@@ -724,9 +726,19 @@ export default function StatsPage() {
                                   <div className="flex items-center gap-4 text-sm">
                                     <Badge
                                       variant="outline"
-                                      className="bg-zinc-800 text-white border-zinc-700"
+                                      className={`${
+                                        battle.playerWins > battle.dungeonWins
+                                          ? 'bg-green-500/20 text-green-400 border-green-500/50'
+                                          : battle.playerWins === battle.dungeonWins
+                                          ? 'bg-yellow-500/20 text-yellow-400 border-yellow-500/50'
+                                          : 'bg-red-500/20 text-red-400 border-red-500/50'
+                                      }`}
                                     >
-                                      {battle.status === "WON" ? "GYŐZELEM" : "VERESÉG"}
+                                      {battle.playerWins > battle.dungeonWins 
+                                        ? "GYŐZELEM" 
+                                        : battle.playerWins === battle.dungeonWins 
+                                        ? "DÖNTETLEN" 
+                                        : "VERESÉG"}
                                     </Badge>
                                     <span className="text-zinc-500">
                                       <Trophy className="w-4 h-4 inline mr-1" />

@@ -205,17 +205,25 @@ export default function StatsPage() {
                           <div className="flex items-center gap-4">
                             <Badge
                               className={
-                                battle.status === "WON"
+                                battle.playerWins > battle.dungeonWins
                                   ? "bg-green-500/20 text-green-400 border-green-500/50"
+                                  : battle.playerWins === battle.dungeonWins
+                                  ? "bg-yellow-500/20 text-yellow-400 border-yellow-500/50"
                                   : "bg-red-500/20 text-red-400 border-red-500/50"
                               }
                             >
-                              {battle.status === "WON" ? (
+                              {battle.playerWins > battle.dungeonWins ? (
                                 <Trophy className="w-4 h-4 mr-1" />
+                              ) : battle.playerWins === battle.dungeonWins ? (
+                                <Swords className="w-4 h-4 mr-1" />
                               ) : (
                                 <Skull className="w-4 h-4 mr-1" />
                               )}
-                              {battle.status === "WON" ? "GYŐZELEM" : "VERESÉG"}
+                              {battle.playerWins > battle.dungeonWins 
+                                ? "GYŐZELEM" 
+                                : battle.playerWins === battle.dungeonWins 
+                                ? "DÖNTETLEN" 
+                                : "VERESÉG"}
                             </Badge>
                             <div>
                               <p className="font-bold text-white">

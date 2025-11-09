@@ -54,36 +54,59 @@ export default function EditLeaderCardPage({ params }: { params: Promise<{ id: s
   useEffect(() => {
     params.then(({ id }) => {
       setCardId(id);
-      Promise.all([
-        fetch("/api/webmaster/environments").then((res) => res.json()),
-        fetch("/api/webmaster/world-cards").then((res) => res.json()),
-        fetch(`/api/webmaster/leader-cards/${id}`).then((res) => res.json()),
-      ]).then(([envs, cards, leader]) => {
-        setEnvironments(envs);
-        setWorldCards(cards);
-        setLeaderCard(leader);
-        
-        setFormData({
-          name: leader.name,
-          baseCardId: leader.baseCardId,
-          boostType: leader.boostType,
-          environmentId: leader.environmentId,
-        });
-        
-        setLoading(false);
-      }).catch(() => {
-        setError("Hiba történt az adatok betöltése során");
-        setLoading(false);
-      });
+      
+      const loadData = async () => {
+        try {
+          const [envsRes, cardsRes, leaderRes] = await Promise.all([
+            fetch("/api/webmaster/environments"),
+            fetch("/api/webmaster/world-cards"),
+            fetch(`/api/webmaster/leader-cards/${id}`),
+          ]);
+
+          if (!envsRes.ok || !cardsRes.ok || !leaderRes.ok) {
+            throw new Error("Hiba az adatok betöltése során");
+          }
+
+          const envs = await envsRes.json();
+          const cards = await cardsRes.json();
+          const leader = await leaderRes.json();
+
+          setEnvironments(envs);
+          setWorldCards(cards);
+          setLeaderCard(leader);
+          
+          setFormData({
+            name: leader.name,
+            baseCardId: leader.baseCardId,
+            boostType: leader.boostType,
+            environmentId: leader.environmentId,
+          });
+          
+          setLoading(false);
+        } catch (err) {
+          console.error("Hiba az adatok betöltése során:", err);
+          setError("Hiba történt az adatok betöltése során");
+          setLoading(false);
+        }
+      };
+
+      loadData();
     });
   }, [params]);
 
   useEffect(() => {
-    if (formData.environmentId) {
+    if (formData.environmentId && worldCards.length > 0) {
       const filtered = worldCards.filter((card) => card.environmentId === formData.environmentId);
       setFilteredCards(filtered);
+      
+      // Ha a kiválasztott kártya nincs a szűrt listában, az első kártyát választjuk
+      if (formData.baseCardId && !filtered.find(c => c.id === formData.baseCardId)) {
+        setFormData((prev) => ({ ...prev, baseCardId: filtered.length > 0 ? filtered[0].id : "" }));
+      }
+    } else {
+      setFilteredCards([]);
     }
-  }, [formData.environmentId, worldCards]);
+  }, [formData.environmentId, worldCards, formData.baseCardId]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -191,24 +214,31 @@ export default function EditLeaderCardPage({ params }: { params: Promise<{ id: s
 
               <Field>
                 <FieldLabel htmlFor="baseCardId" className="text-zinc-200">
-                  Alapkártya *
+                  Alapkártya (Világkártya) *
                 </FieldLabel>
                 <select
                   id="baseCardId"
                   value={formData.baseCardId}
                   onChange={(e) => setFormData({ ...formData, baseCardId: e.target.value })}
                   required
-                  className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-2.5 text-zinc-100 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all"
+                  disabled={filteredCards.length === 0}
+                  className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-2.5 text-zinc-100 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {filteredCards.length === 0 && (
-                    <option value="">Nincs elérhető kártya</option>
+                  {filteredCards.length === 0 ? (
+                    <option value="">Nincs elérhető világkártya ebben a környezetben</option>
+                  ) : (
+                    filteredCards.map((card) => (
+                      <option key={card.id} value={card.id}>
+                        {card.name} - Sebzés: {card.damage} / Életerő: {card.health} ({card.type})
+                      </option>
+                    ))
                   )}
-                  {filteredCards.map((card) => (
-                    <option key={card.id} value={card.id}>
-                      {card.name} (⚔️{card.damage} / ❤️{card.health})
-                    </option>
-                  ))}
                 </select>
+                {filteredCards.length === 0 && formData.environmentId && (
+                  <p className="text-sm text-amber-400 mt-2">
+                    Nincs világkártya ebben a környezetben. Először hozz létre világkártyákat!
+                  </p>
+                )}
               </Field>
 
               <Field>

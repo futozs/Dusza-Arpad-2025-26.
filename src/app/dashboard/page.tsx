@@ -266,9 +266,17 @@ export default async function DashboardPage() {
                           <div className="group p-4 rounded-xl border border-zinc-800 hover:border-violet-500/30 bg-zinc-950/50 hover:bg-zinc-950/80 transition-all cursor-pointer">
                             <div className="flex items-center justify-between">
                               <div className="flex items-center gap-3">
-                                <div className={`w-10 h-10 rounded-lg ${battle.status === 'WON' ? 'bg-gradient-to-br from-green-500 to-emerald-500' : 'bg-gradient-to-br from-red-500 to-rose-500'} flex items-center justify-center`}>
-                                  {battle.status === 'WON' ? (
+                                <div className={`w-10 h-10 rounded-lg ${
+                                  battle.playerWins > battle.dungeonWins 
+                                    ? 'bg-gradient-to-br from-green-500 to-emerald-500' 
+                                    : battle.playerWins === battle.dungeonWins 
+                                    ? 'bg-gradient-to-br from-yellow-500 to-amber-500' 
+                                    : 'bg-gradient-to-br from-red-500 to-rose-500'
+                                } flex items-center justify-center`}>
+                                  {battle.playerWins > battle.dungeonWins ? (
                                     <Trophy className="w-5 h-5 text-white" />
+                                  ) : battle.playerWins === battle.dungeonWins ? (
+                                    <Swords className="w-5 h-5 text-white" />
                                   ) : (
                                     <Swords className="w-5 h-5 text-white" />
                                   )}
@@ -278,13 +286,25 @@ export default async function DashboardPage() {
                                     {battle.dungeon.name}
                                   </h4>
                                   <p className="text-zinc-500 text-sm">
-                                    {battle.game.name} • {battle.status === 'WON' ? 'Győzelem' : 'Vereség'}
+                                    {battle.game.name} • {
+                                      battle.playerWins > battle.dungeonWins 
+                                        ? 'Győzelem' 
+                                        : battle.playerWins === battle.dungeonWins 
+                                        ? 'Döntetlen' 
+                                        : 'Vereség'
+                                    }
                                   </p>
                                 </div>
                               </div>
                               <div className="text-right">
                                 <div className="flex items-center gap-2 mb-1">
-                                  <span className={`text-sm font-semibold ${battle.status === 'WON' ? 'text-green-400' : 'text-red-400'}`}>
+                                  <span className={`text-sm font-semibold ${
+                                    battle.playerWins > battle.dungeonWins 
+                                      ? 'text-green-400' 
+                                      : battle.playerWins === battle.dungeonWins 
+                                      ? 'text-yellow-400' 
+                                      : 'text-red-400'
+                                  }`}>
                                     {battle.playerWins} - {battle.dungeonWins}
                                   </span>
                                 </div>

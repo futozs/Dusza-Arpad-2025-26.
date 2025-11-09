@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `battles` MODIFY `status` ENUM('IN_PROGRESS', 'WON', 'LOST', 'DRAW') NOT NULL DEFAULT 'IN_PROGRESS';

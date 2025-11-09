@@ -17,6 +17,11 @@ export const metadata: Metadata = {
   title: "Damareen - Fantasy Kártyajáték | Dusza Árpád 2025-26",
   description:
     "Stratégia, szerencse és képzelet találkozása. Építsd fel a paklidat, küzdj meg kazamatákban, és fejleszd kártyáidat!",
+  icons: {
+    icon: "/damareen.png",
+    shortcut: "/damareen.png",
+    apple: "/damareen.png",
+  },
 };
 
 export default function RootLayout({

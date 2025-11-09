@@ -305,7 +305,13 @@ export async function POST(
 
     // Harc eredménye - DOKUMENTÁCIÓ SZERINT
     // "A játékos akkor nyer a harc végén, ha összességében legalább annyi kártyája nyert mint amennyi a kazamatának"
-    const status: BattleStatus = playerWins >= dungeonWins ? "WON" : "LOST";
+    // De döntetlen esetén (ugyanannyi) az nem számít győzelemnek
+    const status: BattleStatus = 
+      playerWins > dungeonWins 
+        ? "WON" 
+        : playerWins === dungeonWins 
+        ? "DRAW" 
+        : "LOST";
     
     // Harc ideje (másodpercben -> percre konvertálva)
     const battleDuration = Math.ceil((Date.now() - battleStartTime) / 1000 / 60);

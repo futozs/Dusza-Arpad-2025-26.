@@ -301,6 +301,7 @@ enum BattleStatus {
   IN_PROGRESS
   WON
   LOST
+  DRAW
 }
 
 model Battle {

@@ -31,7 +31,7 @@ export default function DashboardNavbar() {
         <div className="relative flex h-16 items-center justify-between px-6">
           {/* Logo */}
           <Link href="/dashboard" className="flex items-center gap-3 transition-transform hover:scale-105">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500 via-violet-500 to-fuchsia-500 shadow-lg shadow-purple-500/50 relative overflow-hidden group">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br ring-2 ring-purple-500 from-purple-500 via-violet-500 to-fuchsia-500 shadow-lg shadow-purple-500/50 relative overflow-hidden group">
               <Image src="/damareen.png" width="100" height="100" alt="damareen logo"/>
             </div>
             <span className="bg-gradient-to-r from-purple-300 via-violet-300 to-fuchsia-300 bg-clip-text text-2xl font-bold text-transparent">

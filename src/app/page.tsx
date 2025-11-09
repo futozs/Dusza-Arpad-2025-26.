@@ -538,9 +538,6 @@ export default function Home() {
                   Nyersz, ha <strong className="text-purple-400">legalább annyi kártyád nyer</strong>, 
                   mint amennyi kártya a kazamatában van!
                 </p>
-                <p className="text-lg text-zinc-400 italic">
-                  A selyemutak játszóasztalaitól a modern digitális arénákig – ez a műfaj mindig is a hősök és történetek kovácsa volt.
-                </p>
               </div>
             </div>
           </div>
