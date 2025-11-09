@@ -1,8 +1,10 @@
+
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
+import { z } from "zod";
 
 export async function POST(request: NextRequest) {
   try {
@@ -12,16 +14,17 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Nincs bejelentkezve" }, { status: 401 });
     }
 
+
     const body = await request.json();
-    const { currentPassword, newPassword } = body;
-
-    if (!currentPassword || !newPassword) {
-      return NextResponse.json({ error: "Hiányzó adatok" }, { status: 400 });
+    const ChangePasswordSchema = z.object({
+      currentPassword: z.string().min(1),
+      newPassword: z.string().min(8)
+    });
+    const parsed = ChangePasswordSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json({ error: "Érvénytelen adatok", details: parsed.error.flatten().fieldErrors }, { status: 400 });
     }
-
-    if (newPassword.length < 8) {
-      return NextResponse.json({ error: "Az új jelszónak legalább 8 karakter hosszúnak kell lennie" }, { status: 400 });
-    }
+    const { currentPassword, newPassword } = parsed.data;
 
     // Felhasználó lekérése
     const user = await prisma.user.findUnique({

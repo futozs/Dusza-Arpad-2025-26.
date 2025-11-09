@@ -171,3 +171,32 @@ export const EmailVerificationSchema = z.object({
 });
 
 export type EmailVerificationInput = z.infer<typeof EmailVerificationSchema>;
+
+/**
+ * Update Profile Schema
+ * Használat: Felhasználó profil adatainak módosítása
+ * 
+ * BIZTONSÁGI INTÉZKEDÉSEK:
+ * - Username: Csak alfanumerikus + underscore, 3-20 karakter
+ * - Email: Érvényes email format
+ * - Automatikus trim és normalizáció
+ * - SQL Injection elleni védelem (Prisma paraméterezés)
+ */
+export const UpdateProfileSchema = z.object({
+  username: z
+    .string()
+    .min(3, "A felhasználónév legalább 3 karakter hosszú kell legyen")
+    .max(20, "A felhasználónév maximum 20 karakter lehet")
+    .regex(
+      /^[a-zA-Z0-9_]{3,20}$/,
+      "A felhasználónév csak betűt, számot és alulvonást tartalmazhat"
+    )
+    .transform(val => val.trim()), // Whitespace eltávolítása
+  email: z
+    .string()
+    .email("Érvénytelen email cím")
+    .max(255, "Az email cím maximum 255 karakter lehet")
+    .transform(val => val.toLowerCase().trim()), // Normalizálás
+});
+
+export type UpdateProfileInput = z.infer<typeof UpdateProfileSchema>;

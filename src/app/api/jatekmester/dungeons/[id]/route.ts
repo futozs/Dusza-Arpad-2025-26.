@@ -58,6 +58,9 @@ export async function GET(
   }
 }
 
+
+import { z } from "zod";
+
 export async function PUT(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -74,14 +77,19 @@ export async function PUT(
 
     const { id } = await params;
     const body = await req.json();
-    const { name, type, environmentId, cards, order, requiredWins } = body;
-
-    if (!name || !type || !environmentId || !cards || cards.length === 0) {
-      return NextResponse.json(
-        { error: "Minden kötelező mezőt ki kell tölteni" },
-        { status: 400 }
-      );
+    const DungeonSchema = z.object({
+      name: z.string().min(1),
+      type: z.string().min(1),
+      environmentId: z.string().min(1),
+      cards: z.array(z.any()).min(1),
+      order: z.any().optional(),
+      requiredWins: z.any().optional()
+    });
+    const parsed = DungeonSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json({ error: "Érvénytelen adatok", details: parsed.error.flatten().fieldErrors }, { status: 400 });
     }
+    const { name, type, environmentId, cards, order, requiredWins } = parsed.data;
 
     // Típus validálás
     const DUNGEON_TYPES = {

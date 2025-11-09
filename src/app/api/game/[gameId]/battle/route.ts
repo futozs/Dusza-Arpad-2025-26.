@@ -83,6 +83,9 @@ function evaluateClash(
 }
 
 // POST /api/game/[gameId]/battle - Új harc indítása
+
+import { z } from "zod";
+
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ gameId: string }> }
@@ -96,11 +99,12 @@ export async function POST(
 
     const { gameId } = await params;
     const body = await request.json();
-    const { dungeonId } = body;
-
-    if (!dungeonId) {
-      return NextResponse.json({ error: "Hiányzó dungeonId" }, { status: 400 });
+    const BattleSchema = z.object({ dungeonId: z.string().min(1) });
+    const parsed = BattleSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json({ error: "Érvénytelen adatok", details: parsed.error.flatten().fieldErrors }, { status: 400 });
     }
+    const { dungeonId } = parsed.data;
 
     // Ellenőrizzük, hogy a játék a felhasználóé-e
     const game = await prisma.game.findUnique({
