@@ -1,6 +1,7 @@
 import { PrismaClient } from "@/generated/prisma";
 
-// Singleton pattern for Prisma Client to prevent multiple instances
+// prisma... soha többet a sírás keringtet hogy miért nem akar mukodni a singleton
+
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
 };
@@ -11,11 +12,15 @@ export const prisma =
     log: process.env.NODE_ENV === "development" ? ["error", "warn"] : ["error"],
   });
 
-if (process.env.NODE_ENV !== "production") {
+
+if (!globalForPrisma.prisma) {
   globalForPrisma.prisma = prisma;
 }
 
+if (process.env.NODE_ENV !== "test") {
+  process.on("beforeExit", async () => {
+    await prisma.$disconnect();
+  });
+}
+
 export default prisma;
-
-
-//ha ez nem oldja meg akkor: jááááááááááááááj

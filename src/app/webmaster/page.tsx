@@ -21,9 +21,7 @@ import {
   Activity
 } from "lucide-react";
 import TwoFactorSetupButton from "@/components/TwoFactorSetupButton";
-import { PrismaClient } from "@/generated/prisma";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/prisma";
 
 export default async function WebmasterDashboardPage() {
   const session = await getServerSession(authOptions);

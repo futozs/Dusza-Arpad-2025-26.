@@ -1,14 +1,12 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { PrismaClient } from "@/generated/prisma";
+import { prisma } from "@/lib/prisma";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import { ArrowLeft, Plus, Crown, Sword, Heart, Zap } from "lucide-react";
 import { DeleteLeaderCardButton } from "@/components/DeleteLeaderCardButton";
-
-const prisma = new PrismaClient();
 
 export default async function LeaderCardsPage() {
   const session = await getServerSession(authOptions);

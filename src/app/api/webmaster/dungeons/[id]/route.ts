@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import db from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 
 export async function GET(
   req: NextRequest,
@@ -19,7 +19,7 @@ export async function GET(
 
     const { id } = await params;
 
-    const dungeon = await db.dungeon.findUnique({
+    const dungeon = await prisma.dungeon.findUnique({
       where: {
         id,
       },
@@ -130,7 +130,7 @@ export async function PUT(
     }
 
     // Környezet ellenőrzése
-    const environment = await db.environment.findUnique({
+    const environment = await prisma.environment.findUnique({
       where: { id: environmentId },
     });
 
@@ -150,7 +150,7 @@ export async function PUT(
             { status: 400 }
           );
         }
-        const leaderCard = await db.leaderCard.findUnique({
+        const leaderCard = await prisma.leaderCard.findUnique({
           where: { id: card.leaderCardId },
         });
         if (!leaderCard) {
@@ -166,7 +166,7 @@ export async function PUT(
             { status: 400 }
           );
         }
-        const worldCard = await db.worldCard.findUnique({
+        const worldCard = await prisma.worldCard.findUnique({
           where: { id: card.worldCardId },
         });
         if (!worldCard) {
@@ -180,7 +180,7 @@ export async function PUT(
 
     // Kazamata frissítése tranzakcióban
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const updatedDungeon = await db.$transaction(async (tx: any) => {
+    const updatedDungeon = await prisma.$transaction(async (tx: any) => {
       // Töröljük a régi kártyákat
       await tx.dungeonCard.deleteMany({
         where: {

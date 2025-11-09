@@ -1,14 +1,13 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { PrismaClient, DungeonType } from "@/generated/prisma";
+import { DungeonType } from "@/generated/prisma";
+import { prisma } from "@/lib/prisma";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import { ArrowLeft, Plus, Castle, Swords, Sparkles, Crown } from "lucide-react";
 import { DeleteDungeonButton } from "@/components/DeleteDungeonButton";
-
-const prisma = new PrismaClient();
 
 const dungeonTypeInfo: Record<DungeonType, { label: string; iconComponent: typeof Swords; color: string; textColor: string; reward: string }> = {
   SIMPLE_ENCOUNTER: { 

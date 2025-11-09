@@ -1,14 +1,12 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { PrismaClient } from "@/generated/prisma";
+import { prisma } from "@/lib/prisma";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import Link from "next/link";
 import { ArrowLeft, Plus, Globe, Layers, Crown, Castle, GamepadIcon } from "lucide-react";
 import { DeleteEnvironmentButton } from "@/components/DeleteEnvironmentButton";
-
-const prisma = new PrismaClient();
 
 export default async function EnvironmentsPage() {
   const session = await getServerSession(authOptions);

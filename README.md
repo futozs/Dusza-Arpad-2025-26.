@@ -59,7 +59,6 @@ bunx auth secret
 Hozz létre `.env` fájlt:
 
 ```env
-```env
 DATABASE_URL="mysql://username:password@localhost:3306/damareen"
 NEXTAUTH_URL="http://localhost:3000"
 NEXTAUTH_SECRET="<generated-secret-from-npx-auth-secret>"

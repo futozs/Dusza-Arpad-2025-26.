@@ -1,12 +1,11 @@
 import type { NextAuthOptions } from "next-auth";
 import type { JWT } from "next-auth/jwt";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { PrismaClient, UserRole } from "@/generated/prisma";
+import { UserRole } from "@/generated/prisma";
+import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { SignInSchema } from "@/schemas/auth.schemas";
 import * as speakeasy from "speakeasy";
-
-const prisma = new PrismaClient();
 
 /**
  * Parse user agent string to extract device and browser info

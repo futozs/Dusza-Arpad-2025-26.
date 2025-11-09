@@ -1,14 +1,13 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { PrismaClient, CardType } from "@/generated/prisma";
+import { CardType } from "@/generated/prisma";
+import { prisma } from "@/lib/prisma";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import { ArrowLeft, Plus, Pencil, Layers, Mountain, Wind, Droplet, Flame } from "lucide-react";
 import { DeleteCardButton } from "@/components/DeleteCardButton";
-
-const prisma = new PrismaClient();
 
 // Kártya típus ikonok és színek
 const cardTypeInfo: Record<CardType, { iconComponent: typeof Mountain; color: string; bgColor: string }> = {
