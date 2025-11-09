@@ -140,6 +140,8 @@ bun run start
 docker-compose -f .devcontainer/docker-compose.yml up --build
 ```
 
+(ARM platformok nem támogatottak!)
+
 </div>
 
 <br/>
