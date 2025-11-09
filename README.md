@@ -135,7 +135,7 @@ A **Damareen** egy komplex, full-stack stratégiai kártyajáték platform, amel
 
 ### Játék Koncepció
 
-A játékosok különböző dungeon-ökön keresztül haladnak, ahol stratégiai csatákban vesznek részt. Minden játékos gyűjt kártyákat, épít deckeket, és fejleszti karakterét a progresszív játékmenet során.
+A játékosok különböző dungeon-ökön keresztül haladnak, ahol stratégiai csatákban vesznek részt. Minden játékos épít deckeket, és fejleszti karakterét a progresszív játékmenet során.
 
 ---
 
@@ -192,8 +192,6 @@ A játékosok különböző dungeon-ökön keresztül haladnak, ahol stratégiai
 
 ## 🚀 Development
 
-## 🚀 Development
-
 ### Fejlesztői Parancsok
 
 | Parancs | Leírás |
@@ -244,7 +242,7 @@ Email templatek szerkesztése közben élőben látható preview minden template
 
 ---
 
-## Jövőbeli Funkciók
+## Fejlesztési javaslatok!
 
 - [ ] Napi küldetések és jutalom rendszer
 - [ ] Kártya egyesítés mechanika (duplikált kártyák kombinálása erősebb kártyákért, ha lenne ilyen)
