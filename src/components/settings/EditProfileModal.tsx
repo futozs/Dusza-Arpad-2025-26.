@@ -4,18 +4,11 @@ import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { X, User, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
-
-const EditProfileSchema = z.object({
-  username: z.string().min(3, "A felhasználónév legalább 3 karakter hosszú kell legyen"),
-  email: z.string().email("Érvényes email címet adj meg"),
-});
-
-type EditProfileInput = z.infer<typeof EditProfileSchema>;
+import { UpdateProfileSchema, type UpdateProfileInput } from "@/schemas/auth.schemas";
 
 interface EditProfileModalProps {
   isOpen: boolean;
@@ -40,15 +33,15 @@ export default function EditProfileModal({
     setMounted(true);
   }, []);
 
-  const form = useForm<EditProfileInput>({
-    resolver: zodResolver(EditProfileSchema),
+  const form = useForm<UpdateProfileInput>({
+    resolver: zodResolver(UpdateProfileSchema),
     defaultValues: {
       username: currentUsername,
       email: currentEmail,
     },
   });
 
-  const handleSubmit = async (data: EditProfileInput) => {
+  const handleSubmit = async (data: UpdateProfileInput) => {
     try {
       setLoading(true);
       setError("");
