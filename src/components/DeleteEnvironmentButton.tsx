@@ -21,7 +21,7 @@ export function DeleteEnvironmentButton({ environmentId, environmentName }: Dele
 
     setIsDeleting(true);
     try {
-      const res = await fetch(`/api/webmaster/environments?id=${environmentId}`, {
+      const res = await fetch(`/api/jatekmester/environments?id=${environmentId}`, {
         method: "DELETE",
       });
 

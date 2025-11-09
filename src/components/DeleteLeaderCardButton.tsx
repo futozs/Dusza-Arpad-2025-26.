@@ -21,7 +21,7 @@ export function DeleteLeaderCardButton({ cardId, cardName }: DeleteLeaderCardBut
 
     setIsDeleting(true);
     try {
-      const res = await fetch(`/api/webmaster/leader-cards?id=${cardId}`, {
+      const res = await fetch(`/api/jatekmester/leader-cards?id=${cardId}`, {
         method: "DELETE",
       });
 

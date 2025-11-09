@@ -17,7 +17,7 @@ datasource db {
 
 enum UserRole {
   PLAYER      // Normál játékos
-  WEBMASTER   // Webmester (admin)
+  JATEKMESTER   // Játékmester (admin)
 }
 
 model User {

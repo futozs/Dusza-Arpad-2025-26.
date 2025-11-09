@@ -13,8 +13,8 @@ import { NextResponse } from "next/server";
  * 
  * Védett route-ok:
  * - /dashboard/* - Csak bejelentkezett usereknek
- * - /webmaster/* - Csak WEBMASTER role-lal
- * - /game/* - Csak bejelentkezett PLAYER vagy WEBMASTER
+ * - /jatekmester/* - Csak JATEKMESTER role-lal
+ * - /game/* - Csak bejelentkezett PLAYER vagy JATEKMESTER
  */
 export default withAuth(
   function middleware(req) {
@@ -30,10 +30,10 @@ export default withAuth(
       return NextResponse.redirect(url);
     }
 
-    // Webmaster route védelem
-    if (path.startsWith("/webmaster")) {
-      if (token?.role !== "WEBMASTER") {
-        console.log(`Unauthorized webmaster access attempt: ${token?.email}`);
+    // Játékmester route védelem
+    if (path.startsWith("/jatekmester")) {
+      if (token?.role !== "JATEKMESTER") {
+        console.log(`Unauthorized jatekmester access attempt: ${token?.email}`);
         return NextResponse.redirect(new URL("/dashboard", req.url));
       }
     }
@@ -52,7 +52,7 @@ export default withAuth(
         const path = req.nextUrl.pathname;
 
         // Publikus route-ok (nem kell auth)
-        const publicPaths = ["/", "/auth/login", "/auth/register", "/signup", "/auth/login/webmaster"];
+        const publicPaths = ["/", "/auth/login", "/auth/register", "/signup", "/auth/login/jatekmester"];
         if (publicPaths.includes(path)) {
           return true;
         }
@@ -61,7 +61,7 @@ export default withAuth(
         if (
           path.startsWith("/dashboard") ||
           path.startsWith("/game") ||
-          path.startsWith("/webmaster")
+          path.startsWith("/jatekmester")
         ) {
           return !!token;
         }

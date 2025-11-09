@@ -21,7 +21,7 @@ export function DeleteDungeonButton({ dungeonId, dungeonName }: DeleteDungeonBut
 
     setIsDeleting(true);
     try {
-      const res = await fetch(`/api/webmaster/dungeons?id=${dungeonId}`, {
+      const res = await fetch(`/api/jatekmester/dungeons?id=${dungeonId}`, {
         method: "DELETE",
       });
 
