@@ -264,7 +264,7 @@ Email templatek szerkesztése közben élőben látható preview minden template
 - **Gyulai Gergő** - Full-stack Developer  
 - **Szűcs Noel Gergő** - Tesztelő, Dokumentáció
 
-**Projekt Link:** [github.com/futozs/Dusza-Arpad-2025-26](https://github.com/futozs/Dusza-Arpad-2025-26)
+**Projekt Link:** [github.com/futozs/Dusza-Arpad-2025-26.](https://github.com/futozs/Dusza-Arpad-2025-26.)
 
 **Live Platform:** [damareen.hu](https://damareen.hu)
 
