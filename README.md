@@ -5,8 +5,8 @@
   
   ### 🏆 Dusza Árpád Programozói Emlékverseny 2025/26
   
-  [![GitHub Stars](https://img.shields.io/github/stars/futozs/Dusza-Arpad-2025-26?style=for-the-badge&logo=github)](https://github.com/futozs/Dusza-Arpad-2025-26)
-  [![GitHub Forks](https://img.shields.io/github/forks/futozs/Dusza-Arpad-2025-26?style=for-the-badge&logo=github)](https://github.com/futozs/Dusza-Arpad-2025-26)
+  [![GitHub Stars](https://img.shields.io/github/stars/futozs/Dusza-Arpad-2025-26.?style=for-the-badge&logo=github)](https://github.com/futozs/Dusza-Arpad-2025-26.)
+  [![GitHub Forks](https://img.shields.io/github/forks/futozs/Dusza-Arpad-2025-26.?style=for-the-badge&logo=github)](https://github.com/futozs/Dusza-Arpad-2025-26.)
   [![Website](https://img.shields.io/badge/Website-damareen.hu-00ADD8?style=for-the-badge&logo=google-chrome&logoColor=white)](https://damareen.hu)
   
   ![Next.js](https://img.shields.io/badge/Next.js-16.0-000000?style=for-the-badge&logo=next.js&logoColor=white)
