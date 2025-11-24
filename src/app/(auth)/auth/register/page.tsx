@@ -120,7 +120,7 @@ export default function RegisterPage() {
                       </p>
                     )}
                     <FieldDescription className="text-zinc-400">
-                      Biztosan tároljuk, nem adjuk ki senkinek.
+                      Biztonságosan tároljuk, nem adjuk ki senkinek.
                     </FieldDescription>
                   </Field>
 
