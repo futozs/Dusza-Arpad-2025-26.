@@ -609,45 +609,47 @@ export default function BattleArena({
         </motion.div>
       )}
 
-      {/* Kontroll gombok */}
+      {/* Kontroll gombok (mindig fix és középen jelenik meg) */}
       {!allComplete && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="flex items-center justify-center gap-4"
+          className="fixed left-1/2 bottom-4 z-50 transform -translate-x-1/2 w-full px-4"
         >
-          {!clashComplete ? (
-            <Button
-              onClick={playClash}
-              disabled={isProcessing}
-              size="lg"
-              className="bg-zinc-800 hover:bg-zinc-700 text-white text-lg px-10 py-7 border border-zinc-700 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-zinc-800"
-            >
-              <Sparkles className="w-5 h-5 mr-2" />
-              {isProcessing ? "Folyamatban..." : "Harc!"}
-            </Button>
-          ) : (
-            <Button
-              onClick={nextClash}
-              disabled={isProcessing}
-              size="lg"
-              variant="outline"
-              className="border-zinc-700 text-white hover:bg-zinc-800 hover:text-white text-lg px-10 py-7 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
-            >
-              {isLastClash ? (
-                <>
-                  Eredmény
-                  <Trophy className="w-5 h-5 ml-2" />
-                </>
-              ) : (
-                <>
-                  Következő ütközet
-                  <ArrowRight className="w-5 h-5 ml-2" />
-                </>
-              )}
-            </Button>
-          )}
+          <div className="flex items-center justify-center">
+            {!clashComplete ? (
+              <Button
+                onClick={playClash}
+                disabled={isProcessing}
+                size="lg"
+                className="bg-zinc-800 hover:bg-zinc-700 text-white text-base px-6 py-3 border border-zinc-700 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed w-full max-w-[420px]"
+              >
+                <Sparkles className="w-5 h-5 mr-2" />
+                {isProcessing ? "Folyamatban..." : "Harc!"}
+              </Button>
+            ) : (
+              <Button
+                onClick={nextClash}
+                disabled={isProcessing}
+                size="lg"
+                variant="outline"
+                className="border-zinc-700 text-white hover:bg-zinc-800 hover:text-white text-base px-6 py-3 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed w-full max-w-[420px]"
+              >
+                {isLastClash ? (
+                  <>
+                    Eredmény
+                    <Trophy className="w-5 h-5 ml-2" />
+                  </>
+                ) : (
+                  <>
+                    Következő ütközet
+                    <ArrowRight className="w-5 h-5 ml-2" />
+                  </>
+                )}
+              </Button>
+            )}
+          </div>
         </motion.div>
       )}
     </div>
