@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start --port 6777",
+    "start": "next start --port 6767",
     "lint": "eslint",
     "email:dev": "email dev --dir src/mail/templates",
     "db:seed": "node prisma/seed.js"
