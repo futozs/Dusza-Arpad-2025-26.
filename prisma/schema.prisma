@@ -186,7 +186,7 @@ model DungeonCard {
   leaderCardId String?
 
   // Vagy a vezérkártya alapkártyája (ha nem létezik külön LeaderCard)
-  baseLeaderCard   WorldCard? @relation("BaseLeaderCard", fields: [baseLeaderCardId], references: [id])
+  baseLeaderCard   WorldCard? @relation("BaseLeaderCard", fields: [baseLeaderCardId], references: [id], onDelete: Cascade)
   baseLeaderCardId String?
 
   @@unique([dungeonId, order])
